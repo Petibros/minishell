@@ -1,0 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
+/*   Updated: 2025/03/04 00:10:08 by sacgarci         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <linux/limits.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdbool.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include "libft.h"
+
+typedef struct s_line
+{
+	int			n_cmd;
+	int			fd_in;
+	int			fd_out;
+	char		*line;
+	char		**formatted_line;
+	bool		append_out;
+}	t_line;
+
+typedef struct s_vars
+{
+	t_line	input;
+	char	abs_path[PATH_MAX];
+	char	*home_path;
+	char	*user;
+	char	*prompt;
+}	t_vars;
