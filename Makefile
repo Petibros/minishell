@@ -6,13 +6,13 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/04 00:24:21 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/03/05 17:20:46 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFILES = src/main.c
+CFILES = src/main.c	src/prompt.c
 OFILES = $(CFILES:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
