@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/04 00:10:08 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/05 17:20:06 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <stdbool.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include "libft.h"
+#include "../libft/libft.h"
 
 typedef struct s_line
 {
@@ -41,3 +41,5 @@ typedef struct s_vars
 	char	*user;
 	char	*prompt;
 }	t_vars;
+
+int	get_prompt(t_vars *vars);
