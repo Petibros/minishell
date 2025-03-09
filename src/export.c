@@ -18,10 +18,11 @@ static char	**alloc_new_array(t_vars *vars, int size)
 	char	**new_array;
 
 	i = 0;
-	new_array = malloc(size * sizeof(char *) + 1);
+	new_array = malloc((size + 1) * sizeof(char *));
 	while (vars->env.envp[i])
 	{
 		new_array[i] = ft_strdup(vars->env.envp[i]);
+		free(vars->env.envp[i]);
 		++i;
 	}
 	new_array[i] = NULL;
@@ -33,9 +34,10 @@ void	export_var(char *var, char *value, t_vars *vars)
 {
 	if (vars->env.current_size >= vars->env.alloc_size)
 	{
-		vars->env.alloc_size += 8;
+		++vars->env.alloc_size;
 		vars->env.envp = alloc_new_array(vars, vars->env.alloc_size);
 	}
 	vars->env.envp[vars->env.current_size + 1] = NULL;
 	vars->env.envp[vars->env.current_size] = ft_strjoin(var, value);
+	++vars->env.current_size;
 }

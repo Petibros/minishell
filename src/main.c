@@ -12,18 +12,32 @@
 
 #include "minishell.h"
 
+static void	free_vars(t_vars *vars)
+{
+	int	i;
+
+	i = 0;
+	while (vars->env.envp[i])
+	{
+		free(vars->env.envp[i]);
+		++i;
+	}
+	free(vars->env.envp);
+	free(vars);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
 	t_cmds	cmds; // Pas de pointer pour pas avoir besoin de malloc
-
+//c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
 	(void) argv;
 	if (argc > 1 || !envp)
 		return (1);
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
-	transfer_env(envp, vars);
+	transfer_env(envp, vars);//les variables d'environnement sont malloc pour être modifiées dynamiquement
 	envp = vars->env.envp;
 	while (true)
 	{
@@ -56,5 +70,5 @@ int	main(int argc, char **argv, char **envp)
 		free(vars->prompt);
 	}
 	rl_clear_history();
-	free(vars);
+	free_vars(vars);
 }
