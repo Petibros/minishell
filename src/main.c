@@ -12,18 +12,32 @@
 
 #include "minishell.h"
 
+static void	free_vars(t_vars *vars)
+{
+	int	i;
+
+	i = 0;
+	while (vars->env.envp[i])
+	{
+		free(vars->env.envp[i]);
+		++i;
+	}
+	free(vars->env.envp);
+	free(vars);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
 	t_cmds	cmds; // Pas de pointer pour pas avoir besoin de malloc
-
+//c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
 	(void) argv;
 	if (argc > 1 || !envp)
 		return (1);
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
-	transfer_env(envp, vars);
+	transfer_env(envp, vars);//les variables d'environnement sont malloc pour être modifiées dynamiquement
 	envp = vars->env.envp;
 	while (true)
 	{
@@ -39,8 +53,13 @@ int	main(int argc, char **argv, char **envp)
 			free(vars->prompt);
 			break ;
 		}
-		if (ft_strncmp(vars->input.line, "cd ", 3) == 0)
-			cd(vars->input.line + 3);
+		if (ft_strncmp(vars->input.line, "cd", 3) == 0 || ft_strncmp(vars->input.line, "cd ", 3) == 0)
+		{
+			if (*(vars->input.line + 2) == 0 || *(vars->input.line + 3) == 0)
+				cd(vars->home_path);
+			else
+				cd(vars->input.line + 3);
+		}
 		if (ft_strncmp(vars->input.line, "pwd", 4) == 0)
 			pwd(vars);
 		if (ft_strncmp(vars->input.line, "env", 5) == 0)
@@ -48,7 +67,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(vars->input.line, "unset ", 6) == 0)
 			unset(vars->input.line + 6, vars);
 		if (ft_strncmp(vars->input.line, "export", 7) == 0)
-			export_var(envp, "CACA=", "cat", vars);
+			export_var("CACA=", "cat", vars);
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
 		parse_line(vars->input.line, envp, &cmds); 
@@ -56,5 +75,5 @@ int	main(int argc, char **argv, char **envp)
 		free(vars->prompt);
 	}
 	rl_clear_history();
-	free(vars);
+	free_vars(vars);
 }
