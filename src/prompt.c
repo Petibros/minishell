@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:17:58 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/05 17:18:47 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/05 19:55:55 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,9 @@ static int	get_prompt_from_home(t_vars *vars)
 
 int	get_prompt(t_vars *vars)
 {
-	if (ft_strnstr(vars->abs_path, vars->home_path,
+	if (!vars->user)
+		vars->user = "";
+	if (vars->home_path && ft_strnstr(vars->abs_path, vars->home_path,
 			ft_strlen(vars->home_path)) == vars->abs_path)
 	{
 		if (get_prompt_from_home(vars) == -1)
