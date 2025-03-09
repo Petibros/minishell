@@ -48,7 +48,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(vars->input.line, "unset ", 6) == 0)
 			unset(vars->input.line + 6, vars);
 		if (ft_strncmp(vars->input.line, "export", 7) == 0)
-			export_var(envp, "CACA=", "cat", vars);
+			export_var("CACA=", "cat", vars);
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
 		parse_line(vars->input.line, envp, &cmds); 

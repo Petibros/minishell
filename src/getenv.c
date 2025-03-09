@@ -7,7 +7,7 @@ static char	*ft_getenv(char **envp, char *val)
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(envp[i], val, ft_strlen(val) + 1) == 0)
+		if (ft_strncmp(envp[i], val, ft_strlen(val)) == 0 && envp[i][ft_strlen(val)] == '=')
 			return (envp[i] + ft_strlen(val) + 1);
 		++i;
 	}
@@ -33,10 +33,9 @@ void	transfer_env(char **envp, t_vars *vars)
 	vars->env.envp[i] = NULL;
 }
 
-int	actualize_env(t_vars *vars)
+void	actualize_env(t_vars *vars)
 {
-	vars->user = ft_getenv("USER");
-	vars->home_path = ft_getenv("HOME");
+	vars->user = ft_getenv(vars->env.envp, "USER");
+	vars->home_path = ft_getenv(vars->env.envp, "HOME");
 	getcwd(vars->abs_path, PATH_MAX);
-	return (0);
 }

@@ -29,16 +29,12 @@ static char	**alloc_new_array(t_vars *vars, int size)
 	return (new_array);
 }
 
-void	export_var(char **envp, char *var, char *value, t_vars *vars)
+void	export_var(char *var, char *value, t_vars *vars)
 {
-	int	i;
-
-	i = 0;
 	if (vars->env.current_size >= vars->env.alloc_size)
 	{
 		vars->env.alloc_size += 8;
 		vars->env.envp = alloc_new_array(vars, vars->env.alloc_size);
-		envp = vars->env.envp;
 	}
 	vars->env.envp[vars->env.current_size + 1] = NULL;
 	vars->env.envp[vars->env.current_size] = ft_strjoin(var, value);
