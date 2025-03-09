@@ -32,18 +32,27 @@ typedef struct s_token
     struct s_token	*next;
 } t_token;
 
+typedef struct s_cmd
+{
+    char            *command;
+    struct s_cmd    *next;
+} t_cmd;
+
+typedef struct s_arg
+{
+    char            **arg;
+    struct s_arg    *next;
+} t_arg;
+
 typedef struct s_cmds
 {
-    char    **cmds;
-    char    **argvs;
+    t_cmd   *cmds;
+    t_arg   *argvs;
     char    **envp;
     int     fd_in;
     int     fd_out;
     int     cmd_count;
-    char    *input;
-    char    *delimiter;
-    char    *here_doc;
-}   t_cmds;
+} t_cmds;
 
 typedef struct s_env
 {
