@@ -6,34 +6,22 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/04 00:10:08 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/05 17:20:06 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-
-# include <linux/limits.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <fcntl.h>
-# include <signal.h>
-# include <stdlib.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <stdbool.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include "libft.h"
-
-typedef struct s_cmds
-{
-	char	**cmds;
-	char	**argvs;
-	char	**envp;
-	int		fd_in;
-	int		fd_out;
-}	t_cmds;
+#include <linux/limits.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdbool.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include "../libft/libft.h"
 
 typedef struct s_line
 {
@@ -53,3 +41,5 @@ typedef struct s_vars
 	char	*user;
 	char	*prompt;
 }	t_vars;
+
+int	get_prompt(t_vars *vars);
