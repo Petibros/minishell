@@ -10,18 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <linux/limits.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdbool.h>
-#include <readline/history.h>
-#include <readline/readline.h>
-#include "../libft/libft.h"
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+#	include <linux/limits.h>
+#	include <unistd.h>
+#	include <stdio.h>
+#	include <fcntl.h>
+#	include <signal.h>
+#	include <stdlib.h>
+#	include <sys/types.h>
+#	include <sys/stat.h>
+#	include <stdbool.h>
+#	include <readline/history.h>
+#	include <readline/readline.h>
+#	include "../libft/libft.h"
+
+typedef struct s_cmds
+{
+	char	**cmds;
+	char	**argvs;
+	char	**envp;
+	int		fd_in;
+	int		fd_out;
+}	t_cmds;
 
 typedef struct s_line
 {
@@ -42,4 +55,7 @@ typedef struct s_vars
 	char	*prompt;
 }	t_vars;
 
-int	get_prompt(t_vars *vars);
+int		get_prompt(t_vars *vars);
+t_cmds	*parse_line(char *line, char **envp);
+
+#endif
