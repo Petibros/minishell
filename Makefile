@@ -12,11 +12,11 @@
 
 NAME = minishell
 CC = cc
-CFILES = src/main.c	src/prompt.c
+CFILES = src/main.c	src/prompt.c src/parsing/parse_line.c
 OFILES = $(CFILES:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
-CFLAGS = -Wall -Wextra -Werror -I libft
+CFLAGS = -Wall -Wextra -Werror -I libft -I src
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
