@@ -23,6 +23,7 @@ int	actualize_env(t_vars *vars)
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
+	t_cmds	cmds; // Pas de pointer pour pas avoir besoin de malloc
 
 	(void) argv;
 	if (argc > 1 || !envp)
@@ -36,6 +37,9 @@ int	main(int argc, char **argv, char **envp)
 		if (get_prompt(vars) == -1)
 			break ;
 		vars->input.line = readline(vars->prompt);
+		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
+		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
+		parse_line(vars->input.line, envp, &cmds); 
 		free(vars->input.line);
 		free(vars->prompt);
 	}

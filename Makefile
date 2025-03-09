@@ -12,17 +12,17 @@
 
 NAME = minishell
 CC = cc
-CFILES = src/main.c	src/prompt.c src/parsing/parse_line.c
+CFILES = src/main.c	src/prompt.c src/parsing/parse_line.c src/parsing/tokenize.c src/parsing/linked_token_utils.c
 OFILES = $(CFILES:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
-CFLAGS = -Wall -Wextra -Werror -I libft -I src
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
 
 $(NAME) : $(LIBFT) $(OFILES)
-	$(CC) $(OFILES) $(LDFLAGS) -o $(NAME)
+	$(CC) $(OFILES) $(LDFLAGS) -g -o $(NAME)
 
 $(LIBFT) :
 	make -C libft

@@ -27,6 +27,12 @@
 #	include <readline/readline.h>
 #	include "../libft/libft.h"
 
+typedef struct s_token
+{
+    char			*value;
+    struct s_token	*next;
+} t_token;
+
 typedef struct s_cmds
 {
     char    **cmds;
@@ -60,6 +66,13 @@ typedef struct s_vars
 }	t_vars;
 
 int		get_prompt(t_vars *vars);
+
+// Parsing
 int		parse_line(char *line, char **envp, t_cmds *cmds);
+t_token	*tokenize_line(char *line);
+t_token	*create_token_node(char *value, t_token *next);
+t_token	*add_token(t_token *head, char *token_value);
+void	free_token_list(t_token *head);
+
 
 #endif
