@@ -12,33 +12,6 @@
 
 #include "minishell.h"
 
-static void	transfer_env(char **envp, t_vars *vars)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-		++i;
-	vars->env.current_size = i;
-	vars->env.alloc_size = i;
-	vars->env.envp = malloc(vars->env.alloc_size * sizeof(char *) + 1);
-	i = 0;
-	while (envp[i])
-	{
-		vars->env.envp[i] = ft_strdup(envp[i]);
-		++i;
-	}
-	vars->env.envp[i] = NULL;
-}
-
-static int	actualize_env(t_vars *vars)
-{
-	vars->user = getenv("USER");
-	vars->home_path = getenv("HOME");
-	getcwd(vars->abs_path, PATH_MAX);
-	return (0);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;

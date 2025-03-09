@@ -50,6 +50,8 @@ typedef struct s_vars
 	char	*prompt;
 }	t_vars;
 
+void	transfer_env(char **envp, t_vars *vars);
+void	actualize_env(t_vars *vars);
 void	export_var(char **envp, char *var, char *value, t_vars *vars);
 void	cd(char *path);
 int		get_prompt(t_vars *vars);

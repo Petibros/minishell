@@ -12,7 +12,7 @@
 
 NAME = minishell
 CC = cc
-CFILES = src/main.c	src/prompt.c src/pwd.c src/unset.c src/env.c src/exit.c src/cd.c src/export.c
+CFILES = src/getenv.c src/main.c	src/prompt.c src/pwd.c src/unset.c src/env.c src/exit.c src/cd.c src/export.c
 OFILES = $(CFILES:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
