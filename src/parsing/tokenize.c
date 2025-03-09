@@ -66,13 +66,5 @@ t_token *tokenize_line(char *line)
         if (!process_token(line, &i, &head))
             return (NULL);
     }
-    // TODO remove print
-    t_token *current = head;
-    while (current)
-    {
-        printf("%s\n", current->value);
-        current = current->next;
-    }
-    free_token_list(head);
     return (head);
 }
