@@ -53,8 +53,13 @@ int	main(int argc, char **argv, char **envp)
 			free(vars->prompt);
 			break ;
 		}
-		if (ft_strncmp(vars->input.line, "cd ", 3) == 0)
-			cd(vars->input.line + 3);
+		if (ft_strncmp(vars->input.line, "cd", 3) == 0 || ft_strncmp(vars->input.line, "cd ", 3) == 0)
+		{
+			if (*(vars->input.line + 2) == 0 || *(vars->input.line + 3) == 0)
+				cd(vars->home_path);
+			else
+				cd(vars->input.line + 3);
+		}
 		if (ft_strncmp(vars->input.line, "pwd", 4) == 0)
 			pwd(vars);
 		if (ft_strncmp(vars->input.line, "env", 5) == 0)
