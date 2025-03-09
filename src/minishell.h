@@ -29,12 +29,16 @@
 
 typedef struct s_cmds
 {
-	char	**cmds;
-	char	**argvs;
-	char	**envp;
-	int		fd_in;
-	int		fd_out;
-}	t_cmds;
+    char    **cmds;
+    char    **argvs;
+    char    **envp;
+    int     fd_in;
+    int     fd_out;
+    int     cmd_count;
+    char    *input;
+    char    *delimiter;
+    char    *here_doc;
+}   t_cmds;
 
 typedef struct s_line
 {
@@ -56,6 +60,6 @@ typedef struct s_vars
 }	t_vars;
 
 int		get_prompt(t_vars *vars);
-t_cmds	*parse_line(char *line, char **envp);
+int		parse_line(char *line, char **envp, t_cmds *cmds);
 
 #endif

@@ -1,7 +1,9 @@
 #include "minishell.h"
 
-t_cmds	*parse_line(char *line, char **envp)
+int parse_line(char *line, char **envp, t_cmds *cmds)
 {
+    if(!cmds)
+        return (0);
     (void) envp;
     (void) line;
     return (NULL);
