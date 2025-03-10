@@ -72,9 +72,9 @@ typedef struct s_vars
 	char	*prompt;
 }	t_vars;
 
-void	transfer_env(char **envp, t_vars *vars);
+int	transfer_env(char **envp, t_vars *vars);
 void	actualize_env(t_vars *vars);
-void	export_var(char *var, char *value, t_vars *vars);
+int		export_var(char *var, char *value, t_vars *vars);
 void	cd(char *path);
 int		get_prompt(t_vars *vars);
 void	pwd(t_vars *vars);
@@ -82,6 +82,7 @@ void	unset(char *var, t_vars *vars);
 void	env(char **envp);
 void	print_exit(void);
 int		get_prompt(t_vars *vars);
+char	*ft_getenv(char **envp, char *var);
 
 // Parsing
 int		parse_line(char *line, char **envp, t_cmds *cmds);
