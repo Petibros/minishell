@@ -12,8 +12,21 @@
 
 NAME = minishell
 CC = cc
-CFILES = src/echo.c src/main.c src/prompt.c src/parsing/parse_line.c src/parsing/tokenize.c src/parsing/linked_token_utils.c src/getenv.c src/pwd.c src/unset.c src/env.c src/exit.c src/cd.c src/export.c
-OFILES = $(CFILES:.c=.o)
+CFILES =	src/main.c \
+			src/prompt.c \
+			src/getenv.c \
+			src/pwd.c \
+			src/unset.c \
+			src/env.c \
+			src/exit.c \
+			src/cd.c \
+			src/export.c \
+			src/echo.c
+CFILES_PARSING =	src/parsing/parse_line.c \
+					src/parsing/tokenize.c \
+					src/parsing/utils.c
+
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
 CFLAGS = -Wall -Wextra -Werror -g -I libft -I src
@@ -25,7 +38,7 @@ $(NAME) : $(LIBFT) $(OFILES)
 	$(CC) $(OFILES) $(LDFLAGS) -g -o $(NAME)
 
 $(LIBFT) :
-	make -C libft
+	make -C libft bonus
 
 %.o : %.c $(HEADER)
 	$(CC) -c $(CFLAGS) $< -o $@
