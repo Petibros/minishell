@@ -26,24 +26,18 @@
 # include <readline/readline.h>
 # include "../libft/libft.h"
 
-typedef struct s_token
-{
-    char			*value;
-    struct s_token	*next;
-} t_token;
-
 typedef struct s_cmds
 {
-    char    **cmds;
-    char    **argvs;
+    t_list  *cmds;
+    t_list  *argvs;
     char    **envp;
-    int     fd_in;
-    int     fd_out;
+    char	*in_files;
+    char	*out_files;
+	int		*append_fd_out;
+	char	**delimiter;
+	int		*here_doc;
     int     cmd_count;
-    char    *input;
-    char    *delimiter;
-    char    *here_doc;
-}   t_cmds;
+} t_cmds;
 
 typedef struct s_env
 {
@@ -86,10 +80,8 @@ char	*ft_getenv(char **envp, char *var);
 
 // Parsing
 int		parse_line(char *line, char **envp, t_cmds *cmds);
-t_token	*tokenize_line(char *line);
-t_token	*create_token_node(char *value, t_token *next);
-t_token	*add_token(t_token *head, char *token_value);
-void	free_token_list(t_token *head);
-
+t_list	*tokenize_line(char *line);
+int		is_whitespace(char c);
+int		skip_whitespace(char *line, int *index);
 
 #endif

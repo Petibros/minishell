@@ -34,6 +34,7 @@ int	main(int argc, char **argv, char **envp)
 	t_vars	*vars;
 	t_cmds	cmds; // Pas de pointer pour pas avoir besoin de malloc
 //c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
+
 	(void) argv;
 	if (argc > 1 || !envp)
 		return (1);

@@ -1,24 +1,12 @@
 #include "minishell.h"
 
-static int is_whitespace(char c)
-{
-    return (c == ' ' || c == '\t' || c == '\n');
-}
-
-static int skip_whitespace(char *line, int *index)
-{
-    while (line[*index] != '\0' && is_whitespace(line[*index]))
-        (*index)++;
-    return (*index);
-}
-
 static int handle_quotes(char *line, int *index)
 {
     char    quote;
     int     start;
 
-    quote = line[*index];
     start = *index;
+    quote = line[start];
     (*index)++;
     while (line[*index] != quote && line[*index] != '\0')
         (*index)++;
@@ -29,32 +17,48 @@ static int handle_quotes(char *line, int *index)
     return (*index);
 }
 
-static int process_token(char *line, int *i, t_token **head)
+static void find_substr(char *line, int *i)
 {
-    char    *token_value;
-    int     start;
+    (*i)++;
+    while (line[*i] != '\0' && !is_whitespace(line[*i]))
+    {
+        if ((line[*i] == '"' || line[*i] == '\'') && ft_strchr(&line[*i + 1], line[*i]))
+            break ;
+        (*i)++;
+    }
+}
+
+static int process_token(char *line, int *i, t_list **head)
+{
+    char *token_value;
+    int start;
 
     start = *i;
     if (line[*i] == '"' || line[*i] == '\'')
         *i = handle_quotes(line, i);
-    while (line[*i] != '\0' && !is_whitespace(line[*i]))
-        (*i)++;
+    if (*i == start)
+        find_substr(line, i);
     token_value = ft_substr(line, start, *i - start);
     if (token_value == NULL)
     {
-        free_token_list(*head);
-        return (0);
+        ft_lstclear(head, free);
+        return (0); 
     }
-    *head = add_token(*head, token_value);
-    if (*head == NULL)
-        return (0);
-    return (1);
+    t_list *new_node = ft_lstnew(token_value);
+    if (!new_node)
+    {
+        free(token_value);
+        ft_lstclear(head, free); 
+        return (0); 
+    }   
+    ft_lstadd_back(head, new_node); 
+    return (1); 
 }
 
-t_token *tokenize_line(char *line)
+t_list *tokenize_line(char *line)
 {
-    t_token *head;
-    int i;
+    t_list *head;
+    int     i;
 
     head = NULL;
     i = 0;
@@ -64,7 +68,10 @@ t_token *tokenize_line(char *line)
         if (line[i] == '\0')
             break;
         if (!process_token(line, &i, &head))
+        {
+            ft_lstclear(&head, free);
             return (NULL);
+        }
     }
-    return (head);
+    return (head); 
 }
