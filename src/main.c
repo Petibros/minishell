@@ -16,13 +16,16 @@ static void	free_vars(t_vars *vars)
 {
 	int	i;
 
-	i = 0;
-	while (vars->env.envp[i])
+	if (vars->env.envp)
 	{
-		free(vars->env.envp[i]);
-		++i;
+		i = 0;
+		while (vars->env.envp[i])
+		{
+			free(vars->env.envp[i]);
+			++i;
+		}
+		free(vars->env.envp);
 	}
-	free(vars->env.envp);
 	free(vars);
 }
 
@@ -38,8 +41,11 @@ int	main(int argc, char **argv, char **envp)
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
-	transfer_env(envp, vars);//les variables d'environnement sont malloc pour être modifiées dynamiquement
-	envp = vars->env.envp;
+	if (transfer_env(envp, vars) == -1)//les variables d'environnement sont malloc pour être modifiées dynamiquement
+	{
+		free_vars(vars);
+		return (1);
+	}
 	while (true)
 	{
 		actualize_env(vars);
@@ -68,7 +74,8 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(vars->input.line, "unset ", 6) == 0)
 			unset(vars->input.line + 6, vars);
 		if (ft_strncmp(vars->input.line, "export", 7) == 0)
-			export_var("CACA=", "cat", vars);
+			if (export_var("CACA=", "cat", vars) == -1)
+				break ;
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
 		parse_line(vars->input.line, envp, &cmds); 
