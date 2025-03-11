@@ -66,7 +66,8 @@ typedef struct s_vars
 	char	*prompt;
 }	t_vars;
 
-int	transfer_env(char **envp, t_vars *vars);
+void	echo(char *msg, int fd, bool option);
+int		transfer_env(char **envp, t_vars *vars);
 void	actualize_env(t_vars *vars);
 int		export_var(char *var, char *value, t_vars *vars);
 void	cd(char *path);

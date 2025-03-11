@@ -12,7 +12,6 @@
 
 NAME = minishell
 CC = cc
-
 CFILES =	src/main.c \
 			src/prompt.c \
 			src/getenv.c \
@@ -21,7 +20,8 @@ CFILES =	src/main.c \
 			src/env.c \
 			src/exit.c \
 			src/cd.c \
-			src/export.c
+			src/export.c \
+			src/echo.c
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
 					src/parsing/utils.c
@@ -29,8 +29,6 @@ CFILES_PARSING =	src/parsing/parse_line.c \
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src
-LDFLAGS = $(LIBFT) -lreadline
 CFLAGS = -Wall -Wextra -Werror -g -I libft -I src
 LDFLAGS = $(LIBFT) -lreadline
 
