@@ -31,8 +31,11 @@ typedef struct s_cmds
     t_list  *cmds;
     t_list  *argvs;
     char    **envp;
-    int     fd_in;
-    int     fd_out;
+    char	*in_files;
+    char	*out_files;
+	int		*append_fd_out;
+	char	**delimiter;
+	int		*here_doc;
     int     cmd_count;
 } t_cmds;
 
