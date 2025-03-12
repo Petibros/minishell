@@ -80,6 +80,8 @@ int	main(int argc, char **argv, char **envp)
 			echo(vars->input.line + 8, 1, true);
 		else if (ft_strncmp(vars->input.line, "echo ", 5) == 0)
 			echo(vars->input.line + 5, 1, false);
+		if (ft_strncmp(vars->input.line, "here_doc ", 9) == 0)
+			here_doc(2, vars->input.line + 9);
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
 		parse_line(vars->input.line, envp, &cmds); 
