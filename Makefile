@@ -12,7 +12,6 @@
 
 NAME = minishell
 CC = cc
-
 CFILES =	src/main.c \
 			src/prompt.c \
 			src/getenv.c \
@@ -21,7 +20,9 @@ CFILES =	src/main.c \
 			src/env.c \
 			src/exit.c \
 			src/cd.c \
-			src/export.c
+			src/export.c \
+			src/echo.c \
+			src/here_doc.c
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
 					src/parsing/utils.c \
