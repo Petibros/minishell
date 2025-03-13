@@ -24,20 +24,8 @@
 # include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include "../libft/libft.h"
-
-typedef struct s_cmds
-{
-    t_list  *cmds;
-    t_list  *argvs;
-    char    **envp;
-    char	*in_files;
-    char	*out_files;
-	int		*append_fd_out;
-	char	**delimiter;
-	int		*here_doc;
-    int     cmd_count;
-} t_cmds;
+# include "libft.h"
+# include "parsing.h"
 
 typedef struct s_env
 {
@@ -77,11 +65,5 @@ void	env(char **envp);
 void	print_exit(void);
 int		get_prompt(t_vars *vars);
 char	*ft_getenv(char **envp, char *var);
-
-// Parsing
-int		parse_line(char *line, char **envp, t_cmds *cmds);
-t_list	*tokenize_line(char *line);
-int		is_whitespace(char c);
-int		skip_whitespace(char *line, int *index);
 
 #endif
