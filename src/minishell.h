@@ -6,12 +6,16 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/14 15:37:10 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 16:27:14 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define OR 1
+# define AND 2
+# define PIPE 3
 
 # include <linux/limits.h>
 # include <unistd.h>
@@ -30,12 +34,14 @@ typedef struct s_cmds
 {
     t_list  *cmds;
     t_list  *argvs;
-    char    **envp;
+	char	**delimiter;
     char	*in_files;
     char	*out_files;
+	int		last_code;
+	int		*next_operator;
 	int		*append_fd_out;
-	char	**delimiter;
 	int		*here_doc;
+	int		pipes_count;
     int     cmd_count;
 } t_cmds;
 
@@ -61,7 +67,6 @@ typedef struct s_vars
 	t_line	input;
 	t_env	env;
 	t_cmds	cmd;
-	int		last_code;
 	char	abs_path[PATH_MAX];
 	char	*home_path;
 	char	*user;
