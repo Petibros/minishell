@@ -24,26 +24,20 @@ void print_tokens(t_list *tokens)
     }
 }
 
-int parse_tokens(t_list *tokens, char **envp, t_cmds *cmds)
-{
-    (void)envp;
-    (void)cmds;
-    (void)tokens;
-    return (1);
-}
-
 int parse_line(char *line, char **envp, t_cmds *cmds)
 {
-    t_list *tokens;
+    t_list  *tokens;
 
+    (void)cmds;
     (void)envp;
     tokens = tokenize_line(line);
     if (!tokens)
         return (0);
     print_tokens(tokens);
-    if (parse_tokens(tokens, envp, cmds) == 0)
+    if (is_syntax_error(tokens))
     {
         ft_lstclear(&tokens, free);
+        printf("Syntax error!\n");
         return (0);
     }
     ft_lstclear(&tokens, free);

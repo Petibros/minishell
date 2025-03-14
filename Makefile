@@ -25,12 +25,13 @@ CFILES =	src/main.c \
 			src/here_doc.c
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
-					src/parsing/utils.c
+					src/parsing/utils.c \
+					src/parsing/syntax.c
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I src/parsing
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)

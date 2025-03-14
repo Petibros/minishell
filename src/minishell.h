@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/14 16:27:14 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 16:31:39 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@
 # include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include "../libft/libft.h"
+# include "parsing.h"
+# include "libft.h"
 
 typedef struct s_cmds
 {
@@ -86,11 +87,5 @@ void	env(char **envp);
 void	print_exit(void);
 int		get_prompt(t_vars *vars);
 char	*ft_getenv(char **envp, char *var);
-
-// Parsing
-int		parse_line(char *line, char **envp, t_cmds *cmds);
-t_list	*tokenize_line(char *line);
-int		is_whitespace(char c);
-int		skip_whitespace(char *line, int *index);
 
 #endif
