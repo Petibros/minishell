@@ -6,11 +6,11 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/14 16:13:51 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:07:40 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
 void	close_pipe(int pipes[2][2], int	to_close)
 {

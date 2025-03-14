@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/06 00:17:43 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/03/14 16:59:35 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,19 +30,21 @@ CFILES_PARSING =	src/parsing/parse_line.c \
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o)
 LIBFT = libft/libft.a
-HEADER = src/minishell.h
+HEADER = src/minishell.h 
+HEADER_PARSING = src/parsing/parsing.h 
+HEADER_LIBFT = libft/libft.h 
 CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I src/parsing
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
 
 $(NAME) : $(LIBFT) $(OFILES)
-	$(CC) $(OFILES) $(LDFLAGS) -g -o $(NAME)
+	$(CC) $(OFILES) $(LDFLAGS) -o $(NAME)
 
 $(LIBFT) :
-	make -C libft bonus
+	make bonus -C libft
 
-%.o : %.c $(HEADER)
+%.o : %.c $(HEADER_PARSING) $(HEADER_LIBFT) $(HEADER)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 run : all
