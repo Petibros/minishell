@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/06 00:14:09 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 15:37:10 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ typedef struct s_vars
 {
 	t_line	input;
 	t_env	env;
+	t_cmds	cmd;
+	int		last_code;
 	char	abs_path[PATH_MAX];
 	char	*home_path;
 	char	*user;

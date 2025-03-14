@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/06 00:26:10 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 15:37:13 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ static void	free_vars(t_vars *vars)
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
-	t_cmds	cmds; // Pas de pointer pour pas avoir besoin de malloc
 //c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
 
 	(void) argv;
@@ -84,7 +83,7 @@ int	main(int argc, char **argv, char **envp)
 			here_doc(2, vars->input.line + 9);
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
-		parse_line(vars->input.line, envp, &cmds); 
+		parse_line(vars->input.line, envp, &vars->cmd); 
 		free(vars->input.line);
 		free(vars->prompt);
 	}
