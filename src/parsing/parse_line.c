@@ -40,6 +40,6 @@ int parse_line(char *line, char **envp, t_cmds *cmds)
         printf("Syntax error!\n");
         return (0);
     }
-    ft_lstclear(&tokens, free);
+    ft_lstclear(&tokens, free); 
     return (1);
 }

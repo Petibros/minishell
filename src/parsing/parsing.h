@@ -15,19 +15,25 @@
 
 # include "libft.h"
 
+typedef struct s_nodes
+{
+    char            *cmd;
+    char            **argv;
+    int             fd_in;
+    int             fd_out;
+    int             append_out;
+    int             here_doc;
+    char            *delimiter;
+    int             next_operator;
+    struct s_nodes  *left;
+    struct s_nodes  *right;
+}	t_nodes;
+
 typedef struct s_cmds
 {
-    t_list  *cmds;
-    t_list  *argvs;
-	char	**delimiter;
-    char	*in_files;
-    char	*out_files;
-	int		last_code;
-	int		*next_operator;
-	int		*append_fd_out;
-	int		*here_doc;
-	int		pipes_count;
-    int     cmd_count;
+    t_nodes *cmds;
+    int     last_exit_status;
+    int     pipes_count;
 }	t_cmds;
 
 typedef struct s_syntax
