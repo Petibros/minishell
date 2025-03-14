@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/14 16:31:39 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:11:44 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,6 @@
 # include <readline/readline.h>
 # include "parsing.h"
 # include "libft.h"
-
-typedef struct s_cmds
-{
-    t_list  *cmds;
-    t_list  *argvs;
-	char	**delimiter;
-    char	*in_files;
-    char	*out_files;
-	int		last_code;
-	int		*next_operator;
-	int		*append_fd_out;
-	int		*here_doc;
-	int		pipes_count;
-    int     cmd_count;
-} t_cmds;
 
 typedef struct s_env
 {
