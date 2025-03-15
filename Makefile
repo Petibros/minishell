@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/14 16:59:35 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/03/15 23:31:56 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,12 +23,15 @@ CFILES =	src/main.c \
 			src/export.c \
 			src/echo.c \
 			src/here_doc.c
+#CFILES_EXEC =	src/exec/exec.c \
+				src/exec/pipe.c \
+				src/exec/child.c
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
 					src/parsing/utils.c \
 					src/parsing/syntax.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o)
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_EXEC:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = src/parsing/parsing.h 

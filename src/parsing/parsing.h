@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:58:07 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/14 17:07:17 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/15 22:18:57 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ typedef struct s_cmds
     t_nodes *cmds;
     int     last_exit_status;
     int     pipes_count;
+	int		fd_in;
+	int		fd_out;
 }	t_cmds;
 
 typedef struct s_syntax
