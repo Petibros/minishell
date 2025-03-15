@@ -66,6 +66,8 @@ int is_command_valid(t_list **token)
         return (0);
     if (syntax.is_in_redirect > 1 || syntax.is_out_redirect > 1)
         return (0);
+    if (syntax.is_in_redirect > 0 && syntax.is_here_doc > 0)
+        return (0);
     if (syntax.is_append_out > 1 || syntax.is_here_doc > 1)
         return (0);
     *token = current_token;
