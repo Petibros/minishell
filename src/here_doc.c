@@ -14,16 +14,28 @@
 
 char	*get_tmp(void)
 {
-	char	tmp_path[64];
+	char	tmp_path[32];
+	char	*heredoc_path;
 	int		i;
 
-	i = 14;
-	ft_strlcpy(tmp_path, "/tmp/here_doc-0", 64);
+	ft_strlcpy(tmp_path, "/tmp/here_doc-00000000000000000", 32);
 	while (access(tmp_path, F_OK) == 0)
 	{
-		if (tmp_path[i] == 9)
+		if (i != 30)
+			i = 30;
+		while (ft_isdigit(tmp_path[i]) && tmp_path[i] == 9)
+		{
+			tmp_path[i] = 0;
+			--i;
+		}
+		if (ft_isdigit(tmp_path[i]) == 0)
+			return (NULL);
 		++tmp_path[i];
 	}
+	heredoc_path = malloc(32);
+	if (heredoc_path)
+		ft_strlcpy(heredoc_path, tmp_path, 32);
+	return (heredoc_path);
 }
 
 void	here_doc(int fd, char *limiter)

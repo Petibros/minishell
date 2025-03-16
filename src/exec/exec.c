@@ -47,7 +47,7 @@ int	execute(t_vars *vars, t_nodes **cmds)
 	init_pipes(pipes);
 	vars->cmd.pipes_count = 0;
 	vars->cmd.fd_in = first_fd_in(vars, cmds);
-	if (vars->cmd.fd_in == -1)
+	if (vars->cmd.fd_in == -2)
 		return (-1);
 	while (*cmds)
 	{

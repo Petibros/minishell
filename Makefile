@@ -12,26 +12,30 @@
 
 NAME = minishell
 CC = cc
-CFILES =	src/main.c \
-			src/prompt.c \
-			src/getenv.c \
-			src/pwd.c \
-			src/unset.c \
-			src/env.c \
-			src/exit.c \
-			src/cd.c \
-			src/export.c \
-			src/echo.c \
-			src/here_doc.c
-#CFILES_EXEC =	src/exec/exec.c \
-				src/exec/pipe.c \
-				src/exec/child.c
+
+CFILES =			src/main.c \
+		 			src/prompt.c \
+		 			src/getenv.c \
+		 			src/here_doc.c
+
+CFILES_BUILT-IN =	src/built-in/pwd.c \
+					src/built-in/unset.c \
+					src/built-in/env.c \
+					src/built-in/exit.c \
+					src/built-in/cd.c \
+					src/built-in/export.c \
+					src/built-in/echo.c
+
+#CFILES_EXEC =		src/exec/exec.c \
+					src/exec/pipe.c \
+					src/exec/child.c
+
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
 					src/parsing/utils.c \
 					src/parsing/syntax.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_EXEC:.c=.o)
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = src/parsing/parsing.h 
