@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/15 22:46:20 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/16 20:28:39 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,20 @@
 
 static int	first_fd_in(t_vars *vars, t_nodes **cmds)
 {
-	int	fd_in;
-	int	pipe_heredoc[2];
+	int		fd_in;
+	char	*heredoc_path;
 
 	fd_in = 0;
 	if (*cmds->fd_in != -1)
 		fd_in = *cmds->fd_in;
 	else if (*cmds->here_doc == 1)
 	{
-		pipe(pipe_heredoc);
-		here_doc(pipe_heredoc[1], cmds->delimiter);
-		close(pipe_heredoc[1]);
-		fd_in = pipe_heredoc[0];
+		heredoc_path = get_tmp();
+		if (!heredoc_path)
+			return (-2);
+		fd_in = open(heredoc_path, O_CREAT, 700);
+		here_doc(fd_in, cmds->delimiter);
+		unlink(heredoc_path);
 	}
 	return (fd_in);
 }
@@ -45,13 +47,17 @@ int	execute(t_vars *vars, t_nodes **cmds)
 	init_pipes(pipes);
 	vars->cmd.pipes_count = 0;
 	vars->cmd.fd_in = first_fd_in(vars, cmds);
+	if (vars->cmd.fd_in == -1)
+		return (-1);
 	while (*cmds)
 	{
-		exec_routine(vars, cmds, pipes);
+		if (exec_routine(vars, cmds, pipes) == -1)
+			return (-1);
 		if (*cmds->last_exit_status != 0 && *cmds->right)//si la commande est la pre;iere d'un || et fail
 			*cmds = *cmds->right;
 		else
 			*cmds = *cmds->left;
 	}
 	close_pipes(pipes, 3);
+	return (0);
 }

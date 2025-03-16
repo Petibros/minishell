@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/15 22:47:43 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/16 20:20:27 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,21 @@ void	close_pipe(int pipes[2][2], int to_close)
 
 static int	get_fd_in(t_vars *vars, t_nodes **cmds, int pipes[2][2])
 {
-	int	fd_in;
-	int	pipe_heredoc[2];
+	int		fd_in;
+	char	*heredoc_path;
 
 	fd_in = 0;
 	if (*cmds->left->fd_in != -2)
 		fd_in = *cmds->left->fd_in;
 	else if (*cmds->left->here_doc == 1)
 	{
-		pipe(pipe_heredoc);
-		here_doc(pipe_heredoc[1], cmds->left->delimiter);
-		close(pipe_heredoc[1]);
-		fd_in = pipe_heredoc[0];
+		heredoc_path = get_tmp();//fichier tmp pour le heredoc
+		if (!heredoc_path)
+			return (-2);
+		fd_in = open(heredoc_path, O_CREAT, 700);
+		here_doc(fd_in, cmds->left->delimiter);
+		unlink(heredoc_path);
+		free(heredoc_path);
 	}
 	else if (*cmds->next_operator == PIPE)
 	{
@@ -105,4 +108,7 @@ int	exec_routine(t_vars *vars, t_nodes **cmds, int pipes[2][2])
 		vars->cmd.last_exit_status = WEXITSTATUS(status);
 	}
 	vars->cmd.fd_in = get_fd_in(vars, cmds, pipes);//fd_in priorite au fichier specifie puis here_doc puis pipe
+	if (vars->cmd.fd_in == -2)
+		return (-1);
+	return (0);
 }
