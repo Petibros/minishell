@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/15 23:31:56 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/03/20 00:06:50 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,16 +26,19 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/export.c \
 					src/built-in/echo.c
 
-#CFILES_EXEC =		src/exec/exec.c \
+CFILES_EXEC =		src/exec/exec.c \
 					src/exec/pipe.c \
-					src/exec/child.c
+					src/exec/child.c \
+					src/exec/exit_child.c
 
 CFILES_PARSING =	src/parsing/parse_line.c \
 					src/parsing/tokenize.c \
 					src/parsing/utils.c \
 					src/parsing/syntax.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o)
+CFILES_FREE =		src/free/free.c
+
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = src/parsing/parsing.h 
