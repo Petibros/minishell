@@ -32,7 +32,6 @@ static void	free_vars(t_vars *vars)
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
-//c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
 
 	(void) argv;
 	if (argc > 1 || !envp)
@@ -81,9 +80,41 @@ int	main(int argc, char **argv, char **envp)
 			echo(vars->input.line + 5, 1, false);
 		if (ft_strncmp(vars->input.line, "here_doc ", 9) == 0)
 			here_doc(2, vars->input.line + 9);
-		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
-		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
-		parse_line(vars->input.line, envp, &vars->cmd); 
+		// Parse the input line using our new parsing system
+		if (vars->input.line && *vars->input.line)
+		{
+			t_token *tokens = lexer(vars->input.line);
+			if (tokens)
+			{
+				// Print tokenization results
+				printf("\n\033[1;34mTokenization result for: '%s'\033[0m", vars->input.line);
+				print_token_list(tokens);
+
+				vars->cmd.cmds = parse(tokens);
+				if (vars->cmd.cmds)
+				{
+					// Print initial AST
+					printf("\n\033[1;34mInitial AST:\033[0m");
+					print_ast(vars->cmd.cmds);
+
+					// Expand variables and handle quotes
+					expand_variables_in_node(vars->cmd.cmds, vars->cmd.last_exit_status);
+					expand_wildcards(vars->cmd.cmds);
+					handle_quotes_in_node(vars->cmd.cmds);
+
+					// Print final AST after expansion
+					printf("\n\033[1;34mFinal AST after expansion:\033[0m");
+					print_ast(vars->cmd.cmds);
+
+					// Execute commands here
+					// ...
+					// Clean up
+					free_node(vars->cmd.cmds);
+					vars->cmd.cmds = NULL;
+				}
+				free_token(tokens);
+			}
+		}
 		free(vars->input.line);
 		free(vars->prompt);
 	}

@@ -30,10 +30,12 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/exec/pipe.c \
 					src/exec/child.c
 
-CFILES_PARSING =	src/parsing/parse_line.c \
-					src/parsing/tokenize.c \
-					src/parsing/utils.c \
-					src/parsing/syntax.c
+CFILES_PARSING =	src/parsing/lexer.c \
+					src/parsing/parser.c \
+					src/parsing/expander.c \
+					src/parsing/quotes.c \
+					src/parsing/redirections.c \
+					src/parsing/utils.c
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o)
 LIBFT = libft/libft.a

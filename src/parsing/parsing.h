@@ -14,43 +14,87 @@
 # define PARSING_H
 
 # include "libft.h"
+# include <unistd.h>
+# include <stdlib.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <dirent.h>
+
+typedef enum e_token_type
+{
+	TOKEN_WORD,
+	TOKEN_PIPE,
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_APPEND,
+	TOKEN_HEREDOC,
+	TOKEN_LPAREN,
+	TOKEN_RPAREN,
+	TOKEN_EOF
+}	t_token_type;
+
+typedef struct s_token
+{
+	t_token_type		type;
+	char				*value;
+	struct s_token		*next;
+}	t_token;
 
 typedef struct s_nodes
 {
-    char            *cmd;
-    char            **argv;
-    int             fd_in;
-    int             fd_out;
-    int             append_out;
-    int             here_doc;
-    char            *delimiter;
-    int             next_operator;
-    struct s_nodes  *left;
-    struct s_nodes  *right;
+	char			*cmd;
+	char			**argv;
+	int				fd_in;
+	int				fd_out;
+	int				append_out;
+	int				here_doc;
+	char			*delimiter;
+	int				next_operator;
+	struct s_nodes	*left;
+	struct s_nodes	*right;
 }	t_nodes;
 
 typedef struct s_cmds
 {
-    t_nodes *cmds;
-    int     last_exit_status;
-    int     pipes_count;
+	t_nodes	*cmds;
+	int		last_exit_status;
+	int		pipes_count;
 	int		fd_in;
 	int		fd_out;
 }	t_cmds;
 
-typedef struct s_syntax
-{
-    int is_command;
-    int is_in_redirect;
-    int is_out_redirect;
-    int is_append_out;
-    int is_here_doc;
-} t_syntax;
+/* Lexer functions */
+t_token		*lexer(char *input);
+t_token		*get_next_token(char **input);
 
-int		parse_line(char *line, char **envp, t_cmds *cmds);
-t_list	*tokenize_line(char *line);
-int		is_whitespace(char c);
-int		skip_whitespace(char *line, int *index);
-int     is_syntax_error(t_list *tokens);
+/* Parser functions */
+t_nodes		*parse(t_token *token);
+
+/* Expander functions */
+char		*expand_variables(char *str, int exit_status);
+void		expand_variables_in_node(t_nodes *node, int exit_status);
+void		expand_wildcards(t_nodes *node);
+
+/* Quote handling functions */
+char		*remove_quotes(char *str);
+int			check_quotes(char *str);
+void		handle_quotes_in_node(t_nodes *node);
+
+/* Redirection functions */
+int			handle_redirections(t_nodes *node, t_token **token);
+
+/* Utility functions */
+void		free_array(char **array);
+void		free_token(t_token *token);
+void		free_node(t_nodes *node);
+char		*ft_strjoin_free(char *s1, char *s2);
+void		print_syntax_error(char *token);
+
+/* Debug functions */
+void		print_token_list(t_token *token);
+void		print_ast(t_nodes *root);
 
 #endif
