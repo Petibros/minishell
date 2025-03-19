@@ -114,7 +114,7 @@ static t_nodes	*parse_pipeline(t_token **token)
 
 		// Set up pipe structure
 		current->next_operator = TOKEN_PIPE;
-		current->left = next_cmd;
+		current->right = next_cmd;
 
 		// Move to next command
 		current = next_cmd;
@@ -128,7 +128,6 @@ static t_nodes	*parse_and_or(t_token **token)
 	t_nodes	*first_cmd;
 	t_nodes	*next_cmd;
 	t_nodes	*current;
-	t_nodes	*last_in_pipeline;
 
 	// Parse the first command (might be a pipeline)
 	first_cmd = parse_pipeline(token);
@@ -150,45 +149,47 @@ static t_nodes	*parse_and_or(t_token **token)
 			next_cmd = parse_pipeline(token);
 
 		if (!next_cmd)
+		{
+			free_node(first_cmd);
 			return (NULL);
+		}
 
-		// Find the last command in the current pipeline
-		last_in_pipeline = current;
-		while (last_in_pipeline->left && last_in_pipeline->next_operator == TOKEN_PIPE)
-			last_in_pipeline = last_in_pipeline->left;
+		// Create a new node for the operator
+		t_nodes *op_node = create_node();
+		if (!op_node)
+		{
+			free_node(first_cmd);
+			free_node(next_cmd);
+			return (NULL);
+		}
 
-		// Set operator and link next command
-		last_in_pipeline->next_operator = op_type;
+		// Set up operator node
+		op_node->next_operator = op_type;
+		op_node->cmd = ft_strdup(op_type == TOKEN_AND ? "&&" : "||");
 
-		// For AND, add to left branch and move to next command
+		// For AND, success path (left) is next command
+		// For OR, failure path (right) is next command
 		if (op_type == TOKEN_AND)
 		{
-			last_in_pipeline->left = next_cmd;
-			current = next_cmd;
+			op_node->right = current;
+			op_node->left = next_cmd;
 		}
-		else // For OR, add to right branch and stay on current
+		else // TOKEN_OR
 		{
-			// Find the end of the OR chain in the right branch
-			if (!last_in_pipeline->right)
-				last_in_pipeline->right = next_cmd;
-			else
-			{
-				t_nodes *or_end = last_in_pipeline->right;
-				while (or_end->right)
-					or_end = or_end->right;
-				or_end->next_operator = TOKEN_OR;
-				or_end->right = next_cmd;
-			}
+			op_node->right = next_cmd;
+			op_node->left = current;
 		}
+
+		// Update current to the operator node
+		current = op_node;
 	}
 
-	return (first_cmd);
+	return (current);
 }
 
 static t_nodes	*parse_parentheses(t_token **token)
 {
 	t_nodes	*cmd;
-	t_nodes	*result;
 
 	if (!*token || (*token)->type != TOKEN_LPAREN)
 		return (NULL);
@@ -208,34 +209,6 @@ static t_nodes	*parse_parentheses(t_token **token)
 		return (NULL);
 	}
 	*token = (*token)->next;
-
-	// If there's an operator after the parentheses
-	if (*token && ((*token)->type == TOKEN_AND || (*token)->type == TOKEN_OR || (*token)->type == TOKEN_PIPE))
-	{
-		t_token_type op_type = (*token)->type;
-		*token = (*token)->next;
-
-		// Parse next command
-		if ((*token) && (*token)->type == TOKEN_LPAREN)
-			result = parse_parentheses(token);
-		else if (op_type == TOKEN_PIPE)
-			result = parse_pipeline(token);
-		else
-			result = parse_and_or(token);
-
-		if (!result)
-		{
-			free_node(cmd);
-			return (NULL);
-		}
-
-		// Add the command to the appropriate branch
-		cmd->next_operator = op_type;
-		if (op_type == TOKEN_OR)
-			cmd->right = result;
-		else // TOKEN_AND or TOKEN_PIPE
-			cmd->left = result;
-	}
 
 	return (cmd);
 }
