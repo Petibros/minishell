@@ -78,8 +78,12 @@ static t_nodes	*parse_pipeline(t_token **token)
 	t_nodes	*current;
 	t_nodes	*next_cmd;
 
-	// Parse first command as root
-	first_cmd = parse_command(token);
+	// Check if first token is a parenthesis
+	if (*token && (*token)->type == TOKEN_LPAREN)
+		first_cmd = parse_parentheses(token);
+	else
+		first_cmd = parse_command(token);
+
 	if (!first_cmd)
 		return (NULL);
 
@@ -103,7 +107,10 @@ static t_nodes	*parse_pipeline(t_token **token)
 		}
 
 		if (!next_cmd)
+		{
+			free_node(first_cmd);
 			return (NULL);
+		}
 
 		// Set up pipe structure
 		current->next_operator = TOKEN_PIPE;
@@ -137,7 +144,11 @@ static t_nodes	*parse_and_or(t_token **token)
 		*token = (*token)->next;
 
 		// Parse next command (might be a pipeline)
-		next_cmd = parse_pipeline(token);
+		if ((*token) && (*token)->type == TOKEN_LPAREN)
+			next_cmd = parse_parentheses(token);
+		else
+			next_cmd = parse_pipeline(token);
+
 		if (!next_cmd)
 			return (NULL);
 
@@ -148,17 +159,26 @@ static t_nodes	*parse_and_or(t_token **token)
 
 		// Set operator and link next command
 		last_in_pipeline->next_operator = op_type;
-		if (op_type == TOKEN_OR)
-		{
-			last_in_pipeline->right = next_cmd;
-			// For OR, stay on the current command
-			current = last_in_pipeline;
-		}
-		else // TOKEN_AND
+
+		// For AND, add to left branch and move to next command
+		if (op_type == TOKEN_AND)
 		{
 			last_in_pipeline->left = next_cmd;
-			// For AND, move to next command
 			current = next_cmd;
+		}
+		else // For OR, add to right branch and stay on current
+		{
+			// Find the end of the OR chain in the right branch
+			if (!last_in_pipeline->right)
+				last_in_pipeline->right = next_cmd;
+			else
+			{
+				t_nodes *or_end = last_in_pipeline->right;
+				while (or_end->right)
+					or_end = or_end->right;
+				or_end->next_operator = TOKEN_OR;
+				or_end->right = next_cmd;
+			}
 		}
 	}
 
@@ -189,22 +209,32 @@ static t_nodes	*parse_parentheses(t_token **token)
 	}
 	*token = (*token)->next;
 
-	// If there's an AND operator after the parentheses
-	if (*token && (*token)->type == TOKEN_AND)
+	// If there's an operator after the parentheses
+	if (*token && ((*token)->type == TOKEN_AND || (*token)->type == TOKEN_OR || (*token)->type == TOKEN_PIPE))
 	{
+		t_token_type op_type = (*token)->type;
 		*token = (*token)->next;
-		result = parse_pipeline(token);
-		if (!result)
-			return (NULL);
 
-		// Add the AND command to both paths
-		cmd->next_operator = TOKEN_AND;
-		cmd->left = result;
-		if (cmd->right)
+		// Parse next command
+		if ((*token) && (*token)->type == TOKEN_LPAREN)
+			result = parse_parentheses(token);
+		else if (op_type == TOKEN_PIPE)
+			result = parse_pipeline(token);
+		else
+			result = parse_and_or(token);
+
+		if (!result)
 		{
-			cmd->right->next_operator = TOKEN_AND;
-			cmd->right->left = result;
+			free_node(cmd);
+			return (NULL);
 		}
+
+		// Add the command to the appropriate branch
+		cmd->next_operator = op_type;
+		if (op_type == TOKEN_OR)
+			cmd->right = result;
+		else // TOKEN_AND or TOKEN_PIPE
+			cmd->left = result;
 	}
 
 	return (cmd);
