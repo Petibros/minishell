@@ -72,6 +72,7 @@ t_token		*get_next_token(char **input);
 
 /* Parser functions */
 t_nodes		*parse(t_token *token);
+t_nodes		*pratt_parse(t_token *token);
 
 /* Expander functions */
 char		*expand_variables(char *str, int exit_status);

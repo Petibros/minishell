@@ -90,7 +90,7 @@ int	main(int argc, char **argv, char **envp)
 				printf("\n\033[1;34mTokenization result for: '%s'\033[0m", vars->input.line);
 				print_token_list(tokens);
 
-				vars->cmd.cmds = parse(tokens);
+				vars->cmd.cmds = pratt_parse(tokens);
 				if (vars->cmd.cmds)
 				{
 					// Print initial AST
