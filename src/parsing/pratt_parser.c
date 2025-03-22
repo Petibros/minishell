@@ -48,6 +48,17 @@ t_nodes	*parse_atom(t_token **token)
 	if (!node)
 		return (NULL);
 	advance_token(token, argc);
+	if (*token && ((*token)->type == TOKEN_REDIR_IN ||
+		(*token)->type == TOKEN_REDIR_OUT ||
+		(*token)->type == TOKEN_APPEND ||
+		(*token)->type == TOKEN_HEREDOC))
+	{
+		if (!handle_redirections(node, token))
+		{
+			free_node(node);
+			return (NULL);
+		}
+	}
 	return (node);
 }
 

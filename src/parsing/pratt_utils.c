@@ -14,9 +14,6 @@
 
 int	get_precedence(t_token_type type)
 {
-	if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT || 
-		type == TOKEN_APPEND || type == TOKEN_HEREDOC)
-		return (4);
 	if (type == TOKEN_OR)
 		return (3);
 	if (type == TOKEN_PIPE)
