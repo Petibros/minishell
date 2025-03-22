@@ -44,24 +44,53 @@ static t_nodes	*parse_command(t_token **token)
 	t_nodes	*node;
 	int		argc;
 	t_token	*start;
+	t_token	*cmd_start;
 
 	node = create_parser_node();
 	if (!node)
 		return (NULL);
+
+	// Handle any redirections that come before the command
+	if (!handle_redirections(node, token))
+	{
+		free_node(node);
+		return (NULL);
+	}
+
+	// Save start of command tokens
+	cmd_start = *token;
 	argc = 0;
-	start = *token;
+
+	// Count command arguments
 	while (*token && (*token)->type == TOKEN_WORD)
 	{
 		argc++;
 		*token = (*token)->next;
+
+		// Handle any redirections that come between arguments
+		if (!handle_redirections(node, token))
+		{
+			free_node(node);
+			return (NULL);
+		}
 	}
+
+	// Process command arguments if any were found
 	if (argc > 0)
 	{
 		node->argv = (char **)malloc(sizeof(char *) * (argc + 1));
 		if (!node->argv)
+		{
+			free_node(node);
 			return (NULL);
+		}
+
+		// Reset to start of command tokens
+		start = cmd_start;
 		argc = 0;
-		while (start != *token)
+
+		// Copy command arguments
+		while (start != *token && start->type == TOKEN_WORD)
 		{
 			node->argv[argc++] = ft_strdup(start->value);
 			start = start->next;
@@ -69,6 +98,7 @@ static t_nodes	*parse_command(t_token **token)
 		node->argv[argc] = NULL;
 		node->cmd = ft_strdup(node->argv[0]);
 	}
+
 	return (node);
 }
 
