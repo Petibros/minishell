@@ -14,6 +14,7 @@
 # define PARSING_H
 
 # include "libft.h"
+# include "minishell.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -58,14 +59,7 @@ typedef struct s_nodes
 	struct s_nodes	*right;
 }	t_nodes;
 
-typedef struct s_cmds
-{
-	t_nodes	*cmds;
-	int		last_exit_status;
-	int		pipes_count;
-	int		fd_in;
-	int		fd_out;
-}	t_cmds;
+
 
 /* Lexer functions */
 t_token		*lexer(char *input);
@@ -74,6 +68,7 @@ t_token		*get_next_token(char **input);
 /* Parser functions */
 t_nodes		*parse(t_token *token);
 t_nodes		*pratt_parse(t_token *token);
+int			parse_line(t_vars *vars);
 
 /* Pratt parser functions */
 t_nodes		*parse_expression(t_token **token, int min_precedence);

@@ -37,7 +37,8 @@ CFILES_PARSING =	src/parsing/lexer.c \
 					src/parsing/pratt_utils.c \
 					src/parsing/quotes.c \
 					src/parsing/redirections.c \
-					src/parsing/utils.c
+					src/parsing/utils.c \
+					src/parsing/parse_line.c
 
 CFILES_EXPANDER =	src/parsing/expanders/var_expander.c \
 					src/parsing/expanders/wildcard_expander.c \
