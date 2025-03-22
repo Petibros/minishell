@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "expander.h"
 
 char	*handle_single_quote(char *str, int *i, char *result)

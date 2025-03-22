@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "expander.h"
 
 static char	*handle_dollar_in_dquote(char *str, int *i, char *result,

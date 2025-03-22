@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "expander.h"
 
 char	*expand_env_var(char *str, int *i, int exit_status)

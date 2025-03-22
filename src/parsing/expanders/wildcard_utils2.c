@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "wildcard_expander.h"
 
 static int	handle_non_wildcard(char *arg, char **new_argv, int *j)

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "expander.h"
 
 char	*append_substring(char *result, char *str, int start, int end)

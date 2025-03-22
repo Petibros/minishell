@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "wildcard_expander.h"
 
 int	has_unquoted_wildcard(char *str)

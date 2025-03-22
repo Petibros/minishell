@@ -13,7 +13,7 @@
 #ifndef EXPANDER_H
 # define EXPANDER_H
 
-# include "../parsing.h"
+# include "parsing.h"
 
 // var_expander.c
 char	*expand_variables(char *str, int exit_status);

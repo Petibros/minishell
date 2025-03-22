@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing.h"
+#include "parsing.h"
 #include "wildcard_expander.h"
 
 static int	count_args_without_wildcard(char **argv)
