@@ -13,13 +13,13 @@
 #include "parsing.h"
 
 // Function prototypes
-static t_nodes	*create_node(void);
+static t_nodes	*create_parser_node(void);
 static t_nodes	*parse_command(t_token **token);
 static t_nodes	*parse_pipeline(t_token **token);
 static t_nodes	*parse_and_or(t_token **token);
 static t_nodes	*parse_parentheses(t_token **token);
 
-static t_nodes	*create_node(void)
+static t_nodes	*create_parser_node(void)
 {
 	t_nodes	*node;
 
@@ -45,7 +45,7 @@ static t_nodes	*parse_command(t_token **token)
 	int		argc;
 	t_token	*start;
 
-	node = create_node();
+	node = create_parser_node();
 	if (!node)
 		return (NULL);
 	argc = 0;

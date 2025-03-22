@@ -33,6 +33,8 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 CFILES_PARSING =	src/parsing/lexer.c \
 					src/parsing/parser.c \
 					src/parsing/pratt_parser.c \
+					src/parsing/pratt_node.c \
+					src/parsing/pratt_utils.c \
 					src/parsing/expander.c \
 					src/parsing/quotes.c \
 					src/parsing/redirections.c \
