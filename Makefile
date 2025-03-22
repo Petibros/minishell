@@ -35,12 +35,19 @@ CFILES_PARSING =	src/parsing/lexer.c \
 					src/parsing/pratt_parser.c \
 					src/parsing/pratt_node.c \
 					src/parsing/pratt_utils.c \
-					src/parsing/expander.c \
 					src/parsing/quotes.c \
 					src/parsing/redirections.c \
 					src/parsing/utils.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o)
+CFILES_EXPANDER =	src/parsing/expanders/var_expander.c \
+					src/parsing/expanders/wildcard_expander.c \
+					src/parsing/expanders/wildcard_utils.c \
+					src/parsing/expanders/wildcard_utils2.c \
+					src/parsing/expanders/quote_handler.c \
+					src/parsing/expanders/quote_utils.c \
+					src/parsing/expanders/quote_handler_utils.c
+
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = src/parsing/parsing.h 
