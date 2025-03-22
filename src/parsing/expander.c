@@ -13,10 +13,14 @@
 #include "parsing.h"
 #include <dirent.h>
 
+static char	*handle_quote_char(char *str, int *i, char *result);
+static char	*handle_regular_char(char *str, int *i, char *result);
+
 static char	*expand_env_var(char *str, int *i, int exit_status)
 {
 	char	*var_name;
 	char	*var_value;
+	char	*result;
 	int		len;
 
 	(*i)++;
@@ -33,10 +37,12 @@ static char	*expand_env_var(char *str, int *i, int exit_status)
 	var_name = ft_substr(str, *i, len);
 	*i += len;
 	var_value = getenv(var_name);
-	free(var_name);
 	if (!var_value)
-		return (ft_strdup(""));
-	return (ft_strdup(var_value));
+		result = ft_strdup("");
+	else
+		result = ft_strdup(var_value);
+	free(var_name);
+	return (result);
 }
 
 static int	is_pattern_match(const char *pattern, const char *str)
@@ -46,43 +52,140 @@ static int	is_pattern_match(const char *pattern, const char *str)
 	if (*pattern == '*' && *(pattern + 1) != '\0' && *str == '\0')
 		return (0);
 	if (*pattern == '*')
-		return (is_pattern_match(pattern + 1, str) ||
+		return (is_pattern_match(pattern + 1, str) || \
 				is_pattern_match(pattern, str + 1));
 	if (*pattern == *str)
 		return (is_pattern_match(pattern + 1, str + 1));
 	return (0);
 }
 
-static char	**expand_wildcard(char *pattern)
+static int	count_matching_entries(char *pattern)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	int				count;
+
+	dir = opendir(".");
+	if (!dir)
+		return (-1);
+	count = 0;
+	entry = readdir(dir);
+	while (entry != NULL)
+	{
+		if (entry->d_name[0] != '.' && 
+			is_pattern_match(pattern, entry->d_name))
+			count++;
+		entry = readdir(dir);
+	}
+	closedir(dir);
+	return (count);
+}
+
+static char	**collect_matching_entries(char *pattern, int count)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	char			**result;
-	int				count;
 	int				i;
 
+	result = malloc(sizeof(char *) * (count + 1));
 	dir = opendir(".");
-	if (!dir)
+	if (!dir || !result)
+	{
+		free(result);
 		return (NULL);
-	count = 0;
-	while ((entry = readdir(dir)) != NULL)
-		if (entry->d_name[0] != '.' && is_pattern_match(pattern, entry->d_name))
-			count++;
-	closedir(dir);
-	result = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!result)
-		return (NULL);
-	dir = opendir(".");
+	}
 	i = 0;
-	while ((entry = readdir(dir)) != NULL)
+	entry = readdir(dir);
+	while (entry != NULL)
+	{
 		if (entry->d_name[0] != '.' && is_pattern_match(pattern, entry->d_name))
 			result[i++] = ft_strdup(entry->d_name);
+		entry = readdir(dir);
+	}
 	result[i] = NULL;
 	closedir(dir);
 	return (result);
 }
 
+static char	**expand_wildcard(char *pattern)
+{
+	int		count;
+	char	**matches;
 
+	count = count_matching_entries(pattern);
+	if (count < 0)
+		return (NULL);
+	matches = collect_matching_entries(pattern, count);
+	return (matches);
+}
+
+
+
+static char	*handle_quote_char(char *str, int *i, char *result)
+{
+	char	*tmp;
+
+	tmp = ft_substr(str, *i, 1);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	(*i)++;
+	return (result);
+}
+
+static char	*handle_regular_char(char *str, int *i, char *result)
+{
+	char	*tmp;
+
+	tmp = ft_substr(str, *i, 1);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	(*i)++;
+	return (result);
+}
+
+static char	*handle_double_quote_char(char *str, int *i, char *result, int exit_status)
+{
+	char	*tmp;
+
+	if (str[*i] == '$')
+	{
+		tmp = expand_env_var(str, i, exit_status);
+		if (tmp)
+		{
+			result = ft_strjoin_free(result, tmp);
+			free(tmp);
+		}
+	}
+	else
+	{
+		tmp = ft_substr(str, *i, 1);
+		result = ft_strjoin_free(result, tmp);
+		free(tmp);
+		(*i)++;
+	}
+	return (result);
+}
+
+static char	*handle_single_quote(char *str, int *i, char *result)
+{
+	result = handle_quote_char(str, i, result);
+	while (str[*i] && str[*i] != '\'')
+		result = handle_regular_char(str, i, result);
+	if (str[*i])
+		result = handle_quote_char(str, i, result);
+	return (result);
+}
+
+static char	*handle_double_quote(char *str, int *i, char *result, int exit_status)
+{
+	result = handle_quote_char(str, i, result);
+	while (str[*i] && str[*i] != '"')
+		result = handle_double_quote_char(str, i, result, exit_status);
+	if (str[*i])
+		result = handle_quote_char(str, i, result);
+	return (result);
+}
 
 char	*expand_variables(char *str, int exit_status)
 {
@@ -95,62 +198,9 @@ char	*expand_variables(char *str, int exit_status)
 	while (str[i])
 	{
 		if (str[i] == '\'')
-		{
-			// Copy everything in single quotes literally
-			tmp = ft_substr(str, i, 1);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			i++;
-			while (str[i] && str[i] != '\'')
-			{
-				tmp = ft_substr(str, i, 1);
-				result = ft_strjoin_free(result, tmp);
-				free(tmp);
-				i++;
-			}
-			if (str[i])
-			{
-				tmp = ft_substr(str, i, 1);
-				result = ft_strjoin_free(result, tmp);
-				free(tmp);
-				i++;
-			}
-		}
+			result = handle_single_quote(str, &i, result);
 		else if (str[i] == '"')
-		{
-			// Copy quote
-			tmp = ft_substr(str, i, 1);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			i++;
-			// Inside double quotes - expand variables but keep other chars
-			while (str[i] && str[i] != '"')
-			{
-				if (str[i] == '$')
-				{
-					tmp = expand_env_var(str, &i, exit_status);
-					if (tmp)
-					{
-						result = ft_strjoin_free(result, tmp);
-						free(tmp);
-					}
-				}
-				else
-				{
-					tmp = ft_substr(str, i, 1);
-					result = ft_strjoin_free(result, tmp);
-					free(tmp);
-					i++;
-				}
-			}
-			if (str[i])
-			{
-				tmp = ft_substr(str, i, 1);
-				result = ft_strjoin_free(result, tmp);
-				free(tmp);
-				i++;
-			}
-		}
+			result = handle_double_quote(str, &i, result, exit_status);
 		else if (str[i] == '$')
 		{
 			tmp = expand_env_var(str, &i, exit_status);
@@ -161,12 +211,7 @@ char	*expand_variables(char *str, int exit_status)
 			}
 		}
 		else
-		{
-			tmp = ft_substr(str, i, 1);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			i++;
-		}
+			result = handle_regular_char(str, &i, result);
 	}
 	return (result);
 }
@@ -176,19 +221,24 @@ void	expand_variables_in_node(t_nodes *node, int exit_status)
 	char	*expanded;
 	int		i;
 
-	if (!node || !node->argv)
+	if (!node)
 		return ;
 
-	for (i = 0; node->argv[i]; i++)
+	if (node->argv)
 	{
-		if (ft_strchr(node->argv[i], '$'))
+		i = 0;
+		while (node->argv[i])
 		{
-			expanded = expand_variables(node->argv[i], exit_status);
-			if (expanded)
+			if (ft_strchr(node->argv[i], '$'))
 			{
-				free(node->argv[i]);
-				node->argv[i] = expanded;
+				expanded = expand_variables(node->argv[i], exit_status);
+				if (expanded)
+				{
+					free(node->argv[i]);
+					node->argv[i] = expanded;
+				}
 			}
+			i++;
 		}
 	}
 
@@ -198,55 +248,133 @@ void	expand_variables_in_node(t_nodes *node, int exit_status)
 		expand_variables_in_node(node->right, exit_status);
 }
 
-void	expand_wildcards(t_nodes *node)
+static int	count_expanded_entry(char *arg)
 {
 	char	**expanded;
+	int		j;
+	int		count;
+
+	count = 0;
+	if (ft_strchr(arg, '*'))
+	{
+		expanded = expand_wildcard(arg);
+		if (expanded)
+		{
+			j = 0;
+			while (expanded[j])
+			{
+				count++;
+				j++;
+			}
+			free_array(expanded);
+		}
+	}
+	else
+		count++;
+	return (count);
+}
+
+static int	count_expanded_args(char **argv)
+{
+	int		i;
+	int		count;
+
+	count = 0;
+	i = 0;
+	while (argv[i])
+	{
+		count += count_expanded_entry(argv[i]);
+		i++;
+	}
+	return (count);
+}
+
+static int	has_unquoted_wildcard(const char *str)
+{
+	int	in_single_quote;
+	int	in_double_quote;
+	int	i;
+
+	in_single_quote = 0;
+	in_double_quote = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' && !in_double_quote)
+			in_single_quote = !in_single_quote;
+		else if (str[i] == '"' && !in_single_quote)
+			in_double_quote = !in_double_quote;
+		else if (str[i] == '*' && !in_single_quote && !in_double_quote)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static int	copy_expanded_entries(char **new_argv, int j, char *arg)
+{
+	char	**expanded;
+	int		k;
+
+	if (!has_unquoted_wildcard(arg))
+	{
+		new_argv[j++] = ft_strdup(arg);
+		return (j);
+	}
+	expanded = expand_wildcard(arg);
+	if (expanded)
+	{
+		k = 0;
+		while (expanded[k])
+		{
+			new_argv[j++] = expanded[k];
+			k++;
+		}
+		free(expanded);
+	}
+	return (j);
+}
+
+static char	**create_expanded_argv(char **argv, int count)
+{
 	char	**new_argv;
 	int		i;
 	int		j;
+
+	new_argv = (char **)malloc(sizeof(char *) * (count + 1));
+	if (!new_argv)
+		return (NULL);
+	j = 0;
+	i = 0;
+	while (argv[i])
+	{
+		j = copy_expanded_entries(new_argv, j, argv[i]);
+		i++;
+	}
+	new_argv[j] = NULL;
+	return (new_argv);
+}
+
+static void	expand_node_wildcards(t_nodes *node)
+{
+	char	**new_argv;
 	int		count;
 
 	if (!node || !node->argv)
 		return ;
-	count = 0;
-	for (i = 0; node->argv[i]; i++)
-	{
-		if (ft_strchr(node->argv[i], '*'))
-		{
-			expanded = expand_wildcard(node->argv[i]);
-			if (expanded)
-			{
-				for (j = 0; expanded[j]; j++)
-					count++;
-				free_array(expanded);
-			}
-		}
-		else
-			count++;
-	}
-	new_argv = (char **)malloc(sizeof(char *) * (count + 1));
+	count = count_expanded_args(node->argv);
+	new_argv = create_expanded_argv(node->argv, count);
 	if (!new_argv)
 		return ;
-	j = 0;
-	for (i = 0; node->argv[i]; i++)
-	{
-		if (ft_strchr(node->argv[i], '*'))
-		{
-			expanded = expand_wildcard(node->argv[i]);
-			if (expanded)
-			{
-				for (int k = 0; expanded[k]; k++)
-					new_argv[j++] = expanded[k];
-				free(expanded);
-			}
-		}
-		else
-			new_argv[j++] = ft_strdup(node->argv[i]);
-	}
-	new_argv[j] = NULL;
 	free_array(node->argv);
 	node->argv = new_argv;
+}
 
+void	expand_wildcards(t_nodes *node)
+{
+	if (!node)
+		return ;
+	expand_node_wildcards(node);
 	if (node->left)
 		expand_wildcards(node->left);
 	if (node->right)
