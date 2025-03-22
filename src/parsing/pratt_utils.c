@@ -14,13 +14,15 @@
 
 int	get_precedence(t_token_type type)
 {
-	if (type == TOKEN_PIPE)
-		return (1);
-	if (type == TOKEN_AND || type == TOKEN_OR)
-		return (2);
 	if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT || 
 		type == TOKEN_APPEND || type == TOKEN_HEREDOC)
+		return (4);
+	if (type == TOKEN_OR)
 		return (3);
+	if (type == TOKEN_PIPE)
+		return (2);
+	if (type == TOKEN_AND)
+		return (1);
 	return (0);
 }
 
