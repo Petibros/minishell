@@ -11,86 +11,84 @@
 /* ************************************************************************** */
 
 #include "parsing.h"
+#include "expanders/wildcard_expander.h"
 #include <fcntl.h>
 
 static int	handle_input_redirection(t_nodes *node, char *filename)
 {
-	int	fd;
-
-	if (node->fd_in != STDIN_FILENO)
-		close(node->fd_in);
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(filename, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
+	if (node->file_in)
+		free(node->file_in);
+	node->file_in = ft_strdup(filename);
+	if (!node->file_in)
 		return (0);
-	}
-	node->fd_in = fd;
 	return (1);
 }
 
 static int	handle_output_redirection(t_nodes *node, char *filename, int append)
 {
-	int	fd;
-	int	flags;
-
-	if (node->fd_out != STDOUT_FILENO)
-		close(node->fd_out);
-	flags = O_WRONLY | O_CREAT;
-	if (append)
-		flags |= O_APPEND;
-	else
-		flags |= O_TRUNC;
-	fd = open(filename, flags, 0644);
-	if (fd == -1)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(filename, 2);
-		ft_putstr_fd(": Permission denied\n", 2);
+	if (node->file_out)
+		free(node->file_out);
+	node->file_out = ft_strdup(filename);
+	if (!node->file_out)
 		return (0);
-	}
-	node->fd_out = fd;
 	node->append_out = append;
 	return (1);
 }
 
 static int	handle_heredoc(t_nodes *node, char *delimiter)
 {
-	int		pipe_fd[2];
-	char	*line;
-
-	if (pipe(pipe_fd) == -1)
-		return (0);
 	node->here_doc = 1;
+	if (node->delimiter)
+		free(node->delimiter);
 	node->delimiter = ft_strdup(delimiter);
-	while (1)
-	{
-		ft_putstr_fd("> ", 1);
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-			break ;
-		if (ft_strlen(line) - 1 == ft_strlen(delimiter) &&
-			!ft_strncmp(line, delimiter, ft_strlen(delimiter)))
-		{
-			free(line);
-			break ;
-		}
-		ft_putstr_fd(line, pipe_fd[1]);
-		free(line);
-	}
-	close(pipe_fd[1]);
-	if (node->fd_in != STDIN_FILENO)
-		close(node->fd_in);
-	node->fd_in = pipe_fd[0];
+	if (!node->delimiter)
+		return (0);
 	return (1);
+}
+
+static char *expand_filename(char *filename, int exit_status)
+{
+	char *expanded;
+	char *final;
+	char **matches;
+	int count;
+
+	// First expand variables
+	expanded = expand_variables(filename, exit_status);
+	if (!expanded)
+		return (NULL);
+
+	// Then expand wildcards if present
+	if (has_unquoted_wildcard(expanded))
+	{
+		count = count_matching_entries(expanded);
+		if (count <= 0)
+		{
+			free(expanded);
+			return (ft_strdup(filename));
+		}
+		matches = collect_matching_entries(expanded, count);
+		if (!matches || !matches[0])
+		{
+			free(expanded);
+			if (matches)
+				free_array(matches);
+			return (ft_strdup(filename));
+		}
+		// Use only the first match for redirections
+		final = ft_strdup(matches[0]);
+		free(expanded);
+		free_array(matches);
+		return (final);
+	}
+	return (expanded);
 }
 
 int	handle_redirections(t_nodes *node, t_token **token)
 {
 	t_token_type	type;
 	char			*filename;
+	char			*expanded_filename;
 
 	while (*token && ((*token)->type == TOKEN_REDIR_IN ||
 			(*token)->type == TOKEN_REDIR_OUT ||
@@ -100,29 +98,51 @@ int	handle_redirections(t_nodes *node, t_token **token)
 		type = (*token)->type;
 		*token = (*token)->next;
 		if (!*token || (*token)->type != TOKEN_WORD)
+		{
+			print_syntax_error(NULL); // Print newline error for missing filename
 			return (0);
+		}
 		filename = (*token)->value;
 		*token = (*token)->next;
+
+		// Always expand filenames and heredoc delimiters
+		expanded_filename = expand_filename(filename, 0); // TODO: Pass proper exit_status
+		if (!expanded_filename)
+			return (0);
+
 		if (type == TOKEN_REDIR_IN)
 		{
-			if (!handle_input_redirection(node, filename))
+			if (!handle_input_redirection(node, expanded_filename))
+			{
+				free(expanded_filename);
 				return (0);
+			}
 		}
 		else if (type == TOKEN_REDIR_OUT)
 		{
-			if (!handle_output_redirection(node, filename, 0))
+			if (!handle_output_redirection(node, expanded_filename, 0))
+			{
+				free(expanded_filename);
 				return (0);
+			}
 		}
 		else if (type == TOKEN_APPEND)
 		{
-			if (!handle_output_redirection(node, filename, 1))
+			if (!handle_output_redirection(node, expanded_filename, 1))
+			{
+				free(expanded_filename);
 				return (0);
+			}
 		}
 		else if (type == TOKEN_HEREDOC)
 		{
-			if (!handle_heredoc(node, filename))
+			if (!handle_heredoc(node, expanded_filename))
+			{
+				free(expanded_filename);
 				return (0);
+			}
 		}
+		free(expanded_filename);
 	}
 	return (1);
 }

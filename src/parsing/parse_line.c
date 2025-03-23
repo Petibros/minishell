@@ -31,7 +31,6 @@ int	parse_line(t_vars *vars)
 	expand_variables_in_node(vars->cmd.cmds, vars->cmd.last_exit_status);
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
-	// Print only the final AST
 	printf("\n\033[1;34mAST:\033[0m");
 	print_ast(vars->cmd.cmds);
 	free_node(vars->cmd.cmds);

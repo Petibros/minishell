@@ -21,12 +21,13 @@ t_nodes	*create_node(void)
 		return (NULL);
 	node->cmd = NULL;
 	node->argv = NULL;
-	node->fd_in = STDIN_FILENO;
-	node->fd_out = STDOUT_FILENO;
+	node->file_in = NULL;
+	node->file_out = NULL;
 	node->append_out = 0;
 	node->here_doc = 0;
 	node->delimiter = NULL;
-	node->next_operator = 0;
+	node->is_operator = 0;
+	node->operator_type = TOKEN_EOF;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
@@ -39,7 +40,8 @@ t_nodes	*create_op_node(t_nodes *left, t_nodes *right, t_token_type op_type)
 	node = create_node();
 	if (!node)
 		return (NULL);
-	node->next_operator = op_type;
+	node->is_operator = 1;
+	node->operator_type = op_type;
 	node->left = left;
 	node->right = right;
 	if (op_type == TOKEN_PIPE)

@@ -49,12 +49,13 @@ typedef struct s_nodes
 {
 	char			*cmd;
 	char			**argv;
-	int				fd_in;
-	int				fd_out;
+	char			*file_in;
+	char			*file_out;
 	int				append_out;
 	int				here_doc;
 	char			*delimiter;
-	int				next_operator;
+	int				is_operator;
+	t_token_type	operator_type;
 	struct s_nodes	*left;
 	struct s_nodes	*right;
 }	t_nodes;

@@ -66,10 +66,10 @@ void	free_node(t_nodes *node)
 		free_array(node->argv);
 	if (node->delimiter)
 		free(node->delimiter);
-	if (node->fd_in != STDIN_FILENO)
-		close(node->fd_in);
-	if (node->fd_out != STDOUT_FILENO)
-		close(node->fd_out);
+	if (node->file_in)
+		free(node->file_in);
+	if (node->file_out)
+		free(node->file_out);
 	free_node(node->left);
 	free_node(node->right);
 	free(node);
@@ -98,7 +98,10 @@ char	*ft_strjoin_free(char *s1, char *s2)
 void	print_syntax_error(char *token)
 {
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	ft_putstr_fd(token, 2);
+	if (token)
+		ft_putstr_fd(token, 2);
+	else
+		ft_putstr_fd("newline", 2);
 	ft_putstr_fd("'\n", 2);
 }
 
@@ -125,8 +128,11 @@ static void	print_node_recursive(t_nodes *node, int depth)
 	for (i = 0; i < depth; i++)
 		printf("  ");
 
-	// Print command and arguments
+	// Print command, op_type, and arguments
 	printf("Command: %s\n", node->cmd ? node->cmd : "NULL");
+	printf("is_operator: %d\n", node->is_operator);
+	if (node->is_operator)
+		printf("operator_type: %s\n", g_token_types[node->operator_type]);
 	if (node->argv)
 	{
 		for (i = 0; i < depth; i++)
@@ -137,28 +143,18 @@ static void	print_node_recursive(t_nodes *node, int depth)
 		printf("\n");
 	}
 
-	// Print operator before branches
-	if (node->next_operator)
-	{
-		for (i = 0; i < depth; i++)
-			printf("  ");
-		printf("Operator: %s\n", 
-			node->next_operator == TOKEN_PIPE ? "PIPE" :
-			node->next_operator == TOKEN_AND ? "AND" : "OR");
-	}
-
 	// Print redirections
-	if (node->fd_in != STDIN_FILENO || node->fd_out != STDOUT_FILENO ||
+	if (node->file_in || node->file_out ||
 		node->here_doc || node->delimiter)
 	{
 		for (i = 0; i < depth; i++)
 			printf("  ");
 		printf("Redirections:\n");
-		if (node->fd_in != STDIN_FILENO)
-			printf("    Input FD: %d\n", node->fd_in);
-		if (node->fd_out != STDOUT_FILENO)
-			printf("    Output FD: %d (Append: %s)\n",
-				node->fd_out, node->append_out ? "yes" : "no");
+		if (node->file_in)
+			printf("    Input File: %s\n", node->file_in);
+		if (node->file_out)
+			printf("    Output File: %s (Append: %s)\n",
+				node->file_out, node->append_out ? "yes" : "no");
 		if (node->here_doc)
 			printf("    Heredoc with delimiter: %s\n", node->delimiter);
 	}
@@ -181,7 +177,7 @@ static void	print_node_recursive(t_nodes *node, int depth)
 			print_node_recursive(node->right, depth + 1);
 		}
 	}
-	else if (node->next_operator)
+	else if (node->is_operator)
 	{
 		// Show NULL branches when there's an operator
 		for (i = 0; i < depth; i++)

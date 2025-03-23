@@ -57,7 +57,7 @@ static int	get_fd_in(t_vars *vars, t_nodes **cmds, int pipes[2][2])
 		unlink(heredoc_path);
 		free(heredoc_path);
 	}
-	else if (*cmds->next_operator == PIPE)
+	else if (cmds->is_operator && cmds->operator_type == TOKEN_PIPE)
 	{
 		if (vars->cmd.pipes_count % 2 == 0)
 			fd_in = pipes[0][0];
@@ -74,7 +74,7 @@ static int	get_fd_out(t_vars *vars, t_nodes **cmds, int pipes[2][2])
 	fd_out = 1;
 	if (cmds->fd_out != -2)
 		fd_out = cmds->fd_out;
-	else if (*cmds->next_operator == PIPE)
+	else if (cmds->is_operator && cmds->operator_type == TOKEN_PIPE)
 	{
 		++vars->cmd.pipes_count;
 		if (vars->cmd.pipes_count % 2 == 0)
@@ -102,7 +102,7 @@ int	exec_routine(t_vars *vars, t_nodes **cmds, int pipes[2][2])
 		return (-1);
 	if (pid == 0)
 		exec_cmd(vars, *cmds, pipes);
-	if (*cmds->next_operator == AND || *cmds->right)//si c'est un && j'attends le process aue je viens de lancer, si c'est un || j'attends pour voir si ca fail
+	if (((*cmds)->is_operator && (*cmds)->operator_type == TOKEN_AND) || *cmds->right)//si c'est un && j'attends le process aue je viens de lancer, si c'est un || j'attends pour voir si ca fail
 	{
 		waitpid(pid, &status, 0);
 		vars->cmd.last_exit_status = WEXITSTATUS(status);

@@ -28,12 +28,13 @@ static t_nodes	*create_parser_node(void)
 		return (NULL);
 	node->cmd = NULL;
 	node->argv = NULL;
-	node->fd_in = STDIN_FILENO;
-	node->fd_out = STDOUT_FILENO;
+	node->file_in = NULL;
+	node->file_out = NULL;
 	node->append_out = 0;
 	node->here_doc = 0;
 	node->delimiter = NULL;
-	node->next_operator = 0;
+	node->is_operator = 0;
+	node->operator_type = TOKEN_EOF;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
@@ -42,60 +43,92 @@ static t_nodes	*create_parser_node(void)
 static t_nodes	*parse_command(t_token **token)
 {
 	t_nodes	*node;
-	int		argc;
-	t_token	*start;
-	t_token	*cmd_start;
+	t_token	*word_tokens;
+	int		word_count;
 
 	node = create_parser_node();
 	if (!node)
 		return (NULL);
 
-	// Handle any redirections that come before the command
-	if (!handle_redirections(node, token))
+	// Save all word tokens while handling redirections
+	word_tokens = NULL;
+	word_count = 0;
+
+	// Process all tokens, collecting words and handling redirections
+	while (*token && ((*token)->type == TOKEN_WORD ||
+		(*token)->type == TOKEN_REDIR_IN || (*token)->type == TOKEN_REDIR_OUT ||
+		(*token)->type == TOKEN_APPEND || (*token)->type == TOKEN_HEREDOC))
 	{
-		free_node(node);
-		return (NULL);
-	}
-
-	// Save start of command tokens
-	cmd_start = *token;
-	argc = 0;
-
-	// Count command arguments
-	while (*token && (*token)->type == TOKEN_WORD)
-	{
-		argc++;
-		*token = (*token)->next;
-
-		// Handle any redirections that come between arguments
-		if (!handle_redirections(node, token))
+		if ((*token)->type == TOKEN_WORD)
+		{
+			// Save word token
+			t_token *new_word = malloc(sizeof(t_token));
+			if (!new_word)
+			{
+				free_node(node);
+				return (NULL);
+			}
+			new_word->type = TOKEN_WORD;
+			new_word->value = ft_strdup((*token)->value);
+			new_word->next = NULL;
+			if (!new_word->value)
+			{
+				free(new_word);
+				free_node(node);
+				return (NULL);
+			}
+			if (!word_tokens)
+				word_tokens = new_word;
+			else
+			{
+				new_word->next = word_tokens;
+				word_tokens = new_word;
+			}
+			word_count++;
+			*token = (*token)->next;
+		}
+		else if (!handle_redirections(node, token))
 		{
 			free_node(node);
+			while (word_tokens)
+			{
+				t_token *next = word_tokens->next;
+				free(word_tokens->value);
+				free(word_tokens);
+				word_tokens = next;
+			}
 			return (NULL);
 		}
 	}
 
-	// Process command arguments if any were found
-	if (argc > 0)
+	// Process word tokens if any were found
+	if (word_count > 0)
 	{
-		node->argv = (char **)malloc(sizeof(char *) * (argc + 1));
+		node->argv = (char **)malloc(sizeof(char *) * (word_count + 1));
 		if (!node->argv)
 		{
 			free_node(node);
+			while (word_tokens)
+			{
+				t_token *next = word_tokens->next;
+				free(word_tokens->value);
+				free(word_tokens);
+				word_tokens = next;
+			}
 			return (NULL);
 		}
 
-		// Reset to start of command tokens
-		start = cmd_start;
-		argc = 0;
-
-		// Copy command arguments
-		while (start != *token && start->type == TOKEN_WORD)
+		// Copy words in reverse order (since we stored them in reverse)
+		int i = word_count - 1;
+		while (word_tokens)
 		{
-			node->argv[argc++] = ft_strdup(start->value);
-			start = start->next;
+			node->argv[i--] = ft_strdup(word_tokens->value);
+			t_token *next = word_tokens->next;
+			free(word_tokens->value);
+			free(word_tokens);
+			word_tokens = next;
 		}
-		node->argv[argc] = NULL;
+		node->argv[word_count] = NULL;
 		node->cmd = ft_strdup(node->argv[0]);
 	}
 
@@ -143,7 +176,8 @@ static t_nodes	*parse_pipeline(t_token **token)
 		}
 
 		// Set up pipe structure
-		current->next_operator = TOKEN_PIPE;
+		current->is_operator = 1;
+		current->operator_type = TOKEN_PIPE;
 		current->right = next_cmd;
 
 		// Move to next command
@@ -194,7 +228,8 @@ static t_nodes	*parse_and_or(t_token **token)
 		}
 
 		// Set up operator node
-		op_node->next_operator = op_type;
+		op_node->is_operator = 1;
+		op_node->operator_type = op_type;
 		op_node->cmd = ft_strdup(op_type == TOKEN_AND ? "&&" : "||");
 
 		// For AND, success path (left) is next command
