@@ -60,50 +60,11 @@ typedef struct s_nodes
 	struct s_nodes	*right;
 }	t_nodes;
 
-
-
-/* Lexer functions */
-t_token		*lexer(char *input);
-t_token		*get_next_token(char **input);
-
-/* Parser functions */
-t_nodes		*parse(t_token *token);
-t_nodes		*pratt_parse(t_token *token);
-int			parse_line(t_vars *vars);
-
-/* Pratt parser functions */
-t_nodes		*parse_expression(t_token **token, int min_precedence);
-t_nodes		*parse_atom(t_token **token);
-t_nodes		*create_node(void);
-t_nodes		*create_op_node(t_nodes *left, t_nodes *right, t_token_type op_type);
-t_nodes		*create_cmd_node(t_token **token, int argc);
-t_nodes		*handle_parentheses(t_token **token);
-int			get_precedence(t_token_type type);
-int			count_word_tokens(t_token **token);
-void			advance_token(t_token **token, int count);
-
-/* Expander functions */
-char		*expand_variables(char *str, int exit_status);
-void		expand_variables_in_node(t_nodes *node, int exit_status);
-void		expand_wildcards(t_nodes *node);
-
-/* Quote handling functions */
-char		*remove_quotes(char *str);
-int			check_quotes(char *str);
-void		handle_quotes_in_node(t_nodes *node);
-
-/* Redirection functions */
-int			handle_redirections(t_nodes *node, t_token **token);
-
-/* Utility functions */
-void		free_array(char **array);
-void		free_token(t_token *token);
-void		free_node(t_nodes *node);
-char		*ft_strjoin_free(char *s1, char *s2);
-void		print_syntax_error(char *token);
-
-/* Debug functions */
-void		print_token_list(t_token *token);
-void		print_ast(t_nodes *root);
+# include "lexer.h"
+# include "parser.h"
+# include "nodes.h"
+# include "utils.h"
+# include "expander.h"
+# include "wildcard_expander.h"
 
 #endif

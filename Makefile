@@ -30,30 +30,30 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/exec/pipe.c \
 					src/exec/child.c
 
-CFILES_PARSING =	src/parsing/lexer.c \
-					src/parsing/parser.c \
-					src/parsing/pratt_parser.c \
-					src/parsing/pratt_node.c \
-					src/parsing/pratt_utils.c \
-					src/parsing/quotes.c \
-					src/parsing/redirections.c \
-					src/parsing/utils.c \
-					src/parsing/parse_line.c
+CFILES_PARSING =	src/parsing/lexer/lexer.c \
+					src/parsing/parser/parser.c \
+					src/parsing/parser/pratt_parser.c \
+					src/parsing/parser/parse_line.c \
+					src/parsing/nodes/pratt_node.c \
+					src/parsing/utils/pratt_utils.c \
+					src/parsing/utils/quote_utils.c \
+					src/parsing/utils/redirection_utils.c \
+					src/parsing/utils/parsing_utils.c \
+					src/parsing/utils/expansion_quote_utils.c \
+					src/parsing/utils/wildcard_utils.c \
+					src/parsing/utils/wildcard_utils2.c \
+					src/parsing/utils/quote_handler_utils.c
 
 CFILES_EXPANDER =	src/parsing/expanders/var_expander.c \
 					src/parsing/expanders/wildcard_expander.c \
-					src/parsing/expanders/wildcard_utils.c \
-					src/parsing/expanders/wildcard_utils2.c \
-					src/parsing/expanders/quote_handler.c \
-					src/parsing/expanders/quote_utils.c \
-					src/parsing/expanders/quote_handler_utils.c
+					src/parsing/expanders/quote_handler.c
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
-HEADER_PARSING = src/parsing/parsing.h 
+HEADER_PARSING = includes/parsing/parsing.h 
 HEADER_LIBFT = libft/libft.h 
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I src/parsing
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)

@@ -148,10 +148,7 @@ t_token	*lexer(char *input)
 	{
 		new_token = get_next_token(&input);
 		if (!new_token)
-		{
-			// Handle error
 			return (NULL);
-		}
 		if (new_token->type == TOKEN_EOF)
 		{
 			free(new_token);

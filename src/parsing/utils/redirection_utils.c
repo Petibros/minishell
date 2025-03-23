@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "parsing.h"
-#include "expanders/wildcard_expander.h"
+#include "wildcard_expander.h"
 #include <fcntl.h>
 
 static int	handle_input_redirection(t_nodes *node, char *filename)

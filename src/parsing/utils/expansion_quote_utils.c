@@ -30,27 +30,6 @@ char	*handle_double_quote(char *str, int *i, char *result, int exit_status)
 	return (result);
 }
 
-static int	has_unquoted_wildcard(const char *str)
-{
-	int	in_single_quote;
-	int	in_double_quote;
-	int	i;
-
-	in_single_quote = 0;
-	in_double_quote = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' && !in_double_quote)
-			in_single_quote = !in_single_quote;
-		else if (str[i] == '"' && !in_single_quote)
-			in_double_quote = !in_double_quote;
-		else if (str[i] == '*' && !in_single_quote && !in_double_quote)
-			return (1);
-		i++;
-	}
-	return (0);
-}
 
 int	copy_expanded_entries(char **new_argv, int j, char *arg)
 {
