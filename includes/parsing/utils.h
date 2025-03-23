@@ -13,7 +13,7 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-# include "parsing.h"
+# include "types.h"
 
 /* Utility functions */
 void		free_array(char **array);

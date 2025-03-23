@@ -31,6 +31,8 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/exec/child.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
+				src/parsing/lexer/lexer_operator.c \
+				src/parsing/lexer/lexer_word.c \
 					src/parsing/parser/parser.c \
 					src/parsing/parser/pratt_parser.c \
 					src/parsing/parser/parse_line.c \

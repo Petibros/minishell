@@ -13,7 +13,7 @@
 #ifndef NODES_H
 # define NODES_H
 
-# include "parsing.h"
+# include "types.h"
 
 /* Node creation functions */
 t_nodes		*create_node(void);

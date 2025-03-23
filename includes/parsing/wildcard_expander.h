@@ -13,7 +13,7 @@
 #ifndef WILDCARD_EXPANDER_H
 # define WILDCARD_EXPANDER_H
 
-# include "parsing.h"
+# include "types.h"
 
 /* Functions from wildcard_expander.c */
 int		is_pattern_match(const char *pattern, const char *str);

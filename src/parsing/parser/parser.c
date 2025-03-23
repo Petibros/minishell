@@ -12,7 +12,6 @@
 
 #include "parsing.h"
 
-// Function prototypes
 static t_nodes	*create_parser_node(void);
 static t_nodes	*parse_command(t_token **token);
 static t_nodes	*parse_pipeline(t_token **token);
@@ -49,19 +48,14 @@ static t_nodes	*parse_command(t_token **token)
 	node = create_parser_node();
 	if (!node)
 		return (NULL);
-
-	// Save all word tokens while handling redirections
 	word_tokens = NULL;
 	word_count = 0;
-
-	// Process all tokens, collecting words and handling redirections
 	while (*token && ((*token)->type == TOKEN_WORD ||
 		(*token)->type == TOKEN_REDIR_IN || (*token)->type == TOKEN_REDIR_OUT ||
 		(*token)->type == TOKEN_APPEND || (*token)->type == TOKEN_HEREDOC))
 	{
 		if ((*token)->type == TOKEN_WORD)
 		{
-			// Save word token
 			t_token *new_word = malloc(sizeof(t_token));
 			if (!new_word)
 			{
@@ -100,8 +94,6 @@ static t_nodes	*parse_command(t_token **token)
 			return (NULL);
 		}
 	}
-
-	// Process word tokens if any were found
 	if (word_count > 0)
 	{
 		node->argv = (char **)malloc(sizeof(char *) * (word_count + 1));
@@ -117,8 +109,6 @@ static t_nodes	*parse_command(t_token **token)
 			}
 			return (NULL);
 		}
-
-		// Copy words in reverse order (since we stored them in reverse)
 		int i = word_count - 1;
 		while (word_tokens)
 		{

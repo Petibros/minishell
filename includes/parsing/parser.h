@@ -13,7 +13,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "parsing.h"
+# include "types.h"
 
 /* Parser functions */
 t_nodes		*parse(t_token *token);

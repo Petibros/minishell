@@ -58,15 +58,10 @@ t_nodes	*create_op_node(t_nodes *left, t_nodes *right, t_token_type op_type)
 	return (node);
 }
 
-t_nodes	*create_cmd_node(t_token **token, int argc)
+static t_nodes	*init_cmd_argv(t_nodes *node, t_token *start, int argc)
 {
-	t_nodes	*node;
-	t_token	*start;
-	int		i;
+	int	i;
 
-	node = create_node();
-	if (!node || argc <= 0)
-		return (NULL);
 	node->argv = (char **)malloc(sizeof(char *) * (argc + 1));
 	if (!node->argv)
 	{
@@ -74,7 +69,6 @@ t_nodes	*create_cmd_node(t_token **token, int argc)
 		return (NULL);
 	}
 	i = 0;
-	start = *token;
 	while (i < argc)
 	{
 		node->argv[i] = ft_strdup(start->value);
@@ -87,6 +81,19 @@ t_nodes	*create_cmd_node(t_token **token, int argc)
 		i++;
 	}
 	node->argv[argc] = NULL;
+	return (node);
+}
+
+t_nodes	*create_cmd_node(t_token **token, int argc)
+{
+	t_nodes	*node;
+
+	node = create_node();
+	if (!node || argc <= 0)
+		return (NULL);
+	node = init_cmd_argv(node, *token, argc);
+	if (!node)
+		return (NULL);
 	node->cmd = ft_strdup(node->argv[0]);
 	return (node);
 }
