@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:58:07 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/19 18:35:56 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:44:52 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_cmds
     int     pipes_count;
 	int		*fd_in;
 	int		*fd_out;
+	int		pipes[2][2];
 }	t_cmds;
 
 typedef struct s_syntax
