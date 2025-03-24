@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/19 23:51:57 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/24 05:24:42 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,36 @@ static void	init_pipes(int pipes[2][2])
 	pipes[1][1] = 0;
 }
 
+static int search_binary_tree(t_vars *vars, t_nodes **cmds, int pipes[2][2])
+{
+	int	status;
+
+	if ((*cmds)->is_operator)
+	{
+		search_binary_tree(vars, (*cmds)->left, pipes);
+		if ((*cmds)->operator_type != TOKEN_PIPE)
+		{
+			waitpid(vars->cmd.last_pid, &status, 0);
+			if ((*cmds)->operator_type == TOKEN_OR)
+			{
+				vars->cmd.last_exit_status = WEXITSTATUS(status);
+				if (!vars->cmd.last_exit_status == 0)
+					return (0);
+			}
+		}
+		search_binary_tree(vars, (*cmds)->right, pipes);
+	}
+	else
+		exec_cmd(vars, *cmds, pipes);
+}
+
 int	execute(t_vars *vars, t_nodes **cmds)
 {
 	int	pipes[2][2];
 
 	init_pipes(pipes);
 	vars->cmd.pipes_count = 0;
-	first_fd_in(cmds, vars->cmd.fd_in);
-	if (vars->cmd.fd_in == NULL)
-		return (-1);
-	while (*cmds)
-	{
-		if (exec_routine(vars, cmds, pipes) == -1)
-			return (-1);
-		if (vars->cmd.last_exit_status != 0 && (*cmds)->right)//si la commande est la pre;iere d'un || et fail
-			*cmds = (*cmds)->right;
-		else
-			*cmds = (*cmds)->left;
-	}
+	search_binary_tree(vars, cmds);
 	close_pipe(pipes, 3);
 	return (0);
 }
