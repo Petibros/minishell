@@ -13,106 +13,37 @@
 #include "parsing.h"
 #include "expander.h"
 
-char	*expand_env_var(char *str, int *i, int exit_status)
+static void	process_char(t_quote_ctx *ctx, char *tmp)
 {
-	char	*var_name;
-	char	*var_value;
-	char	*result;
-	int		len;
-
-	(*i)++;
-	if (str[*i] == '?')
+	if (ctx->str[*(ctx->i)] == '\'')
+		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
+	else if (ctx->str[*(ctx->i)] == '"')
+		ctx->result = handle_double_quote(ctx);
+	else if (ctx->str[*(ctx->i)] == '$')
 	{
-		(*i)++;
-		return (ft_itoa(exit_status));
+		tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
+		if (tmp)
+		{
+			ctx->result = ft_strjoin_free(ctx->result, tmp);
+			free(tmp);
+		}
 	}
-	len = 0;
-	while (ft_isalnum(str[*i + len]) || str[*i + len] == '_')
-		len++;
-	if (len == 0)
-		return (ft_strdup("$"));
-	var_name = ft_substr(str, *i, len);
-	*i += len;
-	var_value = getenv(var_name);
-	if (!var_value)
-		result = ft_strdup("");
 	else
-		result = ft_strdup(var_value);
-	free(var_name);
+		ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
+}
+
+char	*expand_variables(char *str, int exit_status, char **envp)
+{
+	t_quote_ctx	*ctx;
+	char		*result;
+
+	ctx = init_quote_context(str, exit_status, envp);
+	if (!ctx)
+		return (NULL);
+	while (str[*(ctx->i)])
+		process_char(ctx, NULL);
+	result = ctx->result;
+	free(ctx->i);
+	free(ctx);
 	return (result);
-}
-
-char	*expand_variables(char *str, int exit_status)
-{
-	char	*result;
-	char	*tmp;
-	int		i;
-
-	result = ft_strdup("");
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'')
-			result = handle_single_quote(str, &i, result);
-		else if (str[i] == '"')
-			result = handle_double_quote(str, &i, result, exit_status);
-		else if (str[i] == '$')
-		{
-			tmp = expand_env_var(str, &i, exit_status);
-			if (tmp)
-			{
-				result = ft_strjoin_free(result, tmp);
-				free(tmp);
-			}
-		}
-		else
-			result = handle_regular_char(str, &i, result);
-	}
-	return (result);
-}
-
-static void	expand_single_arg(char **arg, int exit_status)
-{
-	char	*expanded;
-
-	if (ft_strchr(*arg, '$'))
-	{
-		expanded = expand_variables(*arg, exit_status);
-		if (expanded)
-		{
-			free(*arg);
-			*arg = expanded;
-		}
-	}
-}
-
-static void	expand_argv(char **argv, int exit_status)
-{
-	int	i;
-
-	i = 0;
-	while (argv[i])
-	{
-		expand_single_arg(&argv[i], exit_status);
-		i++;
-	}
-}
-
-void	expand_variables_in_node(t_nodes *node, int exit_status)
-{
-	if (!node)
-		return ;
-	if (node->argv)
-	{
-		expand_argv(node->argv, exit_status);
-		if (node->cmd && node->argv[0])
-		{
-			free(node->cmd);
-			node->cmd = ft_strdup(node->argv[0]);
-		}
-	}
-	if (node->left)
-		expand_variables_in_node(node->left, exit_status);
-	if (node->right)
-		expand_variables_in_node(node->right, exit_status);
 }

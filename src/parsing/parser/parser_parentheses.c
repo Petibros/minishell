@@ -12,7 +12,7 @@
 
 #include "parsing.h"
 
-t_nodes	*parse_parentheses(t_token **token)
+t_nodes	*parse_parentheses(t_token **token, char **envp)
 {
 	t_nodes	*node;
 	t_nodes	*inner_cmd;
@@ -20,7 +20,7 @@ t_nodes	*parse_parentheses(t_token **token)
 	if (!*token || (*token)->type != TOKEN_LPAREN)
 		return (NULL);
 	*token = (*token)->next;
-	inner_cmd = parse_and_or(token);
+	inner_cmd = parse_and_or(token, envp);
 	if (!inner_cmd)
 		return (NULL);
 	if (!*token || (*token)->type != TOKEN_RPAREN)

@@ -12,19 +12,19 @@
 
 #include "parsing.h"
 
-static t_nodes	*get_next_and_or_cmd(t_token **token)
+static t_nodes	*get_next_and_or_cmd(t_token **token, char **envp)
 {
 	if ((*token)->type == TOKEN_LPAREN)
-		return (parse_parentheses(token));
-	return (parse_pipeline(token));
+		return (parse_parentheses(token, envp));
+	return (parse_pipeline(token, envp));
 }
 
 static int	process_next_cmd(t_nodes *current, t_token **token,
-			t_token_type op_type)
+			t_token_type op_type, char **envp)
 {
 	t_nodes	*next_cmd;
 
-	next_cmd = get_next_and_or_cmd(token);
+	next_cmd = get_next_and_or_cmd(token, envp);
 	if (!next_cmd)
 		return (0);
 	current->is_operator = 1;
@@ -33,13 +33,13 @@ static int	process_next_cmd(t_nodes *current, t_token **token,
 	return (1);
 }
 
-t_nodes	*parse_and_or(t_token **token)
+t_nodes	*parse_and_or(t_token **token, char **envp)
 {
 	t_nodes			*first_cmd;
 	t_nodes			*current;
 	t_token_type	op_type;
 
-	first_cmd = parse_pipeline(token);
+	first_cmd = parse_pipeline(token, envp);
 	if (!first_cmd)
 		return (NULL);
 	current = first_cmd;
@@ -48,7 +48,7 @@ t_nodes	*parse_and_or(t_token **token)
 	{
 		op_type = (*token)->type;
 		*token = (*token)->next;
-		if (!process_next_cmd(current, token, op_type))
+		if (!process_next_cmd(current, token, op_type, envp))
 		{
 			free_node(first_cmd);
 			return (NULL);

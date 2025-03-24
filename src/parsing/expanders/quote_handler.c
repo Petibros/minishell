@@ -13,49 +13,47 @@
 #include "parsing.h"
 #include "expander.h"
 
-static char	*handle_dollar_in_dquote(char *str, int *i, char *result,
-		int exit_status)
+static char	*handle_dollar_in_dquote(t_quote_ctx *ctx)
 {
 	char	*tmp;
 
-	tmp = expand_env_var(str, i, exit_status);
+	tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
 	if (tmp)
 	{
-		result = ft_strjoin_free(result, tmp);
+		ctx->result = ft_strjoin_free(ctx->result, tmp);
 		free(tmp);
 	}
-	return (result);
+	return (ctx->result);
 }
 
-static char	*process_double_quote_content(char *str, int *i, char *result,
-		int exit_status)
+static char	*process_double_quote_content(t_quote_ctx *ctx)
 {
 	int		start;
 
-	start = *i;
-	while (str[*i] && str[*i] != '"')
+	start = *(ctx->i);
+	while (ctx->str[*(ctx->i)] && ctx->str[*(ctx->i)] != '"')
 	{
-		if (str[*i] == '$')
+		if (ctx->str[*(ctx->i)] == '$')
 		{
-			if (start != *i)
-				result = append_substring(result, str, start, *i);
-			result = handle_dollar_in_dquote(str, i, result, exit_status);
-			start = *i;
+			if (start != *(ctx->i))
+				ctx->result = append_substring(ctx->result, ctx->str, \
+												start, *(ctx->i));
+			ctx->result = handle_dollar_in_dquote(ctx);
+			start = *(ctx->i);
 		}
 		else
-			(*i)++;
+			(*(ctx->i))++;
 	}
-	if (str[*i] == '"' && start != *i)
+	if (ctx->str[*(ctx->i)] == '"' && start != *(ctx->i))
 	{
-		result = append_substring(result, str, start, *i);
-		(*i)++;
+		ctx->result = append_substring(ctx->result, ctx->str, start, *(ctx->i));
+		(*(ctx->i))++;
 	}
-	return (result);
+	return (ctx->result);
 }
 
-char	*handle_double_quote_char(char *str, int *i, char *result,
-		int exit_status)
+char	*handle_double_quote_char(t_quote_ctx *ctx)
 {
-	(*i)++;
-	return (process_double_quote_content(str, i, result, exit_status));
+	(*(ctx->i))++;
+	return (process_double_quote_content(ctx));
 }

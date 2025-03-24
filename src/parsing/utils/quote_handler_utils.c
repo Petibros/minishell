@@ -37,7 +37,8 @@ char	*handle_quote_char(char *str, int *i, char *result)
 	char	quote;
 	int		start;
 
-	quote = str[(*i)++];
+	quote = str[(*i)];
+	(*i)++;
 	start = *i;
 	while (str[*i] && str[*i] != quote)
 		(*i)++;

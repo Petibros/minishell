@@ -12,27 +12,27 @@
 
 #include "parsing.h"
 
-static t_nodes	*get_next_command(t_token **token)
+static t_nodes	*get_next_command(t_token **token, char **envp)
 {
 	if ((*token)->type == TOKEN_LPAREN)
-		return (parse_parentheses(token));
-	return (parse_command(token));
+		return (parse_parentheses(token, envp));
+	return (parse_command(token, envp));
 }
 
-t_nodes	*parse_pipeline(t_token **token)
+t_nodes	*parse_pipeline(t_token **token, char **envp)
 {
 	t_nodes	*first_cmd;
 	t_nodes	*current;
 	t_nodes	*next_cmd;
 
-	first_cmd = get_next_command(token);
+	first_cmd = get_next_command(token, envp);
 	if (!first_cmd)
 		return (NULL);
 	current = first_cmd;
 	while (*token && (*token)->type == TOKEN_PIPE)
 	{
 		*token = (*token)->next;
-		next_cmd = get_next_command(token);
+		next_cmd = get_next_command(token, envp);
 		if (!next_cmd)
 		{
 			free_node(first_cmd);

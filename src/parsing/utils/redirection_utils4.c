@@ -40,11 +40,11 @@ static char	*handle_wildcard_expansion(char *expanded, char *filename)
 	return (final);
 }
 
-char	*expand_filename(char *filename, int exit_status)
+char	*expand_filename(char *filename, int exit_status, char **envp)
 {
 	char	*expanded;
 
-	expanded = expand_variables(filename, exit_status);
+	expanded = expand_variables(filename, exit_status, envp);
 	if (!expanded)
 		return (NULL);
 	if (has_unquoted_wildcard(expanded))
@@ -64,7 +64,7 @@ static int	validate_and_get_token(t_token **token, char **filename)
 	return (1);
 }
 
-int	handle_redirections(t_nodes *node, t_token **token)
+int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 {
 	t_token_type	type;
 	char			*filename;
@@ -80,7 +80,7 @@ int	handle_redirections(t_nodes *node, t_token **token)
 		*token = (*token)->next;
 		if (!validate_and_get_token(token, &filename))
 			return (0);
-		expanded_filename = expand_filename(filename, 0);
+		expanded_filename = expand_filename(filename, 0, envp);
 		if (!expanded_filename)
 			return (0);
 		result = process_redirection(node, expanded_filename, type);

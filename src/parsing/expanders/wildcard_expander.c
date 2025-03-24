@@ -72,29 +72,16 @@ int	count_matching_entries(char *pattern)
 
 char	**collect_matching_entries(char *pattern, int count)
 {
-	DIR				*dir;
-	struct dirent	*entry;
-	char			**matches;
-	int				i;
+	DIR		*dir;
+	char	**matches;
 
-	matches = malloc(sizeof(char *) * (count + 1));
+	matches = init_matches_array(count);
 	if (!matches)
 		return (NULL);
-	dir = opendir(".");
+	dir = open_and_validate(matches);
 	if (!dir)
-	{
-		free(matches);
 		return (NULL);
-	}
-	i = 0;
-	entry = readdir(dir);
-	while (entry && i < count)
-	{
-		if (entry->d_name[0] != '.' && is_pattern_match(pattern, entry->d_name))
-			matches[i++] = ft_strdup(entry->d_name);
-		entry = readdir(dir);
-	}
-	matches[i] = NULL;
+	fill_matches_array(matches, pattern, count, dir);
 	closedir(dir);
 	return (matches);
 }

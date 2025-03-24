@@ -23,25 +23,18 @@ char	*handle_single_quote(char *str, int *i, char *result)
 	return (result);
 }
 
-char	*handle_double_quote(char *str, int *i, char *result, int exit_status)
+char	*handle_double_quote(t_quote_ctx *ctx)
 {
-	if (str[*i] == '"')
-		result = handle_double_quote_char(str, i, result, exit_status);
-	return (result);
+	if (ctx->str[*(ctx->i)] == '"')
+		ctx->result = handle_double_quote_char(ctx);
+	return (ctx->result);
 }
 
-int	copy_expanded_entries(char **new_argv, int j, char *arg)
+static int	process_directory_entries(char **new_argv, int j, char *arg)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	int				start_j;
 
-	start_j = j;
-	if (!has_unquoted_wildcard(arg))
-	{
-		new_argv[j++] = ft_strdup(arg);
-		return (j);
-	}
 	dir = opendir(".");
 	if (!dir)
 		return (j);
@@ -49,11 +42,28 @@ int	copy_expanded_entries(char **new_argv, int j, char *arg)
 	while (entry)
 	{
 		if (entry->d_name[0] != '.' && is_pattern_match(arg, entry->d_name))
-			new_argv[j++] = ft_strdup(entry->d_name);
+		{
+			new_argv[j] = ft_strdup(entry->d_name);
+			j++;
+		}
 		entry = readdir(dir);
 	}
 	closedir(dir);
-	if (j == start_j)
-		new_argv[j++] = ft_strdup(arg);
 	return (j);
+}
+
+int	copy_expanded_entries(char **new_argv, int j, char *arg)
+{
+	int				start_j;
+
+	start_j = j;
+	if (!has_unquoted_wildcard(arg))
+	{
+		new_argv[j] = ft_strdup(arg);
+		return (j + 1);
+	}
+	j = process_directory_entries(new_argv, j, arg);
+	if (j == start_j)
+		new_argv[j] = ft_strdup(arg);
+	return (j + 1);
 }

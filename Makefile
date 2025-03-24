@@ -36,6 +36,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/parser/parser.c \
 					src/parsing/parser/parser_node.c \
 					src/parsing/parser/parser_command.c \
+					src/parsing/parser/parser_command_utils.c \
 					src/parsing/parser/parser_pipeline.c \
 					src/parsing/parser/parser_and_or.c \
 					src/parsing/parser/parser_parentheses.c \
@@ -57,7 +58,10 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/quote_handler_utils.c
 
 CFILES_EXPANDER =	src/parsing/expanders/var_expander.c \
+					src/parsing/expanders/var_expander_utils1.c \
+					src/parsing/expanders/var_expander_utils2.c \
 					src/parsing/expanders/wildcard_expander.c \
+					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/expanders/quote_handler.c
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o)

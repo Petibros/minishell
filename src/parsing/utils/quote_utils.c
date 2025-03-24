@@ -39,21 +39,14 @@ static int	is_quote(char c)
 	return (c == '\'' || c == '\"');
 }
 
-char	*remove_quotes(char *str)
+static void	process_quotes(char *str, char *result, int *j)
 {
-	char	*result;
 	char	quote;
 	int		i;
-	int		j;
 
-	if (!str)
-		return (NULL);
-	result = malloc(sizeof(char) * (count_chars_without_quotes(str) + 1));
-	if (!result)
-		return (NULL);
 	quote = 0;
 	i = 0;
-	j = 0;
+	*j = 0;
 	while (str[i])
 	{
 		if (!quote && is_quote(str[i]))
@@ -61,9 +54,25 @@ char	*remove_quotes(char *str)
 		else if (quote && str[i] == quote)
 			quote = 0;
 		else
-			result[j++] = str[i];
+		{
+			result[(*j)] = str[i];
+			(*j)++;
+		}
 		i++;
 	}
+}
+
+char	*remove_quotes(char *str)
+{
+	char	*result;
+	int		j;
+
+	if (!str)
+		return (NULL);
+	result = malloc(sizeof(char) * (count_chars_without_quotes(str) + 1));
+	if (!result)
+		return (NULL);
+	process_quotes(str, result, &j);
 	result[j] = '\0';
 	return (result);
 }

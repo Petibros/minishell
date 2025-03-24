@@ -30,7 +30,7 @@ int		process_redirection(t_nodes *node, char *expanded_filename,
 			t_token_type type);
 
 // redirection_utils4.c
-char	*expand_filename(char *filename, int exit_status);
-int		handle_redirections(t_nodes *node, t_token **token);
+char	*expand_filename(char *filename, int exit_status, char **envp);
+int		handle_redirections(t_nodes *node, t_token **token, char **envp);
 
 #endif

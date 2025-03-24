@@ -22,13 +22,14 @@ int	parse_line(t_vars *vars)
 	tokens = lexer(vars->input.line);
 	if (!tokens)
 		return (0);
-	vars->cmd.cmds = pratt_parse(tokens);
+	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp);
 	if (!vars->cmd.cmds)
 	{
 		free_token(tokens);
 		return (0);
 	}
-	expand_variables_in_node(vars->cmd.cmds, vars->cmd.last_exit_status);
+	expand_variables_in_node(vars->cmd.cmds, vars->cmd.last_exit_status, \
+								vars->env.envp);
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
 	free_node(vars->cmd.cmds);

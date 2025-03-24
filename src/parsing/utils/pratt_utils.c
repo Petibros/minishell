@@ -50,14 +50,14 @@ void	advance_token(t_token **token, int count)
 	}
 }
 
-t_nodes	*handle_parentheses(t_token **token)
+t_nodes	*handle_parentheses(t_token **token, char **envp)
 {
 	t_nodes	*node;
 
 	if (!*token || (*token)->type != TOKEN_LPAREN)
 		return (NULL);
 	*token = (*token)->next;
-	node = parse_expression(token, 0);
+	node = parse_expression(token, 0, envp);
 	if (*token && (*token)->type == TOKEN_RPAREN)
 		*token = (*token)->next;
 	return (node);
