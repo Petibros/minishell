@@ -64,12 +64,12 @@ void	free_node(t_nodes *node)
 		free(node->cmd);
 	if (node->argv)
 		free_array(node->argv);
-	if (node->delimiter)
-		free(node->delimiter);
 	if (node->file_in)
-		free(node->file_in);
+		free_redir_list(node->file_in);
 	if (node->file_out)
-		free(node->file_out);
+		free_redir_list(node->file_out);
+	if (node->heredoc)
+		free_redir_list(node->heredoc);
 	free_node(node->left);
 	free_node(node->right);
 	free(node);
@@ -118,6 +118,50 @@ void	print_token_list(t_token *token)
 	printf("================\n");
 }
 
+static void	print_redirections(t_nodes *node, int depth)
+{
+	t_redir	*current;
+	int		i;
+
+	for (i = 0; i < depth; i++)
+		printf("  ");
+	printf("Redirections:\n");
+
+	if (node->file_in)
+	{
+		printf("    Input Files:\n");
+		current = node->file_in;
+		while (current)
+		{
+			printf("      %s\n", current->filename);
+			current = current->next;
+		}
+	}
+
+	if (node->file_out)
+	{
+		printf("    Output Files:\n");
+		current = node->file_out;
+		while (current)
+		{
+			printf("      %s (Append: %s)\n",
+				current->filename, current->append ? "yes" : "no");
+			current = current->next;
+		}
+	}
+
+	if (node->heredoc)
+	{
+		printf("    Heredocs:\n");
+		current = node->heredoc;
+		while (current)
+		{
+			printf("      delimiter: %s\n", current->filename);
+			current = current->next;
+		}
+	}
+}
+
 static void	print_node_recursive(t_nodes *node, int depth)
 {
 	int	i;
@@ -144,19 +188,9 @@ static void	print_node_recursive(t_nodes *node, int depth)
 	}
 
 	// Print redirections
-	if (node->file_in || node->file_out ||
-		node->here_doc || node->delimiter)
+	if (node->file_in || node->file_out || node->heredoc)
 	{
-		for (i = 0; i < depth; i++)
-			printf("  ");
-		printf("Redirections:\n");
-		if (node->file_in)
-			printf("    Input File: %s\n", node->file_in);
-		if (node->file_out)
-			printf("    Output File: %s (Append: %s)\n",
-				node->file_out, node->append_out ? "yes" : "no");
-		if (node->here_doc)
-			printf("    Heredoc with delimiter: %s\n", node->delimiter);
+		print_redirections(node, depth);
 	}
 
 	// Print branches

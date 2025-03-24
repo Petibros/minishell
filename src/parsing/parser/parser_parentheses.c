@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_parentheses.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,15 +12,31 @@
 
 #include "parsing.h"
 
-t_nodes	*parse(t_token *token)
+t_nodes	*parse_parentheses(t_token **token)
 {
-	t_nodes	*ast;
+	t_nodes	*node;
+	t_nodes	*inner_cmd;
 
-	ast = parse_and_or(&token);
-	if (!ast || (token && token->type != TOKEN_EOF))
+	if (!*token || (*token)->type != TOKEN_LPAREN)
+		return (NULL);
+	*token = (*token)->next;
+	inner_cmd = parse_and_or(token);
+	if (!inner_cmd)
+		return (NULL);
+	if (!*token || (*token)->type != TOKEN_RPAREN)
 	{
-		free_node(ast);
+		free_node(inner_cmd);
 		return (NULL);
 	}
-	return (ast);
+	*token = (*token)->next;
+	node = create_parser_node();
+	if (!node)
+	{
+		free_node(inner_cmd);
+		return (NULL);
+	}
+	node->is_operator = 1;
+	node->operator_type = TOKEN_LPAREN;
+	node->right = inner_cmd;
+	return (node);
 }

@@ -17,6 +17,11 @@
 
 /* Parser functions */
 t_nodes		*parse(t_token *token);
+t_nodes		*parse_and_or(t_token **token);
+t_nodes		*parse_pipeline(t_token **token);
+t_nodes		*parse_command(t_token **token);
+t_nodes		*parse_parentheses(t_token **token);
+t_nodes		*create_parser_node(void);
 t_nodes		*pratt_parse(t_token *token);
 int			parse_line(t_vars *vars);
 

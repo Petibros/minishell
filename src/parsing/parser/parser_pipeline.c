@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_pipeline.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,15 +12,36 @@
 
 #include "parsing.h"
 
-t_nodes	*parse(t_token *token)
+static t_nodes	*get_next_command(t_token **token)
 {
-	t_nodes	*ast;
+	if ((*token)->type == TOKEN_LPAREN)
+		return (parse_parentheses(token));
+	return (parse_command(token));
+}
 
-	ast = parse_and_or(&token);
-	if (!ast || (token && token->type != TOKEN_EOF))
-	{
-		free_node(ast);
+t_nodes	*parse_pipeline(t_token **token)
+{
+	t_nodes	*first_cmd;
+	t_nodes	*current;
+	t_nodes	*next_cmd;
+
+	first_cmd = get_next_command(token);
+	if (!first_cmd)
 		return (NULL);
+	current = first_cmd;
+	while (*token && (*token)->type == TOKEN_PIPE)
+	{
+		*token = (*token)->next;
+		next_cmd = get_next_command(token);
+		if (!next_cmd)
+		{
+			free_node(first_cmd);
+			return (NULL);
+		}
+		current->is_operator = 1;
+		current->operator_type = TOKEN_PIPE;
+		current->right = next_cmd;
+		current = next_cmd;
 	}
-	return (ast);
+	return (first_cmd);
 }

@@ -33,5 +33,6 @@ void		handle_quotes_in_node(t_nodes *node);
 
 /* Redirection functions */
 int			handle_redirections(t_nodes *node, t_token **token);
+void		free_redir_list(t_redir *head);
 
 #endif

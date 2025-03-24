@@ -7,7 +7,7 @@
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
 #    Updated: 2025/03/15 23:31:56 by sacgarci         ###   ########.fr        #
-#                                                                              #
+#                                                                              #cl
 # **************************************************************************** #
 
 NAME = minishell
@@ -34,7 +34,13 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 				src/parsing/lexer/lexer_operator.c \
 				src/parsing/lexer/lexer_word.c \
 					src/parsing/parser/parser.c \
+					src/parsing/parser/parser_node.c \
+					src/parsing/parser/parser_command.c \
+					src/parsing/parser/parser_pipeline.c \
+					src/parsing/parser/parser_and_or.c \
+					src/parsing/parser/parser_parentheses.c \
 					src/parsing/parser/pratt_parser.c \
+					src/parsing/parser/pratt_parser_atom.c \
 					src/parsing/parser/parse_line.c \
 					src/parsing/nodes/pratt_node.c \
 					src/parsing/utils/pratt_utils.c \

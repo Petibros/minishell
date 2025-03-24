@@ -15,7 +15,7 @@
 
 int	parse_line(t_vars *vars)
 {
-	t_token *tokens;
+	t_token	*tokens;
 
 	if (!vars->input.line || !*vars->input.line)
 		return (0);

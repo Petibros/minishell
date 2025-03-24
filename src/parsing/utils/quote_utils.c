@@ -86,6 +86,27 @@ int	check_quotes(char *str)
 	return (!quote);
 }
 
+static void	handle_quotes_in_redir(t_redir *redir)
+{
+	char	*tmp;
+	t_redir	*current;
+
+	current = redir;
+	while (current)
+	{
+		if (current->filename)
+		{
+			tmp = remove_quotes(current->filename);
+			if (tmp)
+			{
+				free(current->filename);
+				current->filename = tmp;
+			}
+		}
+		current = current->next;
+	}
+}
+
 void	handle_quotes_in_node(t_nodes *node)
 {
 	char	*tmp;
@@ -113,13 +134,10 @@ void	handle_quotes_in_node(t_nodes *node)
 			node->cmd = tmp;
 		}
 	}
-	if (node->delimiter)
-	{
-		tmp = remove_quotes(node->delimiter);
-		if (tmp)
-		{
-			free(node->delimiter);
-			node->delimiter = tmp;
-		}
-	}
+	if (node->file_in)
+		handle_quotes_in_redir(node->file_in);
+	if (node->file_out)
+		handle_quotes_in_redir(node->file_out);
+	if (node->heredoc)
+		handle_quotes_in_redir(node->heredoc);
 }

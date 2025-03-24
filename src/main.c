@@ -81,8 +81,7 @@ int	main(int argc, char **argv, char **envp)
 			echo(vars->input.line + 5, 1, false);
 		if (ft_strncmp(vars->input.line, "here_doc ", 9) == 0)
 			here_doc(2, vars->input.line + 9);
-		if (parse_line(vars) == -1)
-			break;
+		parse_line(vars);
 		free(vars->input.line);
 		free(vars->prompt);
 	}

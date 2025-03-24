@@ -23,9 +23,7 @@ t_nodes	*create_node(void)
 	node->argv = NULL;
 	node->file_in = NULL;
 	node->file_out = NULL;
-	node->append_out = 0;
-	node->here_doc = 0;
-	node->delimiter = NULL;
+	node->heredoc = NULL;
 	node->is_operator = 0;
 	node->operator_type = TOKEN_EOF;
 	node->left = NULL;

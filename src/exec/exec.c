@@ -15,19 +15,43 @@
 static int	first_fd_in(t_vars *vars, t_nodes **cmds)
 {
 	int		fd_in;
+	t_redir	*redir;
 	char	*heredoc_path;
 
 	fd_in = 0;
-	if (*cmds->fd_in != -1)
-		fd_in = *cmds->fd_in;
-	else if (*cmds->here_doc == 1)
+	if ((*cmds)->file_in)
 	{
+		redir = (*cmds)->file_in;
+		while (redir->next)
+			redir = redir->next;
+		fd_in = open(redir->filename, O_RDONLY);
+		if (fd_in == -1)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(redir->filename, 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
+			return (-2);
+		}
+	}
+	else if ((*cmds)->heredoc)
+	{
+		redir = (*cmds)->heredoc;
+		while (redir->next)
+			redir = redir->next;
 		heredoc_path = get_tmp();
 		if (!heredoc_path)
 			return (-2);
-		fd_in = open(heredoc_path, O_CREAT, 700);
-		here_doc(fd_in, cmds->delimiter);
+		fd_in = open(heredoc_path, O_CREAT | O_WRONLY | O_TRUNC, 0700);
+		if (fd_in == -1)
+		{
+			free(heredoc_path);
+			return (-2);
+		}
+		here_doc(fd_in, redir->filename);
+		close(fd_in);
+		fd_in = open(heredoc_path, O_RDONLY);
 		unlink(heredoc_path);
+		free(heredoc_path);
 	}
 	return (fd_in);
 }

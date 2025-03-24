@@ -13,6 +13,8 @@
 #ifndef TYPES_H
 # define TYPES_H
 
+# include <stdbool.h>
+
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -35,16 +37,21 @@ typedef struct s_token
 	struct s_token		*next;
 }	t_token;
 
+typedef struct s_redir
+{
+	char			*filename;
+	bool			append;
+	struct s_redir	*next;
+}	t_redir;
+
 typedef struct s_nodes
 {
 	char			*cmd;
 	char			**argv;
-	char			*file_in;
-	char			*file_out;
-	int				append_out;
-	int				here_doc;
-	char			*delimiter;
-	int				is_operator;
+	t_redir			*file_in;
+	t_redir			*file_out;
+	t_redir			*heredoc;
+	bool			is_operator;
 	t_token_type	operator_type;
 	struct s_nodes	*left;
 	struct s_nodes	*right;

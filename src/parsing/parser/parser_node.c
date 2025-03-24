@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_node.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,15 +12,21 @@
 
 #include "parsing.h"
 
-t_nodes	*parse(t_token *token)
+t_nodes	*create_parser_node(void)
 {
-	t_nodes	*ast;
+	t_nodes	*node;
 
-	ast = parse_and_or(&token);
-	if (!ast || (token && token->type != TOKEN_EOF))
-	{
-		free_node(ast);
+	node = (t_nodes *)malloc(sizeof(t_nodes));
+	if (!node)
 		return (NULL);
-	}
-	return (ast);
+	node->cmd = NULL;
+	node->argv = NULL;
+	node->file_in = NULL;
+	node->file_out = NULL;
+	node->heredoc = NULL;
+	node->is_operator = 0;
+	node->operator_type = TOKEN_EOF;
+	node->left = NULL;
+	node->right = NULL;
+	return (node);
 }

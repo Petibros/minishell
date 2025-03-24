@@ -14,35 +14,96 @@
 #include "wildcard_expander.h"
 #include <fcntl.h>
 
+static t_redir	*create_redir_node(char *filename, int append)
+{
+	t_redir *new;
+
+	new = malloc(sizeof(t_redir));
+	if (!new)
+		return (NULL);
+	new->filename = ft_strdup(filename);
+	if (!new->filename)
+	{
+		free(new);
+		return (NULL);
+	}
+	new->append = append;
+	new->next = NULL;
+	return (new);
+}
+
+void	free_redir_list(t_redir *head)
+{
+	t_redir *current;
+	t_redir *next;
+
+	current = head;
+	while (current)
+	{
+		next = current->next;
+		free(current->filename);
+		free(current);
+		current = next;
+	}
+}
+
 static int	handle_input_redirection(t_nodes *node, char *filename)
 {
-	if (node->file_in)
-		free(node->file_in);
-	node->file_in = ft_strdup(filename);
-	if (!node->file_in)
+	t_redir *new;
+	t_redir *current;
+
+	new = create_redir_node(filename, 0);
+	if (!new)
 		return (0);
+	if (!node->file_in)
+		node->file_in = new;
+	else
+	{
+		current = node->file_in;
+		while (current->next)
+			current = current->next;
+		current->next = new;
+	}
 	return (1);
 }
 
 static int	handle_output_redirection(t_nodes *node, char *filename, int append)
 {
-	if (node->file_out)
-		free(node->file_out);
-	node->file_out = ft_strdup(filename);
-	if (!node->file_out)
+	t_redir *new;
+	t_redir *current;
+
+	new = create_redir_node(filename, append);
+	if (!new)
 		return (0);
-	node->append_out = append;
+	if (!node->file_out)
+		node->file_out = new;
+	else
+	{
+		current = node->file_out;
+		while (current->next)
+			current = current->next;
+		current->next = new;
+	}
 	return (1);
 }
 
 static int	handle_heredoc(t_nodes *node, char *delimiter)
 {
-	node->here_doc = 1;
-	if (node->delimiter)
-		free(node->delimiter);
-	node->delimiter = ft_strdup(delimiter);
-	if (!node->delimiter)
+	t_redir *new;
+	t_redir *current;
+
+	new = create_redir_node(delimiter, 0);
+	if (!new)
 		return (0);
+	if (!node->heredoc)
+		node->heredoc = new;
+	else
+	{
+		current = node->heredoc;
+		while (current->next)
+			current = current->next;
+		current->next = new;
+	}
 	return (1);
 }
 
