@@ -15,6 +15,9 @@
 
 # include "types.h"
 
+/* Global variables */
+extern const char	*g_token_types[];
+
 /* Parser functions */
 t_nodes		*parse(t_token *token);
 t_nodes		*parse_and_or(t_token **token);
@@ -32,5 +35,9 @@ t_nodes		*handle_parentheses(t_token **token);
 int			get_precedence(t_token_type type);
 int			count_word_tokens(t_token **token);
 void		advance_token(t_token **token, int count);
+
+/* Printing functions */
+void		print_node_recursive(t_nodes *node, int depth);
+void		print_ast(t_nodes *root);
 
 #endif

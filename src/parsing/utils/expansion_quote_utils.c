@@ -30,7 +30,6 @@ char	*handle_double_quote(char *str, int *i, char *result, int exit_status)
 	return (result);
 }
 
-
 int	copy_expanded_entries(char **new_argv, int j, char *arg)
 {
 	DIR				*dir;

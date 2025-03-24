@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quotes.c                                           :+:      :+:    :+:   */
+/*   quote_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -48,7 +48,7 @@ char	*remove_quotes(char *str)
 
 	if (!str)
 		return (NULL);
-	result = (char *)malloc(sizeof(char) * (count_chars_without_quotes(str) + 1));
+	result = malloc(sizeof(char) * (count_chars_without_quotes(str) + 1));
 	if (!result)
 		return (NULL);
 	quote = 0;
@@ -84,60 +84,4 @@ int	check_quotes(char *str)
 		i++;
 	}
 	return (!quote);
-}
-
-static void	handle_quotes_in_redir(t_redir *redir)
-{
-	char	*tmp;
-	t_redir	*current;
-
-	current = redir;
-	while (current)
-	{
-		if (current->filename)
-		{
-			tmp = remove_quotes(current->filename);
-			if (tmp)
-			{
-				free(current->filename);
-				current->filename = tmp;
-			}
-		}
-		current = current->next;
-	}
-}
-
-void	handle_quotes_in_node(t_nodes *node)
-{
-	char	*tmp;
-	int		i;
-
-	if (!node || !node->argv)
-		return ;
-	i = 0;
-	while (node->argv[i])
-	{
-		tmp = remove_quotes(node->argv[i]);
-		if (tmp)
-		{
-			free(node->argv[i]);
-			node->argv[i] = tmp;
-		}
-		i++;
-	}
-	if (node->cmd)
-	{
-		tmp = remove_quotes(node->cmd);
-		if (tmp)
-		{
-			free(node->cmd);
-			node->cmd = tmp;
-		}
-	}
-	if (node->file_in)
-		handle_quotes_in_redir(node->file_in);
-	if (node->file_out)
-		handle_quotes_in_redir(node->file_out);
-	if (node->heredoc)
-		handle_quotes_in_redir(node->heredoc);
 }
