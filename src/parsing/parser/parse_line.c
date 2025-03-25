@@ -32,8 +32,6 @@ int	parse_line(t_vars *vars)
 								vars->env.envp);
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
-	free_node(vars->cmd.cmds);
-	vars->cmd.cmds = NULL;
 	free_token(tokens);
 	return (1);
 }

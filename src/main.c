@@ -33,7 +33,6 @@ static void	free_vars(t_vars *vars)
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
-//c'est toi le pointeur baaaaaaaaaaaakaaaaaaaa
 
 	(void) argv;
 	if (argc > 1 || !envp)
@@ -41,7 +40,7 @@ int	main(int argc, char **argv, char **envp)
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
-	if (transfer_env(envp, vars) == -1)//les variables d'environnement sont malloc pour être modifiées dynamiquement
+	if (transfer_env(envp, vars) == -1)
 	{
 		free_vars(vars);
 		return (1);
@@ -82,8 +81,6 @@ int	main(int argc, char **argv, char **envp)
 			echo(vars->line + 5, 1, false);
 		if (ft_strncmp(vars->line, "here_doc ", 9) == 0)
 			here_doc(2, vars->line + 9);
-		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
-		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
 		parse_line(vars);
 		execute(vars, vars->cmd.cmds);
 		free(vars->line);
