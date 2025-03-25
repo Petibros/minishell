@@ -6,13 +6,33 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/24 18:16:50 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/25 02:39:48 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	recursive_call()
+static void	recursive_call(t_vars *vars, t_nodes **cmds, bool is_pipe[2], bool call_left)
+{
+	if (call_left)
+	{
+		if ((*cmds)->operator_type == TOKEN_PIPE)
+			search_binary_tree(vars, (*cmds)->left, false, true);
+		else if ((*cmds)->operator_type == TOKEN_OR)
+			search_binary_tree(vars, (*cmds)->left, is_pipe[0], is_pipe[1]);
+		else
+			search_binary_tree(vars, (*cmds)->left, is_pipe[0], false);
+	}
+	else
+	{
+		if ((*cmds)->operator_type == TOKEN_PIPE)
+			search_binary_tree(vars, (*cmds)->right, true, is_pipe[1]);
+		else if ((*cmds)->operator_type == TOKEN_OR)
+			search_binary_tree(vars, (*cmds)->right, is_pipe[0], is_pipe[1]);
+		else
+			search_binary_tree(vars, (*cmds)->right, false, is_pipe[1]);
+	}
+}
 
 static void	init_pipes(int pipes[2][2])
 {
@@ -28,12 +48,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes **cmds, bool pipe_in, bool p
 
 	if (*cmds && (*cmds)->is_operator)
 	{
-		if ((*cmds)->operator_type == TOKEN_PIPE)
-			search_binary_tree(vars, (*cmds)->left, false, true);
-		else if ((*cmds)->operator_type == TOKEN_OR)
-			search_binary_tree(vars, (*cmds)->left, pipe_in, pipe_out);
-		else
-			search_binary_tree(vars, (*cmds)->left, pipe_in, false);
+		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
 		if ((*cmds)->operator_type != TOKEN_PIPE)
 		{
 			waitpid(vars->cmd.last_pid, &status, 0);
@@ -44,15 +59,14 @@ static int	search_binary_tree(t_vars *vars, t_nodes **cmds, bool pipe_in, bool p
 					return (0);
 			}
 		}
-		if ((*cmds)->operator_type == TOKEN_PIPE)
-			search_binary_tree(vars, (*cmds)->right, true, pipe_out);
-		else if ((*cmds)->operator_type == TOKEN_OR)
-			search_binary_tree(vars, (*cmds)->left, pipe_in, pipe_out);
-		else
-			search_binary_tree(vars, (*cmds)->left, pipe_in, false);
+		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);
 	}
 	else if (*cmds)
-		exec_cmd(vars, *cmds);
+		exec_routine(vars, cmds, vars->cmd.pipes);
+	free_string_array((*cmds)->argv);
+	free_redir((*cmds)->heredoc);
+	free(*cmds);
+	*cmds = NULL;
 }
 
 int	execute(t_vars *vars, t_nodes **cmds)
