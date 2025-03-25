@@ -29,8 +29,8 @@
 # include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include "parsing.h"
 # include "libft.h"
+# include "parsing.h"
 
 typedef struct s_env
 {
@@ -38,6 +38,25 @@ typedef struct s_env
 	int		alloc_size;
 	char	**envp;
 }	t_env;
+
+typedef struct s_line
+{
+	int			n_cmd;
+	int			fd_in;
+	int			fd_out;
+	char		*line;
+	char		**formatted_line;
+	bool		append_out;
+}	t_line;
+
+typedef struct s_cmds
+{
+	struct s_nodes	*cmds;
+	int		last_exit_status;
+	int		pipes_count;
+	int		fd_in;
+	int		fd_out;
+}	t_cmds;
 
 typedef struct s_vars
 {
@@ -49,6 +68,10 @@ typedef struct s_vars
 	char	*user;
 	char	*prompt;
 }	t_vars;
+
+
+//PARSING
+int			parse_line(t_vars *vars);
 
 //BUILT-INS
 void	echo(char *msg, int fd, bool option);
