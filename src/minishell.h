@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/20 00:08:31 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:55:00 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,12 @@ typedef struct s_line
 typedef struct s_cmds
 {
 	struct s_nodes	*cmds;
-	int		last_exit_status;
-	int		pipes_count;
-	int		fd_in;
-	int		fd_out;
+	int				last_exit_status;
+	int				last_pid;
+	int				pipes[2][2];
+	int				pipes_count;
+	int				*fd_in;
+	int				*fd_out;
 }	t_cmds;
 
 typedef struct s_vars
@@ -69,9 +71,8 @@ typedef struct s_vars
 	char	*prompt;
 }	t_vars;
 
-
 //PARSING
-int			parse_line(t_vars *vars);
+int		parse_line(t_vars *vars);
 
 //BUILT-INS
 void	echo(char *msg, int fd, bool option);
@@ -83,8 +84,8 @@ void	env(char **envp);
 void	print_exit(void);
 //EXECUTION
 void	here_doc(int fd, char *limiter);
-int		execute(t_vars *vars, t_nodes **cmds);
-int		exec_routine(t_vars *vars, t_nodes **cmds, int pipes[2][2]);
+int		execute(t_vars *vars, t_nodes *cmds);
+int		exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2]);
 void	close_pipe(int pipes[2][2], int to_close);
 void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2]);
 char	*get_tmp(void);
@@ -101,6 +102,7 @@ void	exit_error(char *path, char **envp, char **argv, int status);
 void	close_fds(int pipes[2][2], t_vars *vars);
 void	free_all(t_vars *vars, char **to_not_free, bool in_child);
 void	free_branch(t_nodes *tree, char **to_not_free);
+void	free_redir(t_redir *node);
 void	free_string_array(char **ptr);
 
 #endif

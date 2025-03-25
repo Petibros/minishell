@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/24 05:24:45 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:56:32 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 	dup2(*vars->cmd.fd_out, 1);
 	close_child_fds(vars, pipes);//fonction qui close tous les fds ouverts du processus fils
 	if (ft_strchr(cmds->argv[0], '/'))//check si la commande est un chemin pre-etabli
-		path = ft_strdup(path);
+		path = ft_strdup(argv[0]);
 	else
 		path = get_path(cmds->argv[0], vars->env.envp);//cherche le path dans l'environnement
 	free_all(vars, argv, true);

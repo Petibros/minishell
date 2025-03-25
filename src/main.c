@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/19 17:16:58 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/25 22:09:23 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ int	main(int argc, char **argv, char **envp)
 			here_doc(2, vars->line + 9);
 		// Parsing renvoie 1 si tout va bien 0 si ça a foiré
 		// Pas besoin de reset cmds entre les cycles de line (mais besoin en dehors du while)
-		parse_line(vars); 
+		parse_line(vars);
+		execute(vars, vars->cmd.cmds);
 		free(vars->line);
 		free(vars->prompt);
 	}

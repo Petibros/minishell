@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 01:56:43 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/25 21:53:27 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	open_fd(t_redir *files, int *fd, bool is_heredoc, t_redir *tmp_node)
 		if (is_heredoc)
 		{
 			heredoc_path = get_tmp();//fichier tmp pour le heredoc
-			*fd_in = open(heredoc_path, O_CREAT, 700);
-			here_doc(*fd_in, files->filename);
+			*fd = open(heredoc_path, O_CREAT, 700);
+			here_doc(*fd, files->filename);
 			unlink(heredoc_path);
 			free(heredoc_path);
 		}
@@ -68,24 +68,22 @@ void	open_fd(t_redir *files, int *fd, bool is_heredoc, t_redir *tmp_node)
 	}
 }
 
-static void	get_fd_in(t_vars *vars, t_nodes **cmds, bool is_pipe[2], int *fd_in)
+static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
 {
-	char	*heredoc_path;
-
 	*fd_in = 0;
-	if ((*cmds)->file_in)
-		open_fd((*cmds)->file_in, fd_in, false, NULL);
-	else if ((*cmds)->heredoc)
-		open_fd((*cmds)->heredoc, fd_in, true, NULL);
+	if (cmds->file_in)
+		open_fd(cmds->file_in, fd_in, false, NULL);
+	else if (cmds->heredoc)
+		open_fd(cmds->heredoc, fd_in, true, NULL);
 	else if (is_pipe[0] == true)
 		fd_in = &vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
 }
 
-static void	get_fd_out(t_vars *vars, t_nodes **cmds, bool is_pipe[2], int *fd_out)
+static void	get_fd_out(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_out)
 {
 	*fd_out = 1;
-	if ((*cmds)->file_out)
-		open_fd((*cmds)->file_out, fd_out, false, NULL);
+	if (cmds->file_out)
+		open_fd(cmds->file_out, fd_out, false, NULL);
 	else if (is_pipe[1] == true)
 	{
 		++vars->cmd.pipes_count;
@@ -94,7 +92,7 @@ static void	get_fd_out(t_vars *vars, t_nodes **cmds, bool is_pipe[2], int *fd_ou
 	}
 }
 
-int	exec_routine(t_vars *vars, t_nodes **cmds, bool is_pipe[2])
+int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 {
 	int	pid;
 
@@ -104,6 +102,7 @@ int	exec_routine(t_vars *vars, t_nodes **cmds, bool is_pipe[2])
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)
-		exec_cmd(vars, *cmds, pipes);
+		exec_cmd(vars, cmds, vars->cmd.pipes);
+	vars->cmd.last_pid = pid;
 	return (0);
 }

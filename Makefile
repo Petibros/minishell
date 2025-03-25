@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/15 23:31:56 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/03/25 22:06:31 by sacha            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,12 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/parser/pratt_parser.c \
 					src/parsing/parser/pratt_parser_atom.c \
 					src/parsing/parser/parse_line.c \
+					src/parsing/expanders/quote_handler.c \
+					src/parsing/expanders/var_expander.c \
+					src/parsing/expanders/var_expander_utils1.c \
+					src/parsing/expanders/var_expander_utils2.c \
+					src/parsing/expanders/wildcard_expander.c \
+					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/nodes/pratt_node.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/quote_utils.c \
@@ -63,7 +69,7 @@ CFILES_FREE =		src/free/free.c
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
-HEADER_PARSING = includes/parsing/parsing.h 
+HEADER_PARSING = includes/parsing/parsing.h  
 HEADER_LIBFT = libft/libft.h 
 CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing
 LDFLAGS = $(LIBFT) -lreadline
