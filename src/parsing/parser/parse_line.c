@@ -17,9 +17,9 @@ int	parse_line(t_vars *vars)
 {
 	t_token	*tokens;
 
-	if (!vars->input.line || !*vars->input.line)
+	if (!vars->line || !*vars->line)
 		return (0);
-	tokens = lexer(vars->input.line);
+	tokens = lexer(vars->line);
 	if (!tokens)
 		return (0);
 	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp);

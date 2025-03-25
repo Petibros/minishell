@@ -7,7 +7,7 @@
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
 #    Updated: 2025/03/15 23:31:56 by sacgarci         ###   ########.fr        #
-#                                                                              #cl
+#                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
@@ -26,9 +26,10 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/export.c \
 					src/built-in/echo.c
 
-#CFILES_EXEC =		src/exec/exec.c \
+CFILES_EXEC =		src/exec/exec.c \
 					src/exec/pipe.c \
-					src/exec/child.c
+					src/exec/child.c \
+					src/exec/exit_child.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 				src/parsing/lexer/lexer_operator.c \
@@ -57,14 +58,9 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c
 
-CFILES_EXPANDER =	src/parsing/expanders/var_expander.c \
-					src/parsing/expanders/var_expander_utils1.c \
-					src/parsing/expanders/var_expander_utils2.c \
-					src/parsing/expanders/wildcard_expander.c \
-					src/parsing/expanders/wildcard_expander_utils.c \
-					src/parsing/expanders/quote_handler.c
+CFILES_FREE =		src/free/free.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o)
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h 
