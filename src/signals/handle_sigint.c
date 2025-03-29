@@ -1,27 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   handle_sigint.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/23 08:02:42 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/23 08:02:42 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/29 08:08:19 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/29 08:08:19 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
+#include "signals.h"
 
-# include <signal.h>
-# include "minishell.h"
-
-void	setup_signals(void);
-void	reset_signals(void);
-void	handle_sigint(int sig);
-void	handle_sigquit(int sig);
-void	ignore_signals(void);
-
-extern int  g_signal_received;
-
-#endif
+/* handle ctrl-c */
+void	handle_sigint(int sig)
+{
+	g_signal_received = SIGINT;
+}
