@@ -71,7 +71,7 @@ LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
 HEADER_LIBFT = libft/libft.h 
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
