@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 22:11:49 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/28 00:59:06 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,15 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pi
 		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
 		if (cmds->operator_type != TOKEN_PIPE)
 		{
-			waitpid(vars->cmd.last_pid, &status, 0);
 			if (cmds->operator_type == TOKEN_OR)
 			{
+				waitpid(vars->cmd.last_pid, &status, 0);
 				vars->cmd.last_exit_status = WEXITSTATUS(status);
-				if (!vars->cmd.last_exit_status == 0)
+				if (vars->cmd.last_exit_status == 0)
 					return (0);
 			}
+			else
+				vars->cmd.last_exit_status = wait_processes();
 		}
 		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);
 	}
@@ -68,13 +70,37 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pi
 	return (0);
 }
 
+int	wait_processes(void)
+{
+	int	status;
+	int	pid;
+	int	last_pid;
+	int	last_status;
+
+	last_pid = 0;
+	last_status = 0;
+	pid = waitpid(-1, &status, 0);
+	while (pid != -1)
+	{
+		if (pid > last_pid)
+		{
+			last_pid = pid;
+			last_status = status;
+		}
+		pid = waitpid(-1, &status, 0);
+	}
+	if (!last_status)
+		return (0);
+	return (WEXITSTATUS(last_status));
+}
+
 int	execute(t_vars *vars, t_nodes *cmds)
 {
 	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
-	printf("%p\n", cmds);
 	search_binary_tree(vars, cmds, false, false);
+	vars->cmd.last_exit_status = wait_processes();
 	close_pipe(vars->cmd.pipes, 3);
-	free_branch(cmds, NULL);
+	free_branch(vars->cmd.cmds, NULL);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 21:55:00 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/27 23:46:52 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ typedef struct s_cmds
 	int				last_pid;
 	int				pipes[2][2];
 	int				pipes_count;
-	int				*fd_in;
-	int				*fd_out;
+	int				fd_in;
+	int				fd_out;
 }	t_cmds;
 
 typedef struct s_vars
@@ -76,10 +76,10 @@ int		parse_line(t_vars *vars);
 
 //BUILT-INS
 void	echo(char *msg, int fd, bool option);
-int		export_var(char *var, char *value, t_vars *vars);
-void	cd(char *path);
+int		export_var(char **argv, char ***envp, t_vars *vars);
+int		cd(char **argv, t_vars *vars);
 void	pwd(t_vars *vars);
-void	unset(char *var, t_vars *vars);
+void	unset(char **argv, t_vars *vars);
 void	env(char **envp);
 void	print_exit(void);
 //EXECUTION
@@ -89,6 +89,7 @@ int		exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2]);
 void	close_pipe(int pipes[2][2], int to_close);
 void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2]);
 char	*get_tmp(void);
+int		wait_processes(void);
 //ENVIRONMENT
 int		transfer_env(char **envp, t_vars *vars);
 void	actualize_env(t_vars *vars);
