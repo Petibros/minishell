@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/28 00:00:16 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/29 05:00:14 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,17 @@
 static int	join_and_export(char *var_name, char *path,
 		char **tmp_export, t_vars *vars)
 {
-	tmp_export[0] = ft_strjoin(var_name, path);
-	tmp_export[1] = NULL;
-	if (!tmp_export[0])
+	tmp_export[0] = "export";
+	tmp_export[1] = ft_strjoin(var_name, path);
+	tmp_export[2] = NULL;
+	if (!tmp_export[1])
 	{
 		free(tmp_export);
 		return (0);
 	}
 	if (!export_var(tmp_export, &vars->env.envp, vars))
 		return (0);
-	free(tmp_export[0]);
+	free(tmp_export[1]);
 	return (1);
 }
 
@@ -34,7 +35,7 @@ static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX])
 	char	**tmp_export;
 
 	getcwd(pwd, PATH_MAX);
-	tmp_export = malloc(2 * sizeof(char *));
+	tmp_export = malloc(3 * sizeof(char *));
 	if (!tmp_export)
 		return (0);
 	if (!join_and_export("OLDPWD", old_pwd, tmp_export, vars))

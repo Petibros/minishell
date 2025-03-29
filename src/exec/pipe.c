@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/28 03:44:29 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/29 05:09:53 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,34 @@ static void	get_fd_out(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_out
 	}
 }
 
+static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
+{
+	char	**to_export;
+	int		status;
+
+	to_export = malloc(2 * sizeof(char *));
+	if (!to_export)
+		return (-1);
+	to_export[0] = "export";
+	to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	if (!to_export[1])
+	{
+		free(to_export);
+		return (-1);
+	}
+	to_export[2] = NULL;
+	status = export_var(to_export, &vars->env.envp, vars);
+	free(to_export[1]);
+	free(to_export);
+	return (status);
+}
+
 int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 {
-	int	pid;
+	int		pid;
 
+	if (actualize_env_last_cmd(vars, cmds) == -1)
+		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
 	pid = fork();

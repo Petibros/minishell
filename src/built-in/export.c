@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/27 22:01:37 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/29 05:04:35 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,10 +122,7 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 		if (status == 1)
 			continue ;
 		else if (status == -1)
-		{
-			vars->cmd.last_exit_status = 1;
-			continue ;
-		}
+			return (-1);
 		if (vars->env.current_size >= vars->env.alloc_size)
 		{
 			++vars->env.alloc_size;
@@ -133,8 +130,7 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 			if (!*envp)
 			{
 				perror("export.c, alloc_new_array");
-				vars->cmd.last_exit_status = 1;
-				continue ;
+				return (-1);
 			}
 		}
 		(*envp)[vars->env.current_size + 1] = NULL;
@@ -142,8 +138,7 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 		if (!(*envp)[vars->env.current_size])
 		{
 			perror("export.c, l.119");
-			vars->cmd.last_exit_status = 1;
-			continue ;
+			return (-1);
 		}
 		++vars->env.current_size;
 	}
