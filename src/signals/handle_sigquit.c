@@ -13,6 +13,7 @@
 #include "signals.h"
 
 /* handle ctrl-\ */
+/* PS: Sur mon ordi ctrl + altgt + \ ne marche pas */
 void	handle_sigquit(int sig)
 {
 	(void)sig;
