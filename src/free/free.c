@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 15:30:04 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 02:38:14 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/28 00:46:47 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,14 @@ void	free_branch(t_nodes *tree, char **to_not_free)
 	{
 		if (tree->right)
 			free_branch(tree->right, to_not_free);
-		node = tree;
-		tree = tree->left;
-		free_redir(node->file_in);
-		free_redir(node->heredoc);
-		free_redir(node->file_out);
-		if (node->argv != to_not_free)
-			free_string_array(node->argv);
-		free(node);
+		free_redir(tree->file_in);
+		free_redir(tree->heredoc);
+		free_redir(tree->file_out);
+		if (tree->argv != to_not_free)
+			free_string_array(tree->argv);
+		node = tree->left;
+		free(tree);
+		tree = node;
 	}
 }
 
@@ -74,12 +74,21 @@ void	free_all(t_vars *vars, char **to_not_free, bool in_child)
 
 void	close_fds(int pipes[2][2], t_vars *vars)
 {
-	if (pipes[vars->cmd.pipes_count % 2][0] == *vars->cmd.fd_out)
+	if (pipes[vars->cmd.pipes_count % 2][1] == vars->cmd.fd_out)
+	{
+		pipes[vars->cmd.pipes_count % 2][1] = 0;
+		if (pipes[(vars->cmd.pipes_count + 1) % 2][0] == vars->cmd.fd_in)
+			vars->cmd.fd_in = 0;
 		close_pipe(pipes, (vars->cmd.pipes_count + 1) % 2 + 1);
+	}
 	else
+	{
+		if (pipes[vars->cmd.pipes_count % 2][0] == vars->cmd.fd_in)
+			vars->cmd.fd_in = 0;
 		close_pipe(pipes, vars->cmd.pipes_count % 2 + 1);
-	if (*vars->cmd.fd_in > 0)
-		close(*vars->cmd.fd_in);
-	close(*vars->cmd.fd_out);
-	*vars->cmd.fd_out = 0;
+	}
+	if (vars->cmd.fd_in > 2)
+		close(vars->cmd.fd_in);
+	if (vars->cmd.fd_out > 2)
+		close(vars->cmd.fd_out);
 }
