@@ -19,7 +19,7 @@ static int	set_op_node_basics(t_nodes *node, t_nodes *left,
 	node->operator_type = op_type;
 	node->left = left;
 	node->right = right;
-	node->argv = (char **)malloc(sizeof(char *) * 2);
+	node->argv = malloc(sizeof(char *) * 2);
 	if (!node->argv)
 		return (0);
 	return (1);

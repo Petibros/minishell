@@ -13,7 +13,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "types.h"
+# include "lexer.h"
 
 // Processing contexts
 typedef struct s_token_loop_ctx

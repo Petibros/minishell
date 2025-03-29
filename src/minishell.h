@@ -29,6 +29,7 @@
 # include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include "parsing/types.h"
 # include "libft.h"
 # include "parsing.h"
 

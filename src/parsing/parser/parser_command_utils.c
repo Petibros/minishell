@@ -66,7 +66,7 @@ int	build_argv(t_nodes *node, t_token *word_tokens, int word_count)
 	int		i;
 	t_token	*next;
 
-	node->argv = (char **)malloc(sizeof(char *) * (word_count + 1));
+	node->argv = malloc(sizeof(char *) * (word_count + 1));
 	if (!node->argv)
 		return (0);
 	i = word_count - 1;

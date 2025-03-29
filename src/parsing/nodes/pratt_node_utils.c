@@ -30,7 +30,7 @@ t_nodes	*init_op_node(t_nodes *node, t_nodes *left,
 	node->operator_type = op_type;
 	node->left = left;
 	node->right = right;
-	node->argv = (char **)malloc(sizeof(char *) * 2);
+	node->argv = malloc(sizeof(char *) * 2);
 	if (!node->argv)
 	{
 		free_node(node);
@@ -43,7 +43,7 @@ t_nodes	*init_cmd_argv(t_nodes *node, t_token *start, int argc)
 {
 	int	i;
 
-	node->argv = (char **)malloc(sizeof(char *) * (argc + 1));
+	node->argv = malloc(sizeof(char *) * (argc + 1));
 	if (!node->argv)
 	{
 		free_node(node);

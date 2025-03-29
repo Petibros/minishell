@@ -14,7 +14,7 @@
 
 static int	alloc_cmd_argv(t_nodes *node, int argc)
 {
-	node->argv = (char **)malloc(sizeof(char *) * (argc + 1));
+	node->argv = malloc(sizeof(char *) * (argc + 1));
 	if (!node->argv)
 		return (0);
 	return (1);
