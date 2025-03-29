@@ -46,8 +46,6 @@ void	free_node(t_nodes *node)
 {
 	if (!node)
 		return ;
-	if (node->cmd)
-		free(node->cmd);
 	if (node->argv)
 		free_array(node->argv);
 	if (node->file_in)

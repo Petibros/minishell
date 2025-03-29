@@ -47,11 +47,6 @@ void	expand_variables_in_node(t_nodes *node, int exit_status, char **envp)
 	if (node->argv)
 	{
 		expand_argv(node->argv, exit_status, envp);
-		if (node->cmd && node->argv[0])
-		{
-			free(node->cmd);
-			node->cmd = ft_strdup(node->argv[0]);
-		}
 	}
 	if (node->left)
 		expand_variables_in_node(node->left, exit_status, envp);

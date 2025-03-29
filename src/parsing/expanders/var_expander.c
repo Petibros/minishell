@@ -18,7 +18,7 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 	if (ctx->str[*(ctx->i)] == '\'')
 		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
 	else if (ctx->str[*(ctx->i)] == '"')
-		ctx->result = handle_double_quote(ctx);
+		ctx->result = handle_double_quote_char(ctx);
 	else if (ctx->str[*(ctx->i)] == '$')
 	{
 		tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);

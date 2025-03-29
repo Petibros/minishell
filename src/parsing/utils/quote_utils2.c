@@ -33,21 +33,6 @@ static void	handle_quotes_in_redir(t_redir *redir)
 	}
 }
 
-static void	handle_quotes_in_cmd(t_nodes *node)
-{
-	char	*tmp;
-
-	if (node->cmd)
-	{
-		tmp = remove_quotes(node->cmd);
-		if (tmp)
-		{
-			free(node->cmd);
-			node->cmd = tmp;
-		}
-	}
-}
-
 static void	handle_quotes_in_argv(t_nodes *node)
 {
 	char	*tmp;
@@ -71,7 +56,6 @@ void	handle_quotes_in_node(t_nodes *node)
 	if (!node || !node->argv)
 		return ;
 	handle_quotes_in_argv(node);
-	handle_quotes_in_cmd(node);
 	if (node->file_in)
 		handle_quotes_in_redir(node->file_in);
 	if (node->file_out)

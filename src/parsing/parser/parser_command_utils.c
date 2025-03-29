@@ -80,6 +80,5 @@ int	build_argv(t_nodes *node, t_token *word_tokens, int word_count)
 		i--;
 	}
 	node->argv[word_count] = NULL;
-	node->cmd = ft_strdup(node->argv[0]);
 	return (1);
 }

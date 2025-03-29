@@ -19,7 +19,6 @@ t_nodes	*create_parser_node(void)
 	node = (t_nodes *)malloc(sizeof(t_nodes));
 	if (!node)
 		return (NULL);
-	node->cmd = NULL;
 	node->argv = NULL;
 	node->file_in = NULL;
 	node->file_out = NULL;

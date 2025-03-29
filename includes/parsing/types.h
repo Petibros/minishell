@@ -46,7 +46,6 @@ typedef struct s_redir
 
 typedef struct s_nodes
 {
-	char			*cmd;
 	char			**argv;
 	t_redir			*file_in;
 	t_redir			*file_out;

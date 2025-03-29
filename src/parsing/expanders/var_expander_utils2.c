@@ -20,6 +20,13 @@ static char	*get_var_value(char *var_name, int exit_status, char **envp)
 
 	if (!ft_strncmp(var_name, "?", 2))
 		return (ft_itoa(exit_status));
+	if (!ft_strncmp(var_name, "_", 2))
+	{
+		var_value = ft_getenv(envp, "_");
+		if (!var_value)
+			return (ft_strdup(""));
+		return (ft_strdup(var_value));
+	}
 	var_value = ft_getenv(envp, var_name);
 	if (!var_value)
 		return (ft_strdup(""));

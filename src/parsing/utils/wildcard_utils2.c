@@ -20,7 +20,7 @@ static int	handle_non_wildcard(char *arg, char **new_argv, int *j)
 	return (1);
 }
 
-static int	process_directory_entries(char *arg, char **new_argv, int *j)
+int	process_directory_entries(char *arg, char **new_argv, int *j)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -45,7 +45,7 @@ static int	process_directory_entries(char *arg, char **new_argv, int *j)
 	return (count);
 }
 
-int	count_and_expand_entry(char *arg, char **new_argv, int *j)
+int	expand_wildcard_entry(char *arg, char **new_argv, int *j)
 {
 	int	count;
 
@@ -59,13 +59,4 @@ int	count_and_expand_entry(char *arg, char **new_argv, int *j)
 		count = 1;
 	}
 	return (count);
-}
-
-void	update_node_cmd(t_nodes *node)
-{
-	if (node->cmd && node->argv[0])
-	{
-		free(node->cmd);
-		node->cmd = ft_strdup(node->argv[0]);
-	}
 }

@@ -51,6 +51,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/expanders/wildcard_expander.c \
 					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/nodes/pratt_node.c \
+					src/parsing/nodes/pratt_node_op.c \
+					src/parsing/nodes/pratt_node_cmd.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/quote_utils.c \
 					src/parsing/utils/quote_utils2.c \
