@@ -6,31 +6,45 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:04:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/05 23:49:22 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/03/27 23:46:04 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	unset(char *var, t_vars *vars)
+static int	is_unset(char **argv, char *env)
 {
 	int	i;
 	int	var_len;
 
 	i = 0;
-	var_len = ft_strlen(var);
+	while (argv[i])
+	{
+		var_len = ft_strlen(argv[i]);
+		if (ft_strncmp(argv[i], env, var_len) == 0 && *(env + var_len) == '=')
+			return (1);
+		++i;
+	}
+	return (0);
+}
+
+void	unset(char **argv, t_vars *vars)
+{
+	int	i;
+	int	tmp_i;
+
+	i = 0;
 	while (vars->env.envp[i])
 	{
-		if (ft_strncmp(vars->env.envp[i], var, var_len) == 0
-			&& vars->env.envp[i][var_len] == '=')
+		if (is_unset(argv, vars->env.envp[i]))
 		{
-			while (vars->env.envp[i])
+			tmp_i = i;
+			while (vars->env.envp[tmp_i])
 			{
-				vars->env.envp[i] = vars->env.envp[i + 1];
-				++i;
+				vars->env.envp[tmp_i] = vars->env.envp[tmp_i + 1];
+				++tmp_i;
 			}
 			--vars->env.current_size;
-			return ;
 		}
 		++i;
 	}

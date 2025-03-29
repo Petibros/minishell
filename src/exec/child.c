@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 21:56:32 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:17:29 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ static char	*get_path(char *cmd, char **envp)
 		free(path);
 		++i;
 	}
-	free_string_array(paths);
 	if (to_join)
 		free(to_join);
 	if (!paths || !paths[i])
-		return (NULL);
+		path = NULL;
+	free_string_array(paths);
 	return (path);
 }
 
@@ -63,10 +63,10 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 
 	argv = cmds->argv;
 	envp = vars->env.envp;
-	if (*vars->cmd.fd_in == -1 || *vars->cmd.fd_out == -1)
+	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
 		exit_fd_error(vars, pipes);//fonction qui free tout les pointeurs du processus fils
-	dup2(*vars->cmd.fd_in, 0);
-	dup2(*vars->cmd.fd_out, 1);
+	dup2(vars->cmd.fd_in, 0);
+	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, pipes);//fonction qui close tous les fds ouverts du processus fils
 	if (ft_strchr(cmds->argv[0], '/'))//check si la commande est un chemin pre-etabli
 		path = ft_strdup(argv[0]);

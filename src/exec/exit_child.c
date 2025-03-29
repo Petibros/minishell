@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:08:45 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/25 01:14:31 by sacha            ###   ########.fr       */
+/*   Updated: 2025/03/26 01:19:13 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,15 @@
 
 void	close_child_fds(t_vars *vars, int pipes[2][2])
 {
+	if (vars->cmd.fd_in == pipes[0][0] || vars->cmd.fd_in == pipes[1][0])
+		vars->cmd.fd_in = 0;
+	if (vars->cmd.fd_out == pipes[0][1] || vars->cmd.fd_out == pipes[1][1])
+		vars->cmd.fd_out = 0;
 	close_pipe(pipes, 3);
-	if (*vars->cmd.fd_in > 0)
-		close(*vars->cmd.fd_in);
-	if (*vars->cmd.fd_out > 0)
-		close(*vars->cmd.fd_out);
+	if (vars->cmd.fd_in > 2)
+		close(vars->cmd.fd_in);
+	if (vars->cmd.fd_out > 2)
+		close(vars->cmd.fd_out);
 }
 
 void	exit_fd_error(t_vars *vars, int pipes[2][2])
