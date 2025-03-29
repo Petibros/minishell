@@ -68,7 +68,11 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 
 CFILES_FREE =		src/free/free.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o)
+CFILES_SIGNALS =	src/signals/signals.c \
+				src/signals/handle_sigint.c \
+				src/signals/handle_sigquit.c
+
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  

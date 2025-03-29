@@ -14,7 +14,7 @@
 # define SIGNALS_H
 
 # include <signal.h>
-# include "minishell.h"
+# include <stdio.h>
 
 void	setup_signals(void);
 void	reset_signals(void);

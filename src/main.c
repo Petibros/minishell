@@ -37,6 +37,7 @@ int	main(int argc, char **argv, char **envp)
 	(void) argv;
 	if (argc > 1 || !envp)
 		return (1);
+	setup_signals();
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);

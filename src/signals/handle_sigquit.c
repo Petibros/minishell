@@ -15,5 +15,7 @@
 /* handle ctrl-\ */
 void	handle_sigquit(int sig)
 {
+	(void)sig;
 	g_signal_received = SIGQUIT;
+	printf("Signal: ctrl-\\\n");
 }

@@ -32,6 +32,7 @@
 # include "parsing/types.h"
 # include "libft.h"
 # include "parsing.h"
+# include "signals.h"
 
 typedef struct s_env
 {

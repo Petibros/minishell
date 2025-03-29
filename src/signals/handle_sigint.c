@@ -15,5 +15,7 @@
 /* handle ctrl-c */
 void	handle_sigint(int sig)
 {
+	(void)sig;
 	g_signal_received = SIGINT;
+	printf("Signal: ctrl-c\n");
 }
