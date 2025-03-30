@@ -105,7 +105,10 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
 		exec_cmd(vars, cmds, vars->cmd.pipes);
+	}
 	close_fds(vars->cmd.pipes, vars);
 	vars->cmd.last_pid = pid;
 	return (0);
