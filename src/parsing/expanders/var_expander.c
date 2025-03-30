@@ -27,6 +27,11 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 			ctx->result = ft_strjoin_free(ctx->result, tmp);
 			free(tmp);
 		}
+		else
+		{
+			free(ctx->result);
+			ctx->result = NULL;
+		}
 	}
 	else
 		ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
@@ -40,7 +45,7 @@ char	*expand_variables(char *str, int exit_status, char **envp)
 	ctx = init_quote_context(str, exit_status, envp);
 	if (!ctx)
 		return (NULL);
-	while (str[*(ctx->i)])
+	while (str[*(ctx->i)] && ctx->result)
 		process_char(ctx, NULL);
 	result = ctx->result;
 	free(ctx->i);
