@@ -15,11 +15,31 @@
 
 char	*handle_single_quote(char *str, int *i, char *result)
 {
+	char	*tmp;
+	int		is_ansi_c;
+
+	is_ansi_c = (*i > 0 && str[*i - 1] == '$');
+	if (!is_ansi_c)
+	{
+		tmp = ft_strjoin_free(result, "'");
+		if (!tmp)
+			return (NULL);
+		result = tmp;
+	}
 	(*i)++;
 	while (str[*i] && str[*i] != '\'')
 		result = handle_regular_char(str, i, result);
 	if (str[*i] == '\'')
+	{
+		if (!is_ansi_c)
+		{
+			tmp = ft_strjoin_free(result, "'");
+			if (!tmp)
+				return (NULL);
+			result = tmp;
+		}
 		(*i)++;
+	}
 	return (result);
 }
 
