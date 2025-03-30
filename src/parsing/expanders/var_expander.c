@@ -48,6 +48,11 @@ char	*expand_variables(char *str, int exit_status, char **envp)
 	while (str[*(ctx->i)] && ctx->result)
 		process_char(ctx, NULL);
 	result = ctx->result;
+	if (result && result[0] == '\0')
+	{
+		free(result);
+		result = NULL;
+	}
 	free(ctx->i);
 	free(ctx);
 	return (result);

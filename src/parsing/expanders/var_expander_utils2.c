@@ -24,12 +24,12 @@ static char	*get_var_value(char *var_name, int exit_status, char **envp)
 	{
 		var_value = ft_getenv(envp, "_");
 		if (!var_value)
-			return (ft_strdup(""));
+			return (NULL);
 		return (ft_strdup(var_value));
 	}
 	var_value = ft_getenv(envp, var_name);
 	if (!var_value)
-		return (ft_strdup(""));
+		return (NULL);
 	return (ft_strdup(var_value));
 }
 
@@ -42,7 +42,7 @@ static char	*get_var_name(char *str, int *i)
 	if (str[*i] == '_' || ft_isalpha(str[*i]))
 	{
 		len++;
-		while (ft_isalnum(str[*i + len]) || str[*i + len] == '_')
+		while ((ft_isalnum(str[*i + len]) || str[*i + len] == '_') && str[*i + len] != '$')
 			len++;
 	}
 	if (len == 0)
@@ -77,11 +77,8 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 	var_name = get_var_name(str, i);
 	result = get_var_value(var_name, exit_status, envp);
 	free(var_name);
-	if (!result || !result[0])
-	{
-		free(result);
+	if (!result)
 		return (NULL);
-	}
 	return (result);
 }
 
