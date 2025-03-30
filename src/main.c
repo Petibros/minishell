@@ -52,6 +52,11 @@ int	main(int argc, char **argv, char **envp)
 		if (get_prompt(vars) == -1)
 			break ;
 		vars->line = readline(vars->prompt);
+		if (!vars->line)
+		{
+			free(vars->prompt);
+			break;
+		}
 		add_history(vars->line);
 		parse_line(vars);
 		execute(vars, vars->cmd.cmds);
