@@ -60,7 +60,11 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 		return (ft_itoa(exit_status));
 	}
 	if (!ft_isalnum(str[*i]) && str[*i] != '_')
+	{
+		if (str[*i] == '"' || str[*i] == '\'')
+			return (ft_strdup(""));
 		return (ft_strdup("$"));
+	}
 	var_name = get_var_name(str, i);
 	result = get_var_value(var_name, exit_status, envp);
 	free(var_name);

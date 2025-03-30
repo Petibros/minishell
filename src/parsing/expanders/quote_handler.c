@@ -38,6 +38,7 @@ static char	*process_double_quote_content(t_quote_ctx *ctx)
 			if (start != *(ctx->i))
 				ctx->result = append_substring(ctx->result, ctx->str, \
 												start, *(ctx->i));
+			(*(ctx->i))++; // Skip the $ character
 			ctx->result = handle_dollar_in_dquote(ctx);
 			start = *(ctx->i);
 		}
