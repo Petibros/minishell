@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include "parsing.h"
+#include "print_ast.h"
 
 int	parse_line(t_vars *vars)
 {
@@ -32,6 +33,11 @@ int	parse_line(t_vars *vars)
 								vars->env.envp);
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
+	/*
+	printf("\nAST Structure:\n");
+	print_ast_node(vars->cmd.cmds);
+	printf("\n");
+	*/
 	free_token(tokens);
 	return (1);
 }

@@ -64,7 +64,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/expansion_quote_utils.c \
 					src/parsing/utils/wildcard_utils.c \
 					src/parsing/utils/wildcard_utils2.c \
-					src/parsing/utils/quote_handler_utils.c
+					src/parsing/utils/quote_handler_utils.c \
+					src/parsing/utils/print_ast.c
 
 CFILES_FREE =		src/free/free.c
 
