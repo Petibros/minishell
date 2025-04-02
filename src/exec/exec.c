@@ -6,17 +6,19 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/28 00:59:06 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 01:07:10 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pipe_out);
+static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
+				bool pipe_in, bool pipe_out);
 
-static int	recursive_call(t_vars *vars, t_nodes *cmds, bool is_pipe[2], bool call_left)
+static int	recursive_call(t_vars *vars, t_nodes *cmds,
+		bool is_pipe[2], bool call_left)
 {
-	int res;
+	int	res;
 
 	if (call_left)
 	{
@@ -47,20 +49,19 @@ static void	init_pipes(int pipes[2][2])
 	pipes[1][1] = 0;
 }
 
-static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pipe_out)
+static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
+		bool pipe_in, bool pipe_out)
 {
 	int	status;
 	int	res;
 
 	if (g_signal_received == SIGINT)
 		return (130);
-
 	if (cmds && cmds->is_operator)
 	{
 		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
 		if (res == 130)
 			return (130);
-
 		if (cmds->operator_type != TOKEN_PIPE)
 		{
 			if (cmds->operator_type == TOKEN_OR)
@@ -77,7 +78,8 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pi
 			}
 			else
 			{
-				vars->cmd.last_exit_status = wait_processes();
+				vars->cmd.last_exit_status
+					= wait_processes(vars->cmd.last_exit_status);
 				if (vars->cmd.last_exit_status == 130)
 					return (130);
 			}
@@ -91,7 +93,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pi
 	return (0);
 }
 
-int	wait_processes(void)
+int	wait_processes(int last_known_exit_status)
 {
 	int	status;
 	int	pid;
@@ -116,7 +118,7 @@ int	wait_processes(void)
 		return (130);
 	}
 	if (!last_status)
-		return (0);
+		return (last_known_exit_status);
 	return (WEXITSTATUS(last_status));
 }
 
@@ -131,7 +133,7 @@ int	execute(t_vars *vars, t_nodes *cmds)
 		g_signal_received = 0;
 		return (130);
 	}
-	vars->cmd.last_exit_status = wait_processes();
+	vars->cmd.last_exit_status = wait_processes(vars->cmd.last_exit_status);
 	if (vars->cmd.last_exit_status == 130)
 	{
 		close_pipe(vars->cmd.pipes, 3);

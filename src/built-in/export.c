@@ -6,39 +6,39 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/27 22:01:37 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 00:38:52 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	already_exists(char **argv, char **envp, int var_len)
+static int	already_exists(char **argv, char **envp,
+		int var_len, int concatenate)
 {
 	int		i;
+	char	*tmp;
 
+	if (argv[1][var_len] == '+')
+		concatenate = 1;
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(argv[1], envp[i], var_len) == 0)
+		if (ft_strncmp(argv[1], envp[i], var_len) == 0
+			&& envp[i][var_len] == '=')
 		{
+			if (concatenate)
+				tmp = ft_strjoin(envp[i], &argv[1][var_len + 2]);
+			else
+				tmp = ft_strdup(argv[1]);
 			free(envp[i]);
-			envp[i] = ft_strdup(argv[1]);
+			envp[i] = tmp;
 			if (!envp[i])
-			{
-				perror("export.c, already_exists(), l.25");
-				++i;
-				while (envp[i])
-				{
-					free(envp[i]);
-					++i;
-				}
-				return (-1);
-			}
-			return (1);
+				return (i);
+			return (-1);
 		}
 		++i;
 	}
-	return (0);
+	return (-2);
 }
 
 static char	**alloc_new_array(char **envp, int size)
@@ -48,23 +48,17 @@ static char	**alloc_new_array(char **envp, int size)
 
 	i = 0;
 	new_array = malloc((size + 1) * sizeof(char *));
-	while (new_array && envp[i])
+	if (!new_array)
 	{
-		new_array[i] = ft_strdup(envp[i]);
-		if (!new_array[i])
-		{
-			--i;
-			while (i > 0)
-			{
-				free(new_array[i]);
-				--i;
-			}
-			free(new_array);
-			new_array = NULL;
-		}
+		perror("export.c: alloc_new_array()");
+		return (NULL);
+	}
+	while (envp[i])
+	{
+		new_array[i] = envp[i];
 		++i;
 	}
-	free_string_array(envp);
+	free(envp);
 	return (new_array);
 }
 
@@ -75,28 +69,37 @@ static int	is_valid(char **argv)
 	i = 0;
 	while (argv[1][i] && (ft_isalpha(argv[1][i]) || argv[1][i] == '_'))
 		++i;
-	if (argv[1][i] != '=' || i == 0)
+	if (argv[1][i] != '=' ||
+		(argv[1][i] == '+' && argv[1][i + 1] != '=') || i == 0)
 	{
 		write(2, "minishell: export: ", 19);
 		write(2, argv[1], ft_strlen(argv[1]));
 		write(2, ": not a valid identifier\n", 25);
 		return (-1);
 	}
-	return (i + 1);
+	return (i);
 }
 
-static int	solely_export(char **envp)
+static int	add_var(char **argv, char ***envp, t_vars *vars, int i)
 {
-	int	i;
-	int	var_len;
+	char	**tmp_array;
 
-	i = 0;
-	while (envp[i])
+	if (vars->env.current_size >= vars->env.alloc_size)
 	{
-		var_len = ft_strnlen(envp[i], '=') + 1;
-		printf("declare -x %.*s\"%s\"\n", var_len, envp[i], &envp[i][var_len]);
-		++i;
+		tmp_array = alloc_new_array(*envp, vars->env.alloc_size);
+		if (!tmp_array)
+			return (-1);
+		++vars->env.alloc_size;
+		*envp = tmp_array;
 	}
+	(*envp)[vars->env.current_size + 1] = NULL;
+	(*envp)[vars->env.current_size] = ft_strdup(argv[i + 1]);
+	if (!(*envp)[vars->env.current_size])
+	{
+		perror("export.c, l.119");
+		return (-1);
+	}
+	++vars->env.current_size;
 	return (1);
 }
 
@@ -118,34 +121,13 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 			vars->cmd.last_exit_status = 1;
 			continue ;
 		}
-		status = already_exists(&argv[i], *envp, ft_strnlen(argv[i + 1], '=') + 1);
-		if (status == 1)
+		status = already_exists(&argv[i], *envp, status, 0);
+		if (status == -1)
 			continue ;
-		else if (status == -1)
-		{
-			vars->cmd.last_exit_status = 1;
-			continue ;
-		}
-		if (vars->env.current_size >= vars->env.alloc_size)
-		{
-			++vars->env.alloc_size;
-			*envp = alloc_new_array(*envp, vars->env.alloc_size);
-			if (!*envp)
-			{
-				perror("export.c, alloc_new_array");
-				vars->cmd.last_exit_status = 1;
-				continue ;
-			}
-		}
-		(*envp)[vars->env.current_size + 1] = NULL;
-		(*envp)[vars->env.current_size] = ft_strdup(argv[i + 1]);
-		if (!(*envp)[vars->env.current_size])
-		{
-			perror("export.c, l.119");
-			vars->cmd.last_exit_status = 1;
-			continue ;
-		}
-		++vars->env.current_size;
+		else if (status >= 0)
+			return (unset_null(*envp, status, &vars->env.current_size));
+		if (add_var(argv, envp, vars, i) == -1)
+			return (-1);
 	}
-	return (1);
+	return (vars->cmd.last_exit_status);
 }
