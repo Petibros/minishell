@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/03/25 22:06:31 by sacha            ###   ########.fr        #
+#    Updated: 2025/04/02 20:53:28 by sacha            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/exit.c \
 					src/built-in/cd.c \
 					src/built-in/export.c \
+					src/built-in/export_utils.c \
 					src/built-in/echo.c
 
 CFILES_EXEC =		src/exec/exec.c \

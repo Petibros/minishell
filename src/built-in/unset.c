@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:04:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/27 23:46:04 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/02 20:40:44 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	is_unset(char **argv, char *env)
 	return (0);
 }
 
-void	unset(char **argv, t_vars *vars)
+int	unset(char **argv, t_vars *vars)
 {
 	int	i;
 	int	tmp_i;
@@ -48,4 +48,5 @@ void	unset(char **argv, t_vars *vars)
 		}
 		++i;
 	}
+	return (0);
 }

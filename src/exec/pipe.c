@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/29 05:09:53 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/02 23:30:09 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,20 +117,71 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 	return (status);
 }
 
+static int	which_built_in(char **argv)
+{
+	if (ft_strncmp(argv[0], "export", 7) == 0)
+		return (1);
+	else if (ft_strncmp(argv[0], "unset", 6) == 0)
+		return (2);
+	else if (ft_strncmp(argv[0], "cd", 3) == 0)
+		return (3);
+	else if (ft_strncmp(argv[0], "exit", 5) == 0)
+		return (4);
+	return (0);
+}
+
+static int	is_built_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
+{
+	int	status;
+
+	status = which_built_in(cmds->argv);
+	if (!status)
+		return (-2);
+	if (is_pipe[0] || is_pipe[1])
+		return (1);
+	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+	{
+		vars->cmd.last_exit_status = 1;
+		return (1);
+	}
+	if (status == 1)
+		status = export_var(cmds->argv, &vars->env.envp, vars);
+	else if (status == 2)
+		status = unset(cmds->argv, vars);
+	else if (status == 3)
+		status = cd(cmds->argv, vars);
+	else if (status == 4)
+		status = exit_built_in(cmds->argv, vars);
+	if (status != -1)
+		vars->cmd.last_exit_status = status;
+	return (status);
+}
+
 int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 {
-	int		pid;
+	int	pid;
+	int	status;
 
+	status = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
-	pid = fork();
-	if (pid == -1)
-		return (-1);
-	if (pid == 0)
-		exec_cmd(vars, cmds, vars->cmd.pipes);
+	status = is_built_in(vars, cmds, is_pipe);
+	if (status == -1)
+		perror("malloc error");
+	if (status == -2)
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("error during fork");
+			return (-1);
+		}
+		if (pid == 0)
+			exec_cmd(vars, cmds, vars->cmd.pipes);
+		vars->cmd.last_pid = pid;
+	}
 	close_fds(vars->cmd.pipes, vars);
-	vars->cmd.last_pid = pid;
-	return (0);
+	return (status);
 }
