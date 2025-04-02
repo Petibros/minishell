@@ -13,31 +13,37 @@
 #include "parsing.h"
 #include "expander.h"
 
-static void	expand_single_arg(char **arg, int exit_status, char **envp)
-{
-	char	*expanded;
-
-	if (ft_strchr(*arg, '$'))
-	{
-		expanded = expand_variables(*arg, exit_status, envp);
-		if (expanded)
-		{
-			free(*arg);
-			*arg = expanded;
-		}
-	}
-}
-
 static void	expand_argv(char **argv, int exit_status, char **envp)
 {
 	int	i;
+	int	j;
+	char	*expanded;
 
 	i = 0;
+	j = 0;
 	while (argv[i])
 	{
-		expand_single_arg(&argv[i], exit_status, envp);
+		if (ft_strchr(argv[i], '$'))
+		{
+			expanded = expand_variables(argv[i], exit_status, envp);
+			if (expanded)
+			{
+				free(argv[i]);
+				argv[j] = expanded;
+				j++;
+			}
+			else
+				free(argv[i]);
+		}
+		else
+		{
+			if (i != j)
+				argv[j] = argv[i];
+			j++;
+		}
 		i++;
 	}
+	argv[j] = NULL;
 }
 
 void	expand_variables_in_node(t_nodes *node, int exit_status, char **envp)
@@ -47,11 +53,6 @@ void	expand_variables_in_node(t_nodes *node, int exit_status, char **envp)
 	if (node->argv)
 	{
 		expand_argv(node->argv, exit_status, envp);
-		if (node->cmd && node->argv[0])
-		{
-			free(node->cmd);
-			node->cmd = ft_strdup(node->argv[0]);
-		}
 	}
 	if (node->left)
 		expand_variables_in_node(node->left, exit_status, envp);

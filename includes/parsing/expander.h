@@ -57,7 +57,6 @@ char		*handle_double_quote_char(t_quote_ctx *ctx);
 
 // quote_utils.c
 char		*handle_single_quote(char *str, int *i, char *result);
-char		*handle_double_quote(t_quote_ctx *ctx);
 
 // quote_handler_utils.c
 char		*append_substring(char *result, char *str, int start, int end);

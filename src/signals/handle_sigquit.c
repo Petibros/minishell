@@ -1,31 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_node.c                                      :+:      :+:    :+:   */
+/*   handle_sigquit.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 03:18:12 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:18:12 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/29 08:08:19 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/29 08:08:19 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#include "signals.h"
 
-t_nodes	*create_parser_node(void)
+/* handle ctrl-\ */
+/* PS: Sur mon ordi ctrl + altgt + \ ne marche pas */
+void	handle_sigquit(int sig)
 {
-	t_nodes	*node;
-
-	node = malloc(sizeof(t_nodes));
-	if (!node)
-		return (NULL);
-	node->argv = NULL;
-	node->file_in = NULL;
-	node->file_out = NULL;
-	node->heredoc = NULL;
-	node->is_operator = 0;
-	node->operator_type = TOKEN_EOF;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	(void)sig;
+	g_signal_received = SIGQUIT;
+	printf("Signal: ctrl-\\\n");
 }

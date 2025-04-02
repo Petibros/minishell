@@ -13,7 +13,6 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-# include "types.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -22,12 +21,11 @@
 # include <sys/stat.h>
 # include <dirent.h>
 # include "libft.h"
-# include "minishell.h"
-# include "lexer.h"
 # include "parser.h"
 # include "nodes.h"
 # include "utils.h"
 # include "expander.h"
 # include "wildcard_expander.h"
+# include "minishell.h"
 
 #endif

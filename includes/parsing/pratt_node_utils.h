@@ -1,31 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pratt_node.c                                       :+:      :+:    :+:   */
+/*   pratt_node_utils.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <npapash@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/22 03:11:38 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/22 03:11:38 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/29 07:22:14 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/29 07:22:14 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#ifndef PRATT_NODE_UTILS_H
+# define PRATT_NODE_UTILS_H
 
-t_nodes	*create_node(void)
-{
-	t_nodes	*node;
+# include "types.h"
 
-	node = malloc(sizeof(t_nodes));
-	if (!node)
-		return (NULL);
-	node->argv = NULL;
-	node->file_in = NULL;
-	node->file_out = NULL;
-	node->heredoc = NULL;
-	node->is_operator = 0;
-	node->operator_type = TOKEN_EOF;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
-}
+char		*get_operator_string(t_token_type op_type);
+t_nodes		*init_op_node(t_nodes *node, t_nodes *left,
+				t_nodes *right, t_token_type op_type);
+t_nodes		*init_cmd_argv(t_nodes *node, t_token *start, int argc);
+
+#endif

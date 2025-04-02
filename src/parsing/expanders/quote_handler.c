@@ -20,7 +20,8 @@ static char	*handle_dollar_in_dquote(t_quote_ctx *ctx)
 	tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
 	if (tmp)
 	{
-		ctx->result = ft_strjoin_free(ctx->result, tmp);
+		if (tmp[0] != '\0' || ctx->str[*(ctx->i)] == '"')
+			ctx->result = ft_strjoin_free(ctx->result, tmp);
 		free(tmp);
 	}
 	return (ctx->result);
@@ -29,11 +30,19 @@ static char	*handle_dollar_in_dquote(t_quote_ctx *ctx)
 static char	*process_double_quote_content(t_quote_ctx *ctx)
 {
 	int		start;
+	char	*tmp;
 
+	tmp = ft_strjoin_free(ctx->result, "\"");
+	if (!tmp)
+		return (NULL);
+	ctx->result = tmp;
 	start = *(ctx->i);
 	while (ctx->str[*(ctx->i)] && ctx->str[*(ctx->i)] != '"')
 	{
-		if (ctx->str[*(ctx->i)] == '$')
+		if (ctx->str[*(ctx->i)] == '$' && 
+			(ft_isalpha(ctx->str[*(ctx->i) + 1]) || 
+			ctx->str[*(ctx->i) + 1] == '_' || 
+			ctx->str[*(ctx->i) + 1] == '?'))
 		{
 			if (start != *(ctx->i))
 				ctx->result = append_substring(ctx->result, ctx->str, \
@@ -44,9 +53,14 @@ static char	*process_double_quote_content(t_quote_ctx *ctx)
 		else
 			(*(ctx->i))++;
 	}
-	if (ctx->str[*(ctx->i)] == '"' && start != *(ctx->i))
+	if (ctx->str[*(ctx->i)] == '"')
 	{
-		ctx->result = append_substring(ctx->result, ctx->str, start, *(ctx->i));
+		if (start != *(ctx->i))
+			ctx->result = append_substring(ctx->result, ctx->str, start, *(ctx->i));
+		tmp = ft_strjoin_free(ctx->result, "\"");
+		if (!tmp)
+			return (NULL);
+		ctx->result = tmp;
 		(*(ctx->i))++;
 	}
 	return (ctx->result);

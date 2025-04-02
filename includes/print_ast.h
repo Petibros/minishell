@@ -1,31 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pratt_node.c                                       :+:      :+:    :+:   */
+/*   print_ast.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <npapash@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/22 03:11:38 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/22 03:11:38 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/31 08:27:15 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/31 08:27:15 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#ifndef PRINT_AST_H
+# define PRINT_AST_H
 
-t_nodes	*create_node(void)
-{
-	t_nodes	*node;
+# include "parsing/types.h"
 
-	node = malloc(sizeof(t_nodes));
-	if (!node)
-		return (NULL);
-	node->argv = NULL;
-	node->file_in = NULL;
-	node->file_out = NULL;
-	node->heredoc = NULL;
-	node->is_operator = 0;
-	node->operator_type = TOKEN_EOF;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
-}
+void	print_ast_node(t_nodes *node);
+
+#endif

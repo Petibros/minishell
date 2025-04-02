@@ -79,13 +79,12 @@ void	expand_node_wildcards(t_nodes *node)
 	j = 0;
 	while (node->argv[i])
 	{
-		count_and_expand_entry(node->argv[i], new_argv, &j);
+		expand_wildcard_entry(node->argv[i], new_argv, &j);
 		i++;
 	}
 	new_argv[j] = NULL;
 	free_array(node->argv);
 	node->argv = new_argv;
-	update_node_cmd(node);
 }
 
 void	expand_wildcards(t_nodes *node)

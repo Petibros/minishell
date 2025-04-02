@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_node.c                                      :+:      :+:    :+:   */
+/*   signals.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 03:18:12 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:18:12 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/23 08:02:42 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/23 08:02:42 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#ifndef SIGNALS_H
+# define SIGNALS_H
 
-t_nodes	*create_parser_node(void)
-{
-	t_nodes	*node;
+# include <signal.h>
+# include <stdio.h>
 
-	node = malloc(sizeof(t_nodes));
-	if (!node)
-		return (NULL);
-	node->argv = NULL;
-	node->file_in = NULL;
-	node->file_out = NULL;
-	node->heredoc = NULL;
-	node->is_operator = 0;
-	node->operator_type = TOKEN_EOF;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
-}
+void	setup_signals(void);
+void	reset_signals(void);
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+void	ignore_signals(void);
+
+extern int  g_signal_received;
+
+#endif

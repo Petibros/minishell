@@ -52,6 +52,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/expanders/wildcard_expander.c \
 					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/nodes/pratt_node.c \
+					src/parsing/nodes/pratt_node_op.c \
+					src/parsing/nodes/pratt_node_cmd.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/quote_utils.c \
 					src/parsing/utils/quote_utils2.c \
@@ -63,16 +65,21 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/expansion_quote_utils.c \
 					src/parsing/utils/wildcard_utils.c \
 					src/parsing/utils/wildcard_utils2.c \
-					src/parsing/utils/quote_handler_utils.c
+					src/parsing/utils/quote_handler_utils.c \
+					src/parsing/utils/print_ast.c
 
 CFILES_FREE =		src/free/free.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o)
+CFILES_SIGNALS =	src/signals/signals.c \
+				src/signals/handle_sigint.c \
+				src/signals/handle_sigquit.c
+
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
 HEADER_LIBFT = libft/libft.h 
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)

@@ -23,7 +23,8 @@ int		has_unquoted_wildcard(char *str);
 int		copy_expanded_entries(char **new_argv, int j, char *arg);
 
 // Functions from wildcard_utils2.c
-int		count_and_expand_entry(char *arg, char **new_argv, int *j);
+int		expand_wildcard_entry(char *arg, char **new_argv, int *j);
+int		process_directory_entries(char *arg, char **new_argv, int *j);
 void	update_node_cmd(t_nodes *node);
 
 #endif

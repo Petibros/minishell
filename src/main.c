@@ -37,6 +37,7 @@ int	main(int argc, char **argv, char **envp)
 	(void) argv;
 	if (argc > 1 || !envp)
 		return (1);
+	setup_signals();
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
@@ -51,6 +52,11 @@ int	main(int argc, char **argv, char **envp)
 		if (get_prompt(vars) == -1)
 			break ;
 		vars->line = readline(vars->prompt);
+		if (!vars->line)
+		{
+			free(vars->prompt);
+			break;
+		}
 		add_history(vars->line);
 		parse_line(vars);
 		execute(vars, vars->cmd.cmds);

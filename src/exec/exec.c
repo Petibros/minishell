@@ -6,34 +6,39 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 23:01:32 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 01:07:10 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pipe_out);
+static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
+				bool pipe_in, bool pipe_out);
 
-static void	recursive_call(t_vars *vars, t_nodes *cmds, bool is_pipe[2], bool call_left)
+static int	recursive_call(t_vars *vars, t_nodes *cmds,
+		bool is_pipe[2], bool call_left)
 {
+	int	res;
+
 	if (call_left)
 	{
 		if (cmds->operator_type == TOKEN_PIPE)
-			search_binary_tree(vars, cmds->left, false, true);
+			res = search_binary_tree(vars, cmds->left, false, true);
 		else if (cmds->operator_type == TOKEN_OR)
-			search_binary_tree(vars, cmds->left, is_pipe[0], is_pipe[1]);
+			res = search_binary_tree(vars, cmds->left, is_pipe[0], is_pipe[1]);
 		else
-			search_binary_tree(vars, cmds->left, is_pipe[0], false);
+			res = search_binary_tree(vars, cmds->left, is_pipe[0], false);
 	}
 	else
 	{
 		if (cmds->operator_type == TOKEN_PIPE)
-			search_binary_tree(vars, cmds->right, true, is_pipe[1]);
+			res = search_binary_tree(vars, cmds->right, true, is_pipe[1]);
 		else if (cmds->operator_type == TOKEN_OR)
-			search_binary_tree(vars, cmds->right, is_pipe[0], is_pipe[1]);
+			res = search_binary_tree(vars, cmds->right, is_pipe[0], is_pipe[1]);
 		else
-			search_binary_tree(vars, cmds->right, false, is_pipe[1]);
+			res = search_binary_tree(vars, cmds->right, false, is_pipe[1]);
 	}
+	return (res);
 }
 
 static void	init_pipes(int pipes[2][2])
@@ -44,26 +49,44 @@ static void	init_pipes(int pipes[2][2])
 	pipes[1][1] = 0;
 }
 
-static int	search_binary_tree(t_vars *vars, t_nodes *cmds, bool pipe_in, bool pipe_out)
+static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
+		bool pipe_in, bool pipe_out)
 {
 	int	status;
+	int	res;
 
+	if (g_signal_received == SIGINT)
+		return (130);
 	if (cmds && cmds->is_operator)
 	{
-		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
+		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
+		if (res == 130)
+			return (130);
 		if (cmds->operator_type != TOKEN_PIPE)
 		{
 			if (cmds->operator_type == TOKEN_OR)
 			{
 				waitpid(vars->cmd.last_pid, &status, 0);
+				if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+				{
+					vars->cmd.last_exit_status = 130;
+					return (130);
+				}
 				vars->cmd.last_exit_status = WEXITSTATUS(status);
 				if (vars->cmd.last_exit_status == 0)
 					return (0);
 			}
 			else
-				vars->cmd.last_exit_status = wait_processes(vars->cmd.last_exit_status);
+			{
+				vars->cmd.last_exit_status
+					= wait_processes(vars->cmd.last_exit_status);
+				if (vars->cmd.last_exit_status == 130)
+					return (130);
+			}
 		}
-		recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);
+		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);
+		if (res == 130)
+			return (130);
 	}
 	else if (cmds)
 		exec_routine(vars, cmds, (bool[2]){pipe_in, pipe_out});
@@ -89,6 +112,11 @@ int	wait_processes(int last_known_exit_status)
 		}
 		pid = waitpid(-1, &status, 0);
 	}
+	if (WIFSIGNALED(last_status) && WTERMSIG(last_status) == SIGINT)
+	{
+		g_signal_received = SIGINT;
+		return (130);
+	}
 	if (!last_status)
 		return (last_known_exit_status);
 	return (WEXITSTATUS(last_status));
@@ -98,8 +126,21 @@ int	execute(t_vars *vars, t_nodes *cmds)
 {
 	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
-	search_binary_tree(vars, cmds, false, false);
+	if (search_binary_tree(vars, cmds, false, false) == 130)
+	{
+		close_pipe(vars->cmd.pipes, 3);
+		free_branch(vars->cmd.cmds, NULL);
+		g_signal_received = 0;
+		return (130);
+	}
 	vars->cmd.last_exit_status = wait_processes(vars->cmd.last_exit_status);
+	if (vars->cmd.last_exit_status == 130)
+	{
+		close_pipe(vars->cmd.pipes, 3);
+		free_branch(vars->cmd.cmds, NULL);
+		g_signal_received = 0;
+		return (130);
+	}
 	close_pipe(vars->cmd.pipes, 3);
 	free_branch(vars->cmd.cmds, NULL);
 	return (0);

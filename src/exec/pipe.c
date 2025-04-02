@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 23:30:09 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 00:51:03 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,10 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 			return (-1);
 		}
 		if (pid == 0)
+		{
+			signal(SIGINT, SIG_DFL);
 			exec_cmd(vars, cmds, vars->cmd.pipes);
+		}
 		vars->cmd.last_pid = pid;
 	}
 	close_fds(vars->cmd.pipes, vars);

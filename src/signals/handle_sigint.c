@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_node.c                                      :+:      :+:    :+:   */
+/*   handle_sigint.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 03:18:12 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:18:12 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/29 08:08:19 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/29 08:08:19 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#include "signals.h"
+#include <readline/readline.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
-t_nodes	*create_parser_node(void)
+/* handle ctrl-c */
+void	handle_sigint(int sig)
 {
-	t_nodes	*node;
-
-	node = malloc(sizeof(t_nodes));
-	if (!node)
-		return (NULL);
-	node->argv = NULL;
-	node->file_in = NULL;
-	node->file_out = NULL;
-	node->heredoc = NULL;
-	node->is_operator = 0;
-	node->operator_type = TOKEN_EOF;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	(void)sig;
+	g_signal_received = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
+	if (waitpid(-1, NULL, WNOHANG) == -1) {
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		g_signal_received = 0;
+	}
 }
