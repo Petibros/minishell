@@ -65,6 +65,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	rl_clear_history();
 	status = vars->cmd.last_exit_status;
-	free_all(vars, NULL, false);
+	exit_and_free(vars, status);
 	return (status);
 }
