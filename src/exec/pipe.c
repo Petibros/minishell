@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 01:34:50 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 04:42:58 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 	char	**to_export;
 	int		status;
 
-	to_export = malloc(2 * sizeof(char *));
+	to_export = malloc(3 * sizeof(char *));
 	if (!to_export)
 		return (-1);
 	to_export[0] = "export";

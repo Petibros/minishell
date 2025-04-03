@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 00:39:23 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 07:55:05 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	pwd(char **argv, char **envp);
 int		unset(char **argv, t_vars *vars);
 void	env(char **argv, char **envp);
 int		exit_built_in(char **argv, t_vars *vars);
+char	*get_var(char *argv);
 //EXECUTION
 void	here_doc(int fd, char *limiter);
 int		execute(t_vars *vars, t_nodes *cmds);

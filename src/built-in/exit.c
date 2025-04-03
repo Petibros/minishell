@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:36:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 21:38:40 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 05:17:28 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ int	exit_built_in(char **argv, t_vars *vars)
 	if (argv[1] && argv[2])
 	{
 		write(2, "exit: too many arguments\n", 25);
-		return (1);
+		vars->cmd.last_exit_status = 2;
+		return (2);
 	}
 	if (argv[1])
 	{
@@ -72,6 +73,7 @@ int	exit_built_in(char **argv, t_vars *vars)
 			write(2, "exit: ", 5);
 			write(2, argv[1], ft_strlen(argv[1]));
 			write(2, ": numeric argument required\n", 28);
+			exit_status = 2;
 		}
 	}
 	exit_and_free(vars, exit_status);

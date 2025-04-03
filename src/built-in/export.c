@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 00:38:52 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 07:19:26 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ static int	is_valid(char **argv)
 	i = 0;
 	while (argv[1][i] && (ft_isalpha(argv[1][i]) || argv[1][i] == '_'))
 		++i;
-	if (argv[1][i] != '=' ||
-		(argv[1][i] == '+' && argv[1][i + 1] != '=') || i == 0)
+	if ((argv[1][i] != '=' && (argv[1][i] != '+'
+		&& argv[1][i + 1] != '=')) || i == 0)
 	{
 		write(2, "minishell: export: ", 19);
 		write(2, argv[1], ft_strlen(argv[1]));
@@ -93,7 +93,7 @@ static int	add_var(char **argv, char ***envp, t_vars *vars, int i)
 		*envp = tmp_array;
 	}
 	(*envp)[vars->env.current_size + 1] = NULL;
-	(*envp)[vars->env.current_size] = ft_strdup(argv[i + 1]);
+	(*envp)[vars->env.current_size] = get_var(argv[i + 1]);
 	if (!(*envp)[vars->env.current_size])
 	{
 		perror("export.c, l.119");

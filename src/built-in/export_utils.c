@@ -27,3 +27,24 @@ int	solely_export(char **envp)
 	}
 	return (0);
 }
+
+char	*get_var(char *argv)
+{
+	int		var_len;
+	char	*var;
+	char	*value;
+	char	*env;
+
+	var_len = ft_strnlen(argv, '=') - 1;
+	if (argv[var_len] == '+')
+	{
+		var = ft_substr(argv, 0, var_len);
+		value = &argv[var_len + 1];
+		env = ft_strjoin(var, value);
+		if (var)
+			free(var);
+		return (env);
+	}
+	else
+		return (ft_strdup(argv));
+}
