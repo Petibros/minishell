@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/27 23:37:41 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 01:50:49 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	free_vars(t_vars *vars)
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	*vars;
+	int		status;
 
 	(void) argv;
 	if (argc > 1 || !envp)
@@ -53,10 +54,9 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		vars->line = readline(vars->prompt);
 		if (!vars->line)
-		{
-			free(vars->prompt);
-			break;
-		}
+			break ;
+		if (!vars->line[0])
+			continue ;
 		add_history(vars->line);
 		parse_line(vars);
 		execute(vars, vars->cmd.cmds);
@@ -64,5 +64,7 @@ int	main(int argc, char **argv, char **envp)
 		free(vars->prompt);
 	}
 	rl_clear_history();
-	free_vars(vars);
+	status = vars->cmd.last_exit_status;
+	free_all(vars, NULL, false);
+	return (status);
 }

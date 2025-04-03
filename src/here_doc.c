@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 20:30:13 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/28 03:22:55 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/03 02:14:24 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,7 @@ char	*get_tmp(void)
 			return (NULL);
 		++tmp_path[i];
 	}
-	heredoc_path = malloc(32);
-	if (heredoc_path)
-		ft_strlcpy(heredoc_path, tmp_path, 32);
+	heredoc_path = ft_strdup(tmp_path);
 	return (heredoc_path);
 }
 
