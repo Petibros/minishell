@@ -143,5 +143,6 @@ int	execute(t_vars *vars, t_nodes *cmds)
 	}
 	close_pipe(vars->cmd.pipes, 3);
 	free_branch(vars->cmd.cmds, NULL);
+	vars->cmd.cmds = NULL;
 	return (0);
 }
