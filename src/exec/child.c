@@ -6,13 +6,11 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 23:28:32 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/04 22:11:23 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-//BIEN PENSER A FAIRE LES FREE ET CLOSES QUAND TU AURAS FINI
 
 static int	path_index(char **envp)
 {
@@ -35,7 +33,7 @@ static char	*get_path(char *cmd, char **envp)
 
 	i = path_index(envp);
 	if (i == -1)
-		return (NULL);
+		return (ft_strjoin("./", cmd));
 	paths = ft_split(&envp[i][5], ':');
 	i = 0;
 	to_join = ft_strjoin("/", cmd);
@@ -73,7 +71,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 
 	argv = cmds->argv;
 	envp = vars->env.envp;
-	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+	if (!argv || vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
 		exit_fd_error(vars, pipes);//fonction qui free tout les pointeurs du processus fils
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);

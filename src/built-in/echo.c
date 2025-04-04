@@ -1,11 +1,27 @@
 #include "minishell.h"
 
+static int	is_option(char *str)
+{
+	int	i;
+
+	i = 1;
+	if (*str != '-')
+		return (0);
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		++i;
+	}
+	return (1);
+}
+
 static int	get_beginning(char **argv, bool *option)
 {
 	int	i;
 
 	i = 1;
-	while (argv[i] && ft_strncmp(argv[i], "-n", 3) == 0)
+	while (argv[i] && is_option(argv[i]))
 	{
 		*option = true;
 		++i;

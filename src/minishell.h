@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 07:55:05 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/04 23:48:56 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_cmds
 	int				last_pid;
 	int				pipes[2][2];
 	int				pipes_count;
+	bool			is_heredoc;
 	int				fd_in;
 	int				fd_out;
 }	t_cmds;
@@ -88,7 +89,8 @@ void	env(char **argv, char **envp);
 int		exit_built_in(char **argv, t_vars *vars);
 char	*get_var(char *argv);
 //EXECUTION
-void	here_doc(int fd, char *limiter);
+void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd);
+void	here_doc(int fd, char *limiter, char *heredoc_path);
 int		execute(t_vars *vars, t_nodes *cmds);
 int		exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2]);
 void	close_pipe(int pipes[2][2], int to_close);

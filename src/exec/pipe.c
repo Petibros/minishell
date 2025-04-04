@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 04:42:58 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/04 23:50:11 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,24 +39,15 @@ void	close_pipe(int pipes[2][2], int to_close)
 	}
 }
 
-void	open_fd(t_redir **redirs, int *fd, int fd_type)
+void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
 {
-	char	*heredoc_path;
 	t_redir	*files;
 
 	files = *redirs;
-	while (files)
+	while (files && *fd != -1)
 	{
 		if (fd_type == 2)
-		{
-			heredoc_path = get_tmp();//fichier tmp pour le heredoc
-			*fd = open(heredoc_path, O_TRUNC | O_WRONLY | O_CREAT, 0777);
-			here_doc(*fd, files->filename);
-			close(*fd);
-			*fd = open(heredoc_path, O_RDONLY);
-			unlink(heredoc_path);
-			free(heredoc_path);
-		}
+			heredoc_gestion(vars, files, fd);
 		else if (fd_type == 3 && files->append)
 			*fd = open(files->filename, O_WRONLY | O_APPEND | O_CREAT, 0777);
 		else if (fd_type == 3)
@@ -74,10 +65,10 @@ void	open_fd(t_redir **redirs, int *fd, int fd_type)
 static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
 {
 	*fd_in = 0;
+	if (cmds->heredoc)
+		open_fd(&cmds->heredoc, fd_in, 2, vars);
 	if (cmds->file_in)
-		open_fd(&cmds->file_in, fd_in, 1);
-	else if (cmds->heredoc)
-		open_fd(&cmds->heredoc, fd_in, 2);
+		open_fd(&cmds->file_in, fd_in, 1, vars);
 	else if (is_pipe[0] == true)
 		*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
 }
@@ -86,7 +77,7 @@ static void	get_fd_out(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_out
 {
 	*fd_out = 1;
 	if (cmds->file_out)
-		open_fd(&cmds->file_out, fd_out, 3);
+		open_fd(&cmds->file_out, fd_out, 3, vars);
 	else if (is_pipe[1] == true)
 	{
 		++vars->cmd.pipes_count;
