@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 01:27:23 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/06 21:02:35 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,14 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 	int	status;
 	int	res;
 
+	res = 0;
 	if (g_signal_received == SIGINT)
 		return (130);
 	if (cmds && cmds->is_operator)
 	{
 		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, true);
-		if (res == 130)
-			return (130);
+		if (res == -1 || res == 130)
+			return (res);
 		if (cmds->operator_type != TOKEN_PIPE)
 		{
 			if (cmds->operator_type == TOKEN_OR)
@@ -85,12 +86,12 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 			}
 		}
 		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);
-		if (res == 130)
-			return (130);
+		if (res == -1 || res == 130)
+			return (res);
 	}
 	else if (cmds)
-		exec_routine(vars, cmds, (bool[2]){pipe_in, pipe_out});
-	return (0);
+		res = exec_routine(vars, cmds, (bool[2]){pipe_in, pipe_out});
+	return (res);
 }
 
 int	wait_processes(int last_known_exit_status)
@@ -122,27 +123,31 @@ int	wait_processes(int last_known_exit_status)
 	return (WEXITSTATUS(last_status));
 }
 
-int	execute(t_vars *vars, t_nodes *cmds)
+void	execute(t_vars *vars, t_nodes *cmds)
 {
+	int	status;
+
 	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
-	if (search_binary_tree(vars, cmds, false, false) == 130)
+	status = search_binary_tree(vars, cmds, false, false);
+	if (status == 130 || status == -1)
 	{
 		close_pipe(vars->cmd.pipes, 3);
 		free_branch(vars->cmd.cmds, NULL);
+		vars->cmd.cmds = NULL;
 		g_signal_received = 0;
-		return (130);
+		return ;
 	}
 	vars->cmd.last_exit_status = wait_processes(vars->cmd.last_exit_status);
 	if (vars->cmd.last_exit_status == 130)
 	{
 		close_pipe(vars->cmd.pipes, 3);
 		free_branch(vars->cmd.cmds, NULL);
+		vars->cmd.cmds = NULL;
 		g_signal_received = 0;
-		return (130);
+		return ;
 	}
 	close_pipe(vars->cmd.pipes, 3);
 	free_branch(vars->cmd.cmds, NULL);
 	vars->cmd.cmds = NULL;
-	return (0);
 }

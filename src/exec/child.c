@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 22:11:23 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 02:28:04 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,26 @@ static void	is_built_in(char **argv, char **envp)
 		pwd(argv, envp);
 }
 
+static int	is_exec(char *path)
+{
+	DIR	*dir;
+
+	dir = opendir(path);
+	if (dir != NULL)
+	{
+		closedir(dir);
+		write(2, path, ft_strlen(path));
+		write(2, ": is a directory\n", 17);
+		return (1);
+	}
+	else if (access(path, X_OK) != 0)
+	{
+		perror(path);
+		return (1);
+	}
+	return (0);
+}
+
 void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 {
 	char	*path;
@@ -85,7 +105,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 	execve(path, argv, envp);
 	if (!path || access(path, F_OK) != 0)
 		exit_error(path, envp, argv, 127);//command not found ou path pas trouve dans l'environnement
-	else if (access(path, X_OK) != 0)
+	else if (is_exec(path) != 0)
 		exit_error(path, envp, argv, 126);//not enough privileges
 	else
 		exit_error(path, envp, argv, 2);//invalid option(2)

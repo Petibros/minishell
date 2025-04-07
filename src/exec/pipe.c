@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 23:50:11 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 03:26:12 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
 	*fd_in = 0;
 	if (cmds->heredoc)
 		open_fd(&cmds->heredoc, fd_in, 2, vars);
+	if (*fd_in <= -2)
+		return ;
 	if (cmds->file_in)
 		open_fd(&cmds->file_in, fd_in, 1, vars);
 	else if (is_pipe[0] == true)
@@ -158,11 +160,19 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
+	if (vars->cmd.fd_in <= -2)
+	{
+		close_fds(vars->cmd.pipes, vars);
+		if (vars->cmd.fd_in == -3)
+			return (130);
+		return (-1);
+	}
 	status = is_built_in(vars, cmds, is_pipe);
 	if (status == -1)
 		perror("malloc error");
 	if (status == -2)
 	{
+		status = 0;
 		pid = fork();
 		if (pid == -1)
 		{
