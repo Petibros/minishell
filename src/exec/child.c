@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/07 02:28:04 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 08:32:23 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,10 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 
 	argv = cmds->argv;
 	envp = vars->env.envp;
-	if (!argv || vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
 		exit_fd_error(vars, pipes);//fonction qui free tout les pointeurs du processus fils
+	if (!argv || !argv[0])
+		exit_no_cmd(vars, pipes);
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, pipes);//fonction qui close tous les fds ouverts du processus fils
@@ -103,7 +105,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 	else
 		path = get_path(argv[0], envp);//cherche le path dans l'environnement
 	execve(path, argv, envp);
-	if (!path || access(path, F_OK) != 0)
+	if (!path || !argv[0][0] || access(path, F_OK) != 0)
 		exit_error(path, envp, argv, 127);//command not found ou path pas trouve dans l'environnement
 	else if (is_exec(path) != 0)
 		exit_error(path, envp, argv, 126);//not enough privileges

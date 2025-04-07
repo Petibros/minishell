@@ -14,6 +14,42 @@ char	*ft_getenv(char **envp, char *var)
 	return (NULL);
 }
 
+void	swap_str(char **str_1, char **str_2)
+{
+	char	*tmp;
+
+	tmp = *str_1;
+	*str_1 = *str_2;
+	*str_2 = tmp;
+}
+
+void	sort_env(char ***envp)
+{
+	int		i;
+	int		limit;
+	int		j;
+
+	limit = 0;
+	while ((*envp)[limit + 1])
+	{
+		i = 0;
+		while ((*envp)[i + limit] && (*envp)[i + limit + 1])
+		{
+			j = 0;
+			while ((*envp)[i][j])
+			{
+				if ((*envp)[i][j] < (*envp)[i + 1][j])
+					swap_str(&(*envp)[i], &(*envp)[i + 1]);
+				if ((*envp)[i][j] != (*envp)[i + 1][j])
+					break ;
+				++j;
+			}
+			++i;
+		}
+		++limit;
+	}
+}
+
 int	transfer_env(char **envp, t_vars *vars)
 {
 	int	i;
@@ -35,6 +71,7 @@ int	transfer_env(char **envp, t_vars *vars)
 		++i;
 	}
 	vars->env.envp[i] = NULL;
+	sort_env(&vars->env.envp);
 	return (1);
 }
 

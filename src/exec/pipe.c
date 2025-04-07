@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/07 03:26:12 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:31:21 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,10 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 	if (!to_export)
 		return (-1);
 	to_export[0] = "export";
-	to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	if (cmds->argv && cmds->argv[0])
+		to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	else
+		to_export[1] = ft_strjoin("_=", "");
 	if (!to_export[1])
 	{
 		free(to_export);
@@ -112,6 +115,8 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 
 static int	which_built_in(char **argv)
 {
+	if (!argv || !argv[0])
+		return (0);
 	if (ft_strncmp(argv[0], "export", 7) == 0)
 		return (1);
 	else if (ft_strncmp(argv[0], "unset", 6) == 0)

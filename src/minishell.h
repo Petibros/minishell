@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/06 21:04:38 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:19:31 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int		get_prompt(t_vars *vars);
 void	exit_and_free(t_vars *vars, int status);
 void	close_child_fds(t_vars *vars, int pipes[2][2]);
 void	exit_fd_error(t_vars *vars, int pipes[2][2]);
+void	exit_no_cmd(t_vars *vars, int pipes[2][2]);
 void	exit_error(char *path, char **envp, char **argv, int status);
 void	close_fds(int pipes[2][2], t_vars *vars);
 void	free_all(t_vars *vars, char **to_not_free, bool in_child);

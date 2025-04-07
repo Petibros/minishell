@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/06 18:57:03 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:07:04 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,13 @@ int	main(int argc, char **argv, char **envp)
 		if (!vars->line[0])
 			continue ;
 		add_history(vars->line);
-		parse_line(vars);
-		execute(vars, vars->cmd.cmds);
+		if (parse_line(vars))
+			execute(vars, vars->cmd.cmds);
+		else
+		{
+			free_branch(vars->cmd.cmds, NULL);
+			vars->cmd.last_exit_status = 2;
+		}
 		free(vars->line);
 		free(vars->prompt);
 	}
