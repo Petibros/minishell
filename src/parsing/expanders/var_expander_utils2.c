@@ -77,8 +77,6 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 	var_name = get_var_name(str, i);
 	result = get_var_value(var_name, exit_status, envp);
 	free(var_name);
-	if (!result)
-		return (ft_strdup(""));
 	return (result);
 }
 

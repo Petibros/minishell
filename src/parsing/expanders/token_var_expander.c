@@ -19,9 +19,53 @@
 static void	expand_token_value(t_token *token, int exit_status, char **envp)
 {
 	char	*expanded;
+	char	*var_start;
+	char	*new_value;
+	int		var_len;
 
 	if (!token || !token->value || !ft_strchr(token->value, '$'))
 		return ;
+	
+	/* Handle the case where the token value is just a variable name */
+	if (token->value[0] == '$' && 
+		(ft_isalpha(token->value[1]) || token->value[1] == '_'))
+	{
+		var_start = token->value + 1;
+		var_len = 0;
+		while (var_start[var_len] && (ft_isalnum(var_start[var_len]) || var_start[var_len] == '_'))
+			var_len++;
+			
+		/* Check if the variable exists in the environment */
+		char *var_name = ft_substr(token->value, 1, var_len);
+		char *var_value = ft_getenv(envp, var_name);
+		free(var_name);
+		
+		if (!var_value)
+		{
+			/* Variable doesn't exist, handle like bash */
+			if (token->value[var_len + 1]) /* If there's content after the variable */
+			{
+				char *after_var = token->value + var_len + 1;
+				
+				/* Skip leading whitespace after the variable name */
+				while (*after_var && (*after_var == ' ' || *after_var == '\t'))
+					after_var++;
+					
+				new_value = ft_strdup(after_var);
+				free(token->value);
+				token->value = new_value;
+				return;
+			}
+			else /* If the token is just the variable */
+			{
+				free(token->value);
+				token->value = ft_strdup("");
+				return;
+			}
+		}
+	}
+	
+	/* Normal variable expansion */
 	expanded = expand_variables(token->value, exit_status, envp);
 	if (expanded)
 	{
@@ -36,12 +80,66 @@ static void	expand_token_value(t_token *token, int exit_status, char **envp)
 void	expand_variables_in_tokens(t_token *tokens, int exit_status, char **envp)
 {
 	t_token	*current;
+	t_token	*prev;
+	t_token	*next;
+	int		is_first_token;
 
 	current = tokens;
+	prev = NULL;
+	is_first_token = 1;
+
 	while (current)
 	{
+		next = current->next;
+
 		if (current->type == TOKEN_WORD)
+		{
+			/* First, expand variables in the token */
 			expand_token_value(current, exit_status, envp);
-		current = current->next;
+			
+			/* Check if this token is now empty after expansion */
+			if (current->value && current->value[0] == '\0')
+			{
+				/* Handle the special case where the first token is empty */
+				if (is_first_token && next && next->type == TOKEN_WORD)
+				{
+					/* Free the empty token */
+					free(current->value);
+					free(current);
+					
+					/* Update the tokens list to start with the next token */
+					if (prev)
+						prev->next = next;
+					else
+						tokens = next;
+				}
+				else if (prev)
+				{
+					/* Remove this empty token from the list */
+					prev->next = next;
+					free(current->value);
+					free(current);
+				}
+				else
+				{
+					/* Keep the empty token but don't update prev */
+					current = next;
+					continue;
+				}
+			}
+			else
+			{
+				/* Token is not empty, update prev */
+				prev = current;
+			}
+		}
+		else
+		{
+			/* For non-word tokens, just update prev */
+			prev = current;
+		}
+		
+		current = next;
+		is_first_token = 0;
 	}
 }
