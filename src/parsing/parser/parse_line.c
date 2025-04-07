@@ -23,21 +23,22 @@ int	parse_line(t_vars *vars)
 	tokens = lexer(vars->line);
 	if (!tokens)
 		return (0);
+	// Perform environment variable expansion at the token level
+	expand_variables_in_tokens(tokens, vars->cmd.last_exit_status, vars->env.envp);
 	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp);
 	if (!vars->cmd.cmds)
 	{
 		free_token(tokens);
 		return (0);
 	}
-	expand_variables_in_node(vars->cmd.cmds, vars->cmd.last_exit_status, \
-								vars->env.envp);
+	// Keep wildcard expansion at the node level
 	expand_wildcards(vars->cmd.cmds);
-	handle_quotes_in_node(vars->cmd.cmds);
 	/*
 	printf("\nAST Structure:\n");
 	print_ast_node(vars->cmd.cmds);
 	printf("\n");
 	*/
+	handle_quotes_in_node(vars->cmd.cmds);
 	free_token(tokens);
 	return (1);
 }

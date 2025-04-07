@@ -32,12 +32,19 @@ char		*expand_variables(char *str, int exit_status, char **envp);
 void		expand_variables_in_node(t_nodes *node, int exit_status, \
 									char **envp);
 
+// token_var_expander.c
+void		expand_variables_in_tokens(t_token *tokens, int exit_status, \
+									char **envp);
+
 // var_expander_utils2.c
 char		*expand_env_var(char *str, int *i, int exit_status, char **envp);
 t_quote_ctx	*init_quote_context(char *str, int exit_status, char **envp);
 
 // wildcard_expander.c
 int			is_pattern_match(const char *pattern, const char *str);
+
+// token_wildcard_expander.c
+void		expand_wildcards_in_tokens(t_token *tokens);
 
 // wildcard_utils.c
 void		expand_wildcards(t_nodes *node);
@@ -62,5 +69,8 @@ char		*handle_single_quote(char *str, int *i, char *result);
 char		*append_substring(char *result, char *str, int start, int end);
 char		*handle_regular_char(char *str, int *i, char *result);
 char		*handle_quote_char(char *str, int *i, char *result);
+
+// array_utils.c
+char		*ft_strjoin_array(char **array, char *delimiter);
 
 #endif

@@ -51,6 +51,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/expanders/var_expander_utils2.c \
 					src/parsing/expanders/wildcard_expander.c \
 					src/parsing/expanders/wildcard_expander_utils.c \
+					src/parsing/expanders/token_var_expander.c \
+					src/parsing/expanders/token_wildcard_expander.c \
 					src/parsing/nodes/pratt_node.c \
 					src/parsing/nodes/pratt_node_op.c \
 					src/parsing/nodes/pratt_node_cmd.c \
@@ -66,7 +68,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c \
-					src/parsing/utils/print_ast.c
+					src/parsing/utils/print_ast.c \
+					src/parsing/utils/array_utils.c
 
 CFILES_FREE =		src/free/free.c
 
@@ -74,7 +77,7 @@ CFILES_SIGNALS =	src/signals/signals.c \
 					src/signals/handle_sigint.c \
 					src/signals/handle_sigquit.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
+OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
@@ -107,4 +110,3 @@ fclean : clean
 re : fclean all
 
 .PHONY = all run clean fclean re
-
