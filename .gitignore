@@ -1,2 +1,5 @@
 minishell_tester
 compile_commands.json
+minishell
+libft.a
+*.o

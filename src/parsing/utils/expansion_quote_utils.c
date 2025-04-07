@@ -16,30 +16,30 @@
 char	*handle_single_quote(char *str, int *i, char *result)
 {
 	char	*tmp;
-	int		is_ansi_c;
+	int		start;
 
-	is_ansi_c = (*i > 0 && str[*i - 1] == '$');
-	if (!is_ansi_c)
+	(*i)++;  /* Skip the opening single quote */
+	
+	/* Remember the start position after the opening quote */
+	start = *i;
+	
+	/* Find the closing quote */
+	while (str[*i] && str[*i] != '\'')
+		(*i)++;
+		
+	/* Extract the content between quotes exactly as is */
+	if (*i > start)
 	{
-		tmp = ft_strjoin_free(result, "'");
+		tmp = ft_substr(str, start, *i - start);
 		if (!tmp)
 			return (NULL);
-		result = tmp;
+		result = ft_strjoin_free(result, tmp);
+		free(tmp);
 	}
-	(*i)++;
-	while (str[*i] && str[*i] != '\'')
-		result = handle_regular_char(str, i, result);
+	
 	if (str[*i] == '\'')
-	{
-		if (!is_ansi_c)
-		{
-			tmp = ft_strjoin_free(result, "'");
-			if (!tmp)
-				return (NULL);
-			result = tmp;
-		}
-		(*i)++;
-	}
+		(*i)++;  /* Skip the closing quote */
+		
 	return (result);
 }
 
