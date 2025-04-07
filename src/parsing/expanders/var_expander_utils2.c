@@ -56,6 +56,9 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 {
 	char	*var_name;
 	char	*result;
+	char	*underscore_pos;
+	char	*base_var;
+	char	*base_value;
 
 	(*i)++;
 	if (str[*i] == '?')
@@ -76,6 +79,28 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 	}
 	var_name = get_var_name(str, i);
 	result = get_var_value(var_name, exit_status, envp);
+	
+	/* If variable not found and contains underscore, try splitting at underscore */
+	if (!result && ft_strchr(var_name, '_'))
+	{
+		underscore_pos = ft_strchr(var_name, '_');
+		if (underscore_pos && underscore_pos != var_name) /* Ensure underscore is not at start */
+		{
+			/* Get the part before the underscore */
+			base_var = ft_substr(var_name, 0, underscore_pos - var_name);
+			base_value = get_var_value(base_var, exit_status, envp);
+			
+			if (base_value)
+			{
+				/* Return base value + underscore + rest of the string */
+				free(result); /* result is NULL here */
+				result = ft_strjoin(base_value, underscore_pos);
+				free(base_value);
+			}
+			free(base_var);
+		}
+	}
+	
 	free(var_name);
 	return (result);
 }

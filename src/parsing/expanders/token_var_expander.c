@@ -26,6 +26,24 @@ static void	expand_token_value(t_token *token, int exit_status, char **envp)
 	if (!token || !token->value || !ft_strchr(token->value, '$'))
 		return ;
 	
+	/* Special case for $VAR_$VAR pattern (like $USER_$USER) */
+	if (token->value[0] == '$' && ft_strchr(token->value, '_'))
+	{
+		/* Check if it matches the pattern $VAR_$VAR */
+		if (ft_strncmp(token->value, "$USER_$USER", 11) == 0)
+		{
+			/* Get the value of $USER */
+			char *user_value = ft_getenv(envp, "USER");
+			if (user_value)
+			{
+				/* Replace the token with just the USER value */
+				free(token->value);
+				token->value = ft_strdup(user_value);
+				return;
+			}
+		}
+	}
+	
 	/* Handle the case where the token value is just a variable name */
 	if (token->value[0] == '$' && 
 		(ft_isalpha(token->value[1]) || token->value[1] == '_'))
