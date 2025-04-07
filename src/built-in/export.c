@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/07 08:40:46 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/08 01:35:22 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,10 @@ static int	add_var(char **argv, char ***envp, t_vars *vars, int i)
 		++vars->env.alloc_size;
 		*envp = tmp_array;
 	}
-	(*envp)[vars->env.current_size + 1] = NULL;
-	(*envp)[vars->env.current_size] = get_var(argv[i + 1]);
-	if (!(*envp)[vars->env.current_size])
-	{
-		perror("export.c, l.119");
+	(*envp)[vars->env.current_size] = NULL;
+	(*envp)[vars->env.current_size - 1] = get_var(argv[i + 1]);
+	if (!(*envp)[vars->env.current_size - 1])
 		return (-1);
-	}
 	++vars->env.current_size;
 	return (1);
 }

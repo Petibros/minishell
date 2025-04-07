@@ -57,9 +57,9 @@ int	transfer_env(char **envp, t_vars *vars)
 	i = 0;
 	while (envp[i])
 		++i;
-	vars->env.current_size = i;
-	vars->env.alloc_size = i;
-	vars->env.envp = malloc((vars->env.alloc_size + 1) * sizeof(char *));
+	vars->env.current_size = i + 1;
+	vars->env.alloc_size = i + 1;
+	vars->env.envp = malloc((vars->env.alloc_size) * sizeof(char *));
 	if (!vars->env.envp)
 		return (-1);
 	i = 0;
