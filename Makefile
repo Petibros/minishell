@@ -33,8 +33,8 @@ CFILES_EXEC =		src/exec/exec.c \
 					src/exec/exit_child.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
-				src/parsing/lexer/lexer_operator.c \
-				src/parsing/lexer/lexer_word.c \
+					src/parsing/lexer/lexer_operator.c \
+					src/parsing/lexer/lexer_word.c \
 					src/parsing/parser/parser.c \
 					src/parsing/parser/parser_node.c \
 					src/parsing/parser/parser_command.c \
@@ -71,8 +71,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 CFILES_FREE =		src/free/free.c
 
 CFILES_SIGNALS =	src/signals/signals.c \
-				src/signals/handle_sigint.c \
-				src/signals/handle_sigquit.c
+					src/signals/handle_sigint.c \
+					src/signals/handle_sigquit.c
 
 OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_EXPANDER:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
