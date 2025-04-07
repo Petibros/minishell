@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 00:54:46 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 08:40:46 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static char	**alloc_new_array(char **envp, int size)
 	return (new_array);
 }
 
-static int	is_valid(char **argv)
+static int	is_valid(char **argv, int *status)
 {
 	int	i;
 
@@ -72,9 +72,12 @@ static int	is_valid(char **argv)
 	if ((argv[1][i] != '=' && !(argv[1][i] == '+'
 		&& argv[1][i + 1] == '=')) || i == 0)
 	{
+		if (!argv[1][i])
+			return (-1);
 		write(2, "minishell: export: ", 19);
 		write(2, argv[1], ft_strlen(argv[1]));
 		write(2, ": not a valid identifier\n", 25);
+		*status = 1;
 		return (-1);
 	}
 	return (i);
@@ -115,12 +118,9 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 	while (argv[i + 2])
 	{
 		++i;
-		status = is_valid(&argv[i]);
+		status = is_valid(&argv[i], &vars->cmd.last_exit_status);
 		if (status == -1)
-		{
-			vars->cmd.last_exit_status = 1;
 			continue ;
-		}
 		status = already_exists(&argv[i], *envp, status, 0);
 		if (status == -1)
 			continue ;

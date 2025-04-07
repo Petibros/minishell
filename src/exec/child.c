@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 22:11:23 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 08:32:23 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,26 @@ static void	is_built_in(char **argv, char **envp)
 		pwd(argv, envp);
 }
 
+static int	is_exec(char *path)
+{
+	DIR	*dir;
+
+	dir = opendir(path);
+	if (dir != NULL)
+	{
+		closedir(dir);
+		write(2, path, ft_strlen(path));
+		write(2, ": is a directory\n", 17);
+		return (1);
+	}
+	else if (access(path, X_OK) != 0)
+	{
+		perror(path);
+		return (1);
+	}
+	return (0);
+}
+
 void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 {
 	char	*path;
@@ -71,8 +91,10 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 
 	argv = cmds->argv;
 	envp = vars->env.envp;
-	if (!argv || vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
 		exit_fd_error(vars, pipes);//fonction qui free tout les pointeurs du processus fils
+	if (!argv || !argv[0])
+		exit_no_cmd(vars, pipes);
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, pipes);//fonction qui close tous les fds ouverts du processus fils
@@ -83,9 +105,9 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2])
 	else
 		path = get_path(argv[0], envp);//cherche le path dans l'environnement
 	execve(path, argv, envp);
-	if (!path || access(path, F_OK) != 0)
+	if (!path || !argv[0][0] || access(path, F_OK) != 0)
 		exit_error(path, envp, argv, 127);//command not found ou path pas trouve dans l'environnement
-	else if (access(path, X_OK) != 0)
+	else if (is_exec(path) != 0)
 		exit_error(path, envp, argv, 126);//not enough privileges
 	else
 		exit_error(path, envp, argv, 2);//invalid option(2)

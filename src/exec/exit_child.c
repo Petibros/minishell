@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:08:45 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/03/29 05:19:32 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:18:51 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,13 @@ void	exit_fd_error(t_vars *vars, int pipes[2][2])
 	exit(1);
 }
 
+void	exit_no_cmd(t_vars *vars, int pipes[2][2])
+{
+	close_child_fds(vars, pipes);
+	free_all(vars, NULL, false);
+	exit(0);
+}
+
 void	exit_error(char *path, char **envp, char **argv, int status)
 {
 	if (status == 127)
@@ -39,7 +46,7 @@ void	exit_error(char *path, char **envp, char **argv, int status)
 		write(2, argv[0], ft_strlen(argv[0]));
 		write(2, ": command not found\n", 20);
 	}
-	else
+	else if (status == 2)
 		perror(argv[0]);
 	free_string_array(envp);
 	free_string_array(argv);

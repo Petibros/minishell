@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 23:48:56 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:19:31 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,8 @@ int		exit_built_in(char **argv, t_vars *vars);
 char	*get_var(char *argv);
 //EXECUTION
 void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd);
-void	here_doc(int fd, char *limiter, char *heredoc_path);
-int		execute(t_vars *vars, t_nodes *cmds);
+int		here_doc(int fd, char *limiter);
+void	execute(t_vars *vars, t_nodes *cmds);
 int		exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2]);
 void	close_pipe(int pipes[2][2], int to_close);
 void	exec_cmd(t_vars *vars, t_nodes *cmds, int pipes[2][2]);
@@ -107,6 +107,7 @@ int		get_prompt(t_vars *vars);
 void	exit_and_free(t_vars *vars, int status);
 void	close_child_fds(t_vars *vars, int pipes[2][2]);
 void	exit_fd_error(t_vars *vars, int pipes[2][2]);
+void	exit_no_cmd(t_vars *vars, int pipes[2][2]);
 void	exit_error(char *path, char **envp, char **argv, int status);
 void	close_fds(int pipes[2][2], t_vars *vars);
 void	free_all(t_vars *vars, char **to_not_free, bool in_child);

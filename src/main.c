@@ -6,29 +6,12 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 01:50:49 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:07:04 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parsing.h"
-
-static void	free_vars(t_vars *vars)
-{
-	int	i;
-
-	if (vars->env.envp)
-	{
-		i = 0;
-		while (vars->env.envp[i])
-		{
-			free(vars->env.envp[i]);
-			++i;
-		}
-		free(vars->env.envp);
-	}
-	free(vars);
-}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -42,9 +25,11 @@ int	main(int argc, char **argv, char **envp)
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
 		return (1);
+	vars->cmd.cmds = NULL;
+	vars->cmd.last_exit_status = 0;
 	if (transfer_env(envp, vars) == -1)
 	{
-		free_vars(vars);
+		free_all(vars, NULL, false);
 		return (1);
 	}
 	while (true)
@@ -58,8 +43,13 @@ int	main(int argc, char **argv, char **envp)
 		if (!vars->line[0])
 			continue ;
 		add_history(vars->line);
-		parse_line(vars);
-		execute(vars, vars->cmd.cmds);
+		if (parse_line(vars))
+			execute(vars, vars->cmd.cmds);
+		else
+		{
+			free_branch(vars->cmd.cmds, NULL);
+			vars->cmd.last_exit_status = 2;
+		}
 		free(vars->line);
 		free(vars->prompt);
 	}

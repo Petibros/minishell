@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/04 23:50:11 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/07 07:31:21 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
 	*fd_in = 0;
 	if (cmds->heredoc)
 		open_fd(&cmds->heredoc, fd_in, 2, vars);
+	if (*fd_in <= -2)
+		return ;
 	if (cmds->file_in)
 		open_fd(&cmds->file_in, fd_in, 1, vars);
 	else if (is_pipe[0] == true)
@@ -95,7 +97,10 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 	if (!to_export)
 		return (-1);
 	to_export[0] = "export";
-	to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	if (cmds->argv && cmds->argv[0])
+		to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	else
+		to_export[1] = ft_strjoin("_=", "");
 	if (!to_export[1])
 	{
 		free(to_export);
@@ -110,6 +115,8 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 
 static int	which_built_in(char **argv)
 {
+	if (!argv || !argv[0])
+		return (0);
 	if (ft_strncmp(argv[0], "export", 7) == 0)
 		return (1);
 	else if (ft_strncmp(argv[0], "unset", 6) == 0)
@@ -158,11 +165,19 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
+	if (vars->cmd.fd_in <= -2)
+	{
+		close_fds(vars->cmd.pipes, vars);
+		if (vars->cmd.fd_in == -3)
+			return (130);
+		return (-1);
+	}
 	status = is_built_in(vars, cmds, is_pipe);
 	if (status == -1)
 		perror("malloc error");
 	if (status == -2)
 	{
+		status = 0;
 		pid = fork();
 		if (pid == -1)
 		{

@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 08:02:42 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/23 08:02:42 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/07 03:27:10 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 # include <signal.h>
 # include <stdio.h>
 
+extern int	g_signal_received;
+
 void	setup_signals(void);
+void	setup_signals_child(void);
 void	reset_signals(void);
 void	handle_sigint(int sig);
+void	handle_sigint_heredoc(int sig);
 void	handle_sigquit(int sig);
 void	ignore_signals(void);
-
-extern int  g_signal_received;
 
 #endif
