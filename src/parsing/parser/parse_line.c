@@ -62,6 +62,7 @@ int	parse_line(t_vars *vars)
 	}
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
+	print_ast_types(vars->cmd.cmds, 0);
 	free_token(tokens);
 	return (1);
 }

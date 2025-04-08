@@ -27,6 +27,7 @@ typedef enum e_token_type
 	TOKEN_HEREDOC,
 	TOKEN_LPAREN,
 	TOKEN_RPAREN,
+	TOKEN_SUBSHELL,
 	TOKEN_EOF
 }	t_token_type;
 

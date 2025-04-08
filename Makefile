@@ -41,7 +41,6 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/parser/parser_command_utils.c \
 					src/parsing/parser/parser_pipeline.c \
 					src/parsing/parser/parser_and_or.c \
-					src/parsing/parser/parser_parentheses.c \
 					src/parsing/parser/pratt_parser.c \
 					src/parsing/parser/pratt_parser_atom.c \
 					src/parsing/parser/parse_line.c \
@@ -69,6 +68,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c \
 					src/parsing/utils/print_ast.c \
+					src/parsing/utils/print_ast_types.c \
 					src/parsing/utils/array_utils.c
 
 CFILES_FREE =		src/free/free.c

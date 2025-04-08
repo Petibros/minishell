@@ -53,12 +53,28 @@ void	advance_token(t_token **token, int count)
 t_nodes	*handle_parentheses(t_token **token, char **envp)
 {
 	t_nodes	*node;
+	t_nodes	*inner_cmd;
 
 	if (!*token || (*token)->type != TOKEN_LPAREN)
 		return (NULL);
 	*token = (*token)->next;
-	node = parse_expression(token, 0, envp);
-	if (*token && (*token)->type == TOKEN_RPAREN)
-		*token = (*token)->next;
+	inner_cmd = parse_expression(token, 0, envp);
+	if (!inner_cmd)
+		return (NULL);
+	if (!*token || (*token)->type != TOKEN_RPAREN)
+	{
+		free_node(inner_cmd);
+		return (NULL);
+	}
+	*token = (*token)->next;
+	node = create_node();
+	if (!node)
+	{
+		free_node(inner_cmd);
+		return (NULL);
+	}
+	node->is_operator = 1;
+	node->operator_type = TOKEN_SUBSHELL;
+	node->right = inner_cmd;
 	return (node);
 }
