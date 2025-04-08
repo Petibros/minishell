@@ -33,7 +33,7 @@ void		expand_variables_in_node(t_nodes *node, int exit_status, \
 									char **envp);
 
 // token_var_expander.c
-void		expand_variables_in_tokens(t_token *tokens, int exit_status, \
+void		expand_variables_in_tokens(t_token **tokens, int exit_status, \
 									char **envp);
 
 // var_expander_utils2.c

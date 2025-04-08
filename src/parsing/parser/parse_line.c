@@ -53,7 +53,7 @@ int	parse_line(t_vars *vars)
 		free_token(tokens);
 		return (0);
 	}
-	expand_variables_in_tokens(tokens, vars->cmd.last_exit_status, vars->env.envp);
+	expand_variables_in_tokens(&tokens, vars->cmd.last_exit_status, vars->env.envp);
 	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp);
 	if (!vars->cmd.cmds)
 	{

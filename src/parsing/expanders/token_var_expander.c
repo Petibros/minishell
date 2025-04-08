@@ -95,16 +95,17 @@ static void	expand_token_value(t_token *token, int exit_status, char **envp)
 /*
  * Recursively expands environment variables in all tokens
  */
-void	expand_variables_in_tokens(t_token *tokens, int exit_status, char **envp)
+void	expand_variables_in_tokens(t_token **tokens, int exit_status, char **envp)
 {
 	t_token	*current;
 	t_token	*prev;
 	t_token	*next;
-	int		is_first_token;
 
-	current = tokens;
+	if (!tokens || !*tokens)
+		return;
+
+	current = *tokens;
 	prev = NULL;
-	is_first_token = 1;
 
 	while (current)
 	{
@@ -118,32 +119,23 @@ void	expand_variables_in_tokens(t_token *tokens, int exit_status, char **envp)
 			/* Check if this token is now empty after expansion */
 			if (current->value && current->value[0] == '\0')
 			{
-				/* Handle the special case where the first token is empty */
-				if (is_first_token && next && next->type == TOKEN_WORD)
+				/* Handle empty token */
+				if (prev)
 				{
-					/* Free the empty token */
-					free(current->value);
-					free(current);
-					
-					/* Update the tokens list to start with the next token */
-					if (prev)
-						prev->next = next;
-					else
-						tokens = next;
-				}
-				else if (prev)
-				{
-					/* Remove this empty token from the list */
+					/* Not the first token, update previous token's next pointer */
 					prev->next = next;
-					free(current->value);
-					free(current);
 				}
 				else
 				{
-					/* Keep the empty token but don't update prev */
-					current = next;
-					continue;
+					/* This is the first token, update tokens head */
+					*tokens = next;
 				}
+				
+				/* Free the empty token */
+				free(current->value);
+				free(current);
+				current = next;
+				continue;
 			}
 			else
 			{
@@ -158,6 +150,5 @@ void	expand_variables_in_tokens(t_token *tokens, int exit_status, char **envp)
 		}
 		
 		current = next;
-		is_first_token = 0;
 	}
 }
