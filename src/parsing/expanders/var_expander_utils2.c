@@ -68,7 +68,7 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 	}
 	if (str[*i] == '\'')
 	{
-		(*i)--;
+		//(*i)--;
 		return (ft_strdup(""));
 	}
 	if (!ft_isalnum(str[*i]) && str[*i] != '_')
