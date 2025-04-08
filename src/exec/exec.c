@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/06 21:02:35 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/08 04:16:03 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ static int	recursive_call(t_vars *vars, t_nodes *cmds,
 	{
 		if (cmds->operator_type == TOKEN_PIPE)
 			res = search_binary_tree(vars, cmds->left, false, true);
-		else if (cmds->operator_type == TOKEN_OR)
-			res = search_binary_tree(vars, cmds->left, is_pipe[0], is_pipe[1]);
 		else
 			res = search_binary_tree(vars, cmds->left, is_pipe[0], false);
 	}
@@ -33,8 +31,6 @@ static int	recursive_call(t_vars *vars, t_nodes *cmds,
 	{
 		if (cmds->operator_type == TOKEN_PIPE)
 			res = search_binary_tree(vars, cmds->right, true, is_pipe[1]);
-		else if (cmds->operator_type == TOKEN_OR)
-			res = search_binary_tree(vars, cmds->right, is_pipe[0], is_pipe[1]);
 		else
 			res = search_binary_tree(vars, cmds->right, false, is_pipe[1]);
 	}
@@ -67,13 +63,13 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 		{
 			if (cmds->operator_type == TOKEN_OR)
 			{
-				waitpid(vars->cmd.last_pid, &status, 0);
+				if (waitpid(vars->cmd.last_pid, &status, 0) != -1)
+					vars->cmd.last_exit_status = WEXITSTATUS(status);
 				if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 				{
 					vars->cmd.last_exit_status = 130;
 					return (130);
 				}
-				vars->cmd.last_exit_status = WEXITSTATUS(status);
 				if (vars->cmd.last_exit_status == 0)
 					return (0);
 			}
@@ -81,8 +77,8 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 			{
 				vars->cmd.last_exit_status
 					= wait_processes(vars->cmd.last_exit_status);
-				if (vars->cmd.last_exit_status == 130)
-					return (130);
+				if (vars->cmd.last_exit_status != 0)
+					return (vars->cmd.last_exit_status);
 			}
 		}
 		res = recursive_call(vars, cmds, (bool[2]){pipe_in, pipe_out}, false);

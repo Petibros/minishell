@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/08 01:35:22 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/08 03:07:03 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static int	is_valid(char **argv, int *status)
 	if ((argv[1][i] != '=' && !(argv[1][i] == '+'
 		&& argv[1][i + 1] == '=')) || i == 0)
 	{
-		if (!argv[1][i])
+		if (!argv[1][i] && i > 0)
 			return (-1);
 		write(2, "minishell: export: ", 19);
 		write(2, argv[1], ft_strlen(argv[1]));
