@@ -39,38 +39,38 @@ char	*get_var_name(char *str, int *i)
 	char	*var_name;
 
 	len = 0;
-	if (str[*i] == '_' || ft_isalpha(str[*i]))
+	if (str[len] == '_' || ft_isalpha(str[len]))
 	{
 		len++;
-		while (str[*i + len])
+		while (str[len])
 		{
-			if (!ft_isalnum(str[*i + len]) && str[*i + len] != '_')
+			if (!ft_isalnum(str[len]) && str[len] != '_')
 				break ;
 			len++;
 		}
 	}
 	if (len == 0)
 		return (ft_strdup(""));
-	var_name = ft_substr(str, *i, len);
+	var_name = ft_substr(str, 0, len);
 	*i += len;
 	return (var_name);
 }
 
 char	*handle_special_var_cases(char *str, int *i, int exit_status)
 {
-	(*i)++;
 	if (str[*i] == '?')
 	{
 		(*i)++;
 		return (ft_itoa(exit_status));
 	}
-	if (str[*i] == '\'')
+	if (str[*i] == '\'' || str[*i] == '"')
 		return (ft_strdup(""));
-	if (!ft_isalnum(str[*i]) && str[*i] != '_')
+	if (str[*i] == '$')
 	{
-		if (str[*i] == '"' && *(i) == 1)
-			return (ft_strdup(""));
+		(*i)++;
 		return (ft_strdup("$"));
 	}
+	if (!ft_isalnum(str[*i]) && str[*i] != '_')
+		return (ft_strdup("$"));
 	return (NULL);
 }

@@ -13,16 +13,29 @@
 #include "parsing.h"
 #include "expander.h"
 
-static char	*handle_var_value(char *token_value, int var_len)
+static char	*process_var_token(char *token_value, char **envp);
+
+static char	*handle_var_value(char *token_value, int var_len, char **envp)
 {
 	char	*after_var;
 	char	*new_value;
+	char	*expanded;
 
 	if (token_value[var_len])
 	{
 		after_var = token_value + var_len;
-		while (*after_var && (*after_var == ' ' || *after_var == '\t'))
-			after_var++;
+		if (*after_var == '$')
+		{
+			if (*(after_var + 1) == '\0')
+			{
+				new_value = ft_strdup("$");
+				free(token_value);
+				return (new_value);
+			}
+			expanded = process_var_token(ft_strdup(after_var), envp);
+			if (expanded)
+				return (expanded);
+		}
 		new_value = ft_strdup(after_var);
 		free(token_value);
 		return (new_value);
@@ -35,6 +48,7 @@ static char	*process_var_token(char *token_value, char **envp)
 {
 	char	*var_name;
 	char	*var_value;
+	char	*next_part;
 	int		var_len;
 
 	var_len = 1;
@@ -45,7 +59,24 @@ static char	*process_var_token(char *token_value, char **envp)
 	var_value = ft_getenv(envp, var_name);
 	free(var_name);
 	if (!var_value)
-		return (handle_var_value(token_value, var_len));
+		return (handle_var_value(token_value, var_len, envp));
+	if (token_value[var_len] == '$')
+	{
+		if (token_value[var_len + 1] == '\0')
+		{
+			char *result = ft_strjoin(var_value, "$");
+			free(token_value);
+			return (result);
+		}
+		next_part = process_var_token(ft_strdup(token_value + var_len), envp);
+		if (next_part)
+		{
+			char *result = ft_strjoin(var_value, next_part);
+			free(next_part);
+			free(token_value);
+			return (result);
+		}
+	}
 	free(token_value);
 	return (ft_strdup(var_value));
 }

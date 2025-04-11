@@ -27,6 +27,13 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 			ctx->result = ft_strjoin_free(ctx->result, tmp);
 			free(tmp);
 		}
+		else if (ctx->str[*(ctx->i) + 1] == '\0')
+		{
+			tmp = ft_strdup("$");
+			ctx->result = ft_strjoin_free(ctx->result, tmp);
+			free(tmp);
+			(*(ctx->i))++;
+		}
 	}
 	else
 		ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);

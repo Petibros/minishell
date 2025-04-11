@@ -27,11 +27,9 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 		return (NULL);
 	base_var = ft_substr(var_name, 0, underscore_pos - var_name);
 	base_value = get_var_value(base_var, exit_status, envp);
+	free(base_var);
 	if (!base_value)
-	{
-		free(base_var);
 		return (NULL);
-	}
 	next_var = get_var_value(underscore_pos + 1, exit_status, envp);
 	if (next_var)
 	{
@@ -41,7 +39,6 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 	else
 		result = ft_strdup(base_value);
 	free(base_value);
-	free(base_var);
 	return (result);
 }
 
@@ -53,15 +50,20 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 	int		original_i;
 
 	original_i = *i;
+	(*i)++;
 	special_case = handle_special_var_cases(str, i, exit_status);
 	if (special_case)
 		return (special_case);
-	var_name = get_var_name(str, i);
-	if (!*var_name && str[*i] && str[*i] != ' ' && str[*i] != '\t')
+	var_name = get_var_name(str + *i, i);
+	if (!*var_name)
 	{
 		free(var_name);
-		*i = original_i;
-		return (ft_strdup("$"));
+		if (str[*i] == '$' || str[*i] == '\0')
+		{
+			*i = original_i;
+			return (ft_strdup("$"));
+		}
+		return (NULL);
 	}
 	result = get_var_value(var_name, exit_status, envp);
 	if (!result && ft_strchr(var_name, '_'))
