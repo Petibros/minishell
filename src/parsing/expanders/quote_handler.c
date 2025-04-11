@@ -27,6 +27,24 @@ static char	*handle_dollar_in_dquote(t_quote_ctx *ctx)
 	return (ctx->result);
 }
 
+static char	*handle_closing_quote(t_quote_ctx *ctx, int start)
+{
+	char	*tmp;
+
+	if (ctx->str[*(ctx->i)] == '"')
+	{
+		if (start != *(ctx->i))
+			ctx->result = append_substring(ctx->result, ctx->str,
+					start, *(ctx->i));
+		tmp = ft_strjoin_free(ctx->result, "\"");
+		if (!tmp)
+			return (NULL);
+		ctx->result = tmp;
+		(*(ctx->i))++;
+	}
+	return (ctx->result);
+}
+
 static char	*process_double_quote_content(t_quote_ctx *ctx)
 {
 	int		start;
@@ -39,31 +57,21 @@ static char	*process_double_quote_content(t_quote_ctx *ctx)
 	start = *(ctx->i);
 	while (ctx->str[*(ctx->i)] && ctx->str[*(ctx->i)] != '"')
 	{
-		if (ctx->str[*(ctx->i)] == '$' && 
-			(ft_isalpha(ctx->str[*(ctx->i) + 1]) || 
-			ctx->str[*(ctx->i) + 1] == '_' || 
-			ctx->str[*(ctx->i) + 1] == '?'))
+		if (ctx->str[*(ctx->i)] == '$'
+			&& (ft_isalpha(ctx->str[*(ctx->i) + 1])
+				|| ctx->str[*(ctx->i) + 1] == '_'
+				|| ctx->str[*(ctx->i) + 1] == '?'))
 		{
 			if (start != *(ctx->i))
-				ctx->result = append_substring(ctx->result, ctx->str, \
-												start, *(ctx->i));
+				ctx->result = append_substring(ctx->result, ctx->str,
+						start, *(ctx->i));
 			ctx->result = handle_dollar_in_dquote(ctx);
 			start = *(ctx->i);
 		}
 		else
 			(*(ctx->i))++;
 	}
-	if (ctx->str[*(ctx->i)] == '"')
-	{
-		if (start != *(ctx->i))
-			ctx->result = append_substring(ctx->result, ctx->str, start, *(ctx->i));
-		tmp = ft_strjoin_free(ctx->result, "\"");
-		if (!tmp)
-			return (NULL);
-		ctx->result = tmp;
-		(*(ctx->i))++;
-	}
-	return (ctx->result);
+	return (handle_closing_quote(ctx, start));
 }
 
 char	*handle_double_quote_char(t_quote_ctx *ctx)

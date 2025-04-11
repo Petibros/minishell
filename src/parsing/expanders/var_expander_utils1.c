@@ -13,10 +13,31 @@
 #include "parsing.h"
 #include "expander.h"
 
+static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
+{
+	char	*expanded;
+
+	expanded = expand_variables(arg, exit_status, envp);
+	if (!expanded)
+	{
+		free(arg);
+		return (NULL);
+	}
+	free(arg);
+	return (expanded);
+}
+
+static void	shift_argv(char **argv, int i, int *j)
+{
+	if (i != *j)
+		argv[*j] = argv[i];
+	(*j)++;
+}
+
 static void	expand_argv(char **argv, int exit_status, char **envp)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	*expanded;
 
 	i = 0;
@@ -25,22 +46,15 @@ static void	expand_argv(char **argv, int exit_status, char **envp)
 	{
 		if (ft_strchr(argv[i], '$'))
 		{
-			expanded = expand_variables(argv[i], exit_status, envp);
+			expanded = handle_dollar_expansion(argv[i], exit_status, envp);
 			if (expanded)
 			{
-				free(argv[i]);
 				argv[j] = expanded;
 				j++;
 			}
-			else
-				free(argv[i]);
 		}
 		else
-		{
-			if (i != j)
-				argv[j] = argv[i];
-			j++;
-		}
+			shift_argv(argv, i, &j);
 		i++;
 	}
 	argv[j] = NULL;

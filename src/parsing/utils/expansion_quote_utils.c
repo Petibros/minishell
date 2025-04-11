@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   quote_utils.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/22 09:04:49 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/22 09:04:49 by npapash          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "parsing.h"
 #include "expander.h"
 
@@ -18,16 +6,10 @@ char	*handle_single_quote(char *str, int *i, char *result)
 	char	*tmp;
 	int		start;
 
-	(*i)++;  /* Skip the opening single quote */
-	
-	/* Remember the start position after the opening quote */
+	(*i)++;
 	start = *i;
-	
-	/* Find the closing quote */
 	while (str[*i] && str[*i] != '\'')
 		(*i)++;
-		
-	/* Extract the content between quotes exactly as is */
 	if (*i > start)
 	{
 		tmp = ft_substr(str, start, *i - start);
@@ -36,10 +18,8 @@ char	*handle_single_quote(char *str, int *i, char *result)
 		result = ft_strjoin_free(result, tmp);
 		free(tmp);
 	}
-	
 	if (str[*i] == '\'')
-		(*i)++;  /* Skip the closing quote */
-		
+		(*i)++;
 	return (result);
 }
 

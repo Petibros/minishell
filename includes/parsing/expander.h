@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 09:04:49 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/22 09:04:49 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/11 22:32:41 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,15 @@ typedef struct s_quote_ctx
 	char	**envp;
 }	t_quote_ctx;
 
+// Token processor context
+typedef struct s_token_processor_ctx
+{
+	t_token	*prev;
+	t_token	*next;
+	int		exit_status;
+	char	**envp;
+}	t_token_processor_ctx;
+
 // var_expander.c
 char		*expand_variables(char *str, int exit_status, char **envp);
 
@@ -35,10 +44,15 @@ void		expand_variables_in_node(t_nodes *node, int exit_status, \
 // token_var_expander.c
 void		expand_variables_in_tokens(t_token **tokens, int exit_status, \
 									char **envp);
+void		expand_token_value(t_token *token, int exit_status, char **envp);
 
 // var_expander_utils2.c
 char		*expand_env_var(char *str, int *i, int exit_status, char **envp);
 t_quote_ctx	*init_quote_context(char *str, int exit_status, char **envp);
+char		*get_var_value(char *var_name, int exit_status, char **envp);
+char		*get_var_name(char *str, int *i);
+char		*handle_special_var_cases(char *str, int *i, int exit_status);
+char		*handle_underscore_case(char *var_name, int exit_status, char **envp);
 
 // wildcard_expander.c
 int			is_pattern_match(const char *pattern, const char *str);
@@ -69,6 +83,12 @@ char		*handle_single_quote(char *str, int *i, char *result);
 char		*append_substring(char *result, char *str, int start, int end);
 char		*handle_regular_char(char *str, int *i, char *result);
 char		*handle_quote_char(char *str, int *i, char *result);
+
+// token_processor.c
+void		handle_empty_token(t_token **tokens, t_token *current,
+				t_token *prev, t_token *next);
+t_token		*process_token(t_token **tokens, t_token *current,
+				t_token_processor_ctx *ctx);
 
 // array_utils.c
 char		*ft_strjoin_array(char **array, char *delimiter);

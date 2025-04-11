@@ -48,9 +48,11 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/expanders/var_expander.c \
 					src/parsing/expanders/var_expander_utils1.c \
 					src/parsing/expanders/var_expander_utils2.c \
+					src/parsing/expanders/var_expander_utils3.c \
 					src/parsing/expanders/wildcard_expander.c \
 					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/expanders/token_var_expander.c \
+					src/parsing/expanders/token_processor.c \
 					src/parsing/expanders/token_wildcard_expander.c \
 					src/parsing/nodes/pratt_node.c \
 					src/parsing/nodes/pratt_node_op.c \

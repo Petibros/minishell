@@ -6,40 +6,43 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 03:18:12 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:18:12 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/11 22:21:10 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-static t_nodes	*get_next_and_or_cmd(t_token **token, char **envp)
+static t_nodes	*handle_subshell_cmd(t_token **token, char **envp)
 {
 	t_nodes	*node;
 	t_nodes	*inner_cmd;
 
-	if ((*token)->type == TOKEN_LPAREN)
+	*token = (*token)->next;
+	inner_cmd = parse_and_or(token, envp);
+	if (!inner_cmd)
+		return (NULL);
+	if (!*token || (*token)->type != TOKEN_RPAREN)
 	{
-		*token = (*token)->next;
-		inner_cmd = parse_and_or(token, envp);
-		if (!inner_cmd)
-			return (NULL);
-		if (!*token || (*token)->type != TOKEN_RPAREN)
-		{
-			free_node(inner_cmd);
-			return (NULL);
-		}
-		*token = (*token)->next;
-		node = create_parser_node();
-		if (!node)
-		{
-			free_node(inner_cmd);
-			return (NULL);
-		}
-		node->is_operator = 1;
-		node->operator_type = TOKEN_SUBSHELL;
-		node->right = inner_cmd;
-		return (node);
+		free_node(inner_cmd);
+		return (NULL);
 	}
+	node = create_parser_node();
+	if (!node)
+	{
+		free_node(inner_cmd);
+		return (NULL);
+	}
+	node->is_operator = 1;
+	node->operator_type = TOKEN_SUBSHELL;
+	node->right = inner_cmd;
+	*token = (*token)->next;
+	return (node);
+}
+
+static t_nodes	*get_next_and_or_cmd(t_token **token, char **envp)
+{
+	if ((*token)->type == TOKEN_LPAREN)
+		return (handle_subshell_cmd(token, envp));
 	return (parse_pipeline(token, envp));
 }
 

@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:09:00 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/05 00:48:05 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/11 22:39:43 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,93 +14,39 @@
 #include "expander.h"
 #include "libft.h"
 
-static char	*get_var_value(char *var_name, int exit_status, char **envp)
+char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 {
-	char	*var_value;
+	char	*underscore_pos;
+	char	*base_var;
+	char	*base_value;
+	char	*result;
 
-	if (!ft_strncmp(var_name, "?", 2))
-		return (ft_itoa(exit_status));
-	if (!ft_strncmp(var_name, "_", 2))
-	{
-		var_value = ft_getenv(envp, "_");
-		if (!var_value)
-			return (NULL);
-		return (ft_strdup(var_value));
-	}
-	var_value = ft_getenv(envp, var_name);
-	if (!var_value)
+	underscore_pos = ft_strchr(var_name, '_');
+	if (!underscore_pos || underscore_pos == var_name)
 		return (NULL);
-	return (ft_strdup(var_value));
-}
-
-static char	*get_var_name(char *str, int *i)
-{
-	int		len;
-	char	*var_name;
-
-	len = 0;
-	if (str[*i] == '_' || ft_isalpha(str[*i]))
-	{
-		len++;
-		while (str[*i + len] && (ft_isalnum(str[*i + len]) || str[*i + len] == '_'))
-			len++;
-	}
-	if (len == 0)
-		return (ft_strdup(""));
-	var_name = ft_substr(str, *i, len);
-	*i += len;
-	return (var_name);
+	base_var = ft_substr(var_name, 0, underscore_pos - var_name);
+	base_value = get_var_value(base_var, exit_status, envp);
+	result = NULL;
+	if (base_value)
+		result = ft_strjoin(base_value, underscore_pos);
+	free(base_value);
+	free(base_var);
+	return (result);
 }
 
 char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 {
 	char	*var_name;
 	char	*result;
-	char	*underscore_pos;
-	char	*base_var;
-	char	*base_value;
+	char	*special_case;
 
-	(*i)++;
-	if (str[*i] == '?')
-	{
-		(*i)++;
-		return (ft_itoa(exit_status));
-	}
-	if (str[*i] == '\'')
-	{
-		//(*i)--;
-		return (ft_strdup(""));
-	}
-	if (!ft_isalnum(str[*i]) && str[*i] != '_')
-	{
-		if (str[*i] == '"' && *(i) == 1)
-			return (ft_strdup(""));
-		return (ft_strdup("$"));
-	}
+	special_case = handle_special_var_cases(str, i, exit_status);
+	if (special_case)
+		return (special_case);
 	var_name = get_var_name(str, i);
 	result = get_var_value(var_name, exit_status, envp);
-	
-	/* If variable not found and contains underscore, try splitting at underscore */
 	if (!result && ft_strchr(var_name, '_'))
-	{
-		underscore_pos = ft_strchr(var_name, '_');
-		if (underscore_pos && underscore_pos != var_name) /* Ensure underscore is not at start */
-		{
-			/* Get the part before the underscore */
-			base_var = ft_substr(var_name, 0, underscore_pos - var_name);
-			base_value = get_var_value(base_var, exit_status, envp);
-			
-			if (base_value)
-			{
-				/* Return base value + underscore + rest of the string */
-				free(result); /* result is NULL here */
-				result = ft_strjoin(base_value, underscore_pos);
-				free(base_value);
-			}
-			free(base_var);
-		}
-	}
-	
+		result = handle_underscore_case(var_name, exit_status, envp);
 	free(var_name);
 	return (result);
 }
