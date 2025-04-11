@@ -16,15 +16,37 @@
 static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 {
 	char	*expanded;
+	int		i;
+	int		j;
+	char	*result;
+	char	*tmp;
 
-	expanded = expand_variables(arg, exit_status, envp);
-	if (!expanded)
+	result = ft_strdup("");
+	i = 0;
+	while (arg[i])
 	{
-		free(arg);
-		return (NULL);
+		j = i;
+		if (arg[i] == '$')
+		{
+			tmp = expand_env_var(arg, &i, exit_status, envp);
+			if (tmp)
+			{
+				expanded = ft_strjoin(result, tmp);
+				free(tmp);
+				free(result);
+				result = expanded;
+				continue;
+			}
+		}
+		tmp = ft_substr(arg, j, i - j + 1);
+		expanded = ft_strjoin(result, tmp);
+		free(tmp);
+		free(result);
+		result = expanded;
+		i++;
 	}
 	free(arg);
-	return (expanded);
+	return (result);
 }
 
 static void	shift_argv(char **argv, int i, int *j)
