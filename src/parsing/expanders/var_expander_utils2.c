@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_expander_utils2.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: npapashv <npapashv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:09:00 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/11 22:39:43 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/12 01:40:38 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,17 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 	return (result);
 }
 
+static char	*handle_empty_var_case(char *str, int *i, int start, char *var_name)
+{
+	free(var_name);
+	if (str[*i] == '$' || str[*i] == '\0')
+	{
+		*i = start;
+		return (ft_strdup("$"));
+	}
+	return (NULL);
+}
+
 char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 {
 	char	*var_name;
@@ -56,15 +67,7 @@ char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
 		return (special_case);
 	var_name = get_var_name(str + *i, i);
 	if (!*var_name)
-	{
-		free(var_name);
-		if (str[*i] == '$' || str[*i] == '\0')
-		{
-			*i = original_i;
-			return (ft_strdup("$"));
-		}
-		return (NULL);
-	}
+		return (handle_empty_var_case(str, i, original_i, var_name));
 	result = get_var_value(var_name, exit_status, envp);
 	if (!result && ft_strchr(var_name, '_'))
 		result = handle_underscore_case(var_name, exit_status, envp);

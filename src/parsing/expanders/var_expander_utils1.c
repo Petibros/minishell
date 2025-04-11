@@ -6,20 +6,29 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:09:00 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 17:09:00 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/12 01:28:51 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 #include "expander.h"
 
-static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
+static char	*append_expanded_segment(char *result, char *segment)
 {
 	char	*expanded;
-	int		i;
-	int		j;
+
+	expanded = ft_strjoin(result, segment);
+	free(segment);
+	free(result);
+	return (expanded);
+}
+
+static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
+{
 	char	*result;
 	char	*tmp;
+	int		i;
+	int		j;
 
 	result = ft_strdup("");
 	i = 0;
@@ -29,21 +38,13 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 		if (arg[i] == '$')
 		{
 			tmp = expand_env_var(arg, &i, exit_status, envp);
-			if (tmp)
-			{
-				expanded = ft_strjoin(result, tmp);
-				free(tmp);
-				free(result);
-				result = expanded;
-				continue;
-			}
+			result = append_expanded_segment(result, tmp);
+			continue ;
 		}
-		tmp = ft_substr(arg, j, i - j + 1);
-		expanded = ft_strjoin(result, tmp);
-		free(tmp);
-		free(result);
-		result = expanded;
-		i++;
+		while (arg[i] && arg[i] != '$')
+			i++;
+		tmp = ft_substr(arg, j, i - j);
+		result = append_expanded_segment(result, tmp);
 	}
 	free(arg);
 	return (result);

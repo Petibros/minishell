@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_var_expander.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: npapashv <npapashv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 02:52:15 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/07 02:52:15 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/12 01:45:38 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,34 @@ static char	*handle_var_value(char *token_value, int var_len, char **envp)
 	return (ft_strdup(""));
 }
 
+static char	*handle_dollar_continuation(char *token_value, char *var_value,
+					int var_len, char **envp)
+{
+	char	*next_part;
+	char	*result;
+
+	if (token_value[var_len + 1] == '\0')
+		return (ft_strjoin(var_value, "$"));
+	next_part = process_var_token(ft_strdup(token_value + var_len), envp);
+	if (next_part)
+	{
+		result = ft_strjoin(var_value, next_part);
+		free(next_part);
+		return (result);
+	}
+	return (ft_strdup(var_value));
+}
+
 static char	*process_var_token(char *token_value, char **envp)
 {
 	char	*var_name;
 	char	*var_value;
-	char	*next_part;
+	char	*result;
 	int		var_len;
 
 	var_len = 1;
-	while (token_value[var_len] && (ft_isalnum(token_value[var_len])
-			|| token_value[var_len] == '_'))
+	while (token_value[var_len]
+		&& (ft_isalnum(token_value[var_len]) || token_value[var_len] == '_'))
 		var_len++;
 	var_name = ft_substr(token_value, 1, var_len - 1);
 	var_value = ft_getenv(envp, var_name);
@@ -62,20 +80,10 @@ static char	*process_var_token(char *token_value, char **envp)
 		return (handle_var_value(token_value, var_len, envp));
 	if (token_value[var_len] == '$')
 	{
-		if (token_value[var_len + 1] == '\0')
-		{
-			char *result = ft_strjoin(var_value, "$");
-			free(token_value);
-			return (result);
-		}
-		next_part = process_var_token(ft_strdup(token_value + var_len), envp);
-		if (next_part)
-		{
-			char *result = ft_strjoin(var_value, next_part);
-			free(next_part);
-			free(token_value);
-			return (result);
-		}
+		result = handle_dollar_continuation(token_value, var_value,
+				var_len, envp);
+		free(token_value);
+		return (result);
 	}
 	free(token_value);
 	return (ft_strdup(var_value));
