@@ -24,8 +24,6 @@ void		print_syntax_error(char *token);
 
 /* Debug functions */
 void		print_token_list(t_token *token);
-void		print_ast(t_nodes *root);
-void		print_ast_types(t_nodes *node, int depth);
 
 /* Quote handling functions */
 char		*remove_quotes(char *str);

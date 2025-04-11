@@ -12,7 +12,6 @@
 
 #include "minishell.h"
 #include "parsing.h"
-#include "print_ast.h"
 
 static int	validate_syntax(t_token *tokens)
 {
@@ -62,7 +61,6 @@ int	parse_line(t_vars *vars)
 	}
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
-	print_ast_types(vars->cmd.cmds, 0);
 	free_token(tokens);
 	return (1);
 }
