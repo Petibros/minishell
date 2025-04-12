@@ -35,7 +35,7 @@ static t_nodes	*handle_subshell(t_token **token, char **envp)
 	}
 	node->is_operator = 1;
 	node->operator_type = TOKEN_SUBSHELL;
-	node->right = inner_cmd;
+	node->left = inner_cmd;
 	return (node);
 }
 
