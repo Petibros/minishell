@@ -64,6 +64,7 @@ int	parse_line(t_vars *vars)
 	}
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
+	print_ast(vars->cmd.cmds);  // Print the AST after all processing is done
 	free_token(tokens);
 	return (1);
 }
