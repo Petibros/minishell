@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/07 07:31:21 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:18:37 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
 	}
 }
 
-static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
+void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
 {
 	*fd_in = 0;
 	if (cmds->heredoc)
@@ -71,16 +71,16 @@ static void	get_fd_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_in)
 		return ;
 	if (cmds->file_in)
 		open_fd(&cmds->file_in, fd_in, 1, vars);
-	else if (is_pipe[0] == true)
+	else if (is_pipe[0] == 1)
 		*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
 }
 
-static void	get_fd_out(t_vars *vars, t_nodes *cmds, bool is_pipe[2], int *fd_out)
+void	get_fd_out(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_out)
 {
 	*fd_out = 1;
 	if (cmds->file_out)
 		open_fd(&cmds->file_out, fd_out, 3, vars);
-	else if (is_pipe[1] == true)
+	else if (is_pipe[1] == 1)
 	{
 		++vars->cmd.pipes_count;
 		pipe(vars->cmd.pipes[vars->cmd.pipes_count % 2]);
@@ -115,8 +115,6 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 
 static int	which_built_in(char **argv)
 {
-	if (!argv || !argv[0])
-		return (0);
 	if (ft_strncmp(argv[0], "export", 7) == 0)
 		return (1);
 	else if (ft_strncmp(argv[0], "unset", 6) == 0)
@@ -128,20 +126,13 @@ static int	which_built_in(char **argv)
 	return (0);
 }
 
-static int	is_built_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
+static int	is_built_in(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 {
 	int	status;
 
 	status = which_built_in(cmds->argv);
-	if (!status)
+	if (!status || is_pipe[0] || is_pipe[1])
 		return (-2);
-	if (is_pipe[0] || is_pipe[1])
-		return (1);
-	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
-	{
-		vars->cmd.last_exit_status = 1;
-		return (1);
-	}
 	if (status == 1)
 		status = export_var(cmds->argv, &vars->env.envp, vars);
 	else if (status == 2)
@@ -149,28 +140,39 @@ static int	is_built_in(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 	else if (status == 3)
 		status = cd(cmds->argv, vars);
 	else if (status == 4)
-		status = exit_built_in(cmds->argv, vars);
+		status = exit_built_in(cmds->argv, vars, true);
 	if (status != -1)
 		vars->cmd.last_exit_status = status;
 	return (status);
 }
 
-int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
+int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 {
 	int	pid;
 	int	status;
 
 	status = 0;
+	vars->cmd.last_pid = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
+//	printf("%s: out: %d, in: %d , count : %d\n", cmds->argv[0], vars->cmd.fd_out, vars->cmd.fd_in, vars->cmd.pipes_count_sub);
 	if (vars->cmd.fd_in <= -2)
 	{
-		close_fds(vars->cmd.pipes, vars);
+		close_fds(vars);
 		if (vars->cmd.fd_in == -3)
 			return (130);
 		return (-1);
+	}
+	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1
+		|| !cmds->argv || !cmds->argv[0])
+	{
+		close_fds(vars);
+		vars->cmd.last_exit_status = 0;
+		if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+			vars->cmd.last_exit_status = 1;
+		return (0);
 	}
 	status = is_built_in(vars, cmds, is_pipe);
 	if (status == -1)
@@ -187,10 +189,9 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, bool is_pipe[2])
 		if (pid == 0)
 		{
 			signal(SIGINT, SIG_DFL);
-			exec_cmd(vars, cmds, vars->cmd.pipes);
+			exec_cmd(vars, cmds);
 		}
 		vars->cmd.last_pid = pid;
 	}
-	close_fds(vars->cmd.pipes, vars);
 	return (status);
 }

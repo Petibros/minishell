@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/08 03:07:03 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/11 18:55:24 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,16 +106,17 @@ static int	add_var(char **argv, char ***envp, t_vars *vars, int i)
 int	export_var(char **argv, char ***envp, t_vars *vars)
 {
 	int	status;
+	int	return_status;
 	int	i;
 
 	if (!argv[1])
 		return (solely_export(*envp));
-	vars->cmd.last_exit_status = 0;
+	return_status = 0;
 	i = -1;
 	while (argv[i + 2])
 	{
 		++i;
-		status = is_valid(&argv[i], &vars->cmd.last_exit_status);
+		status = is_valid(&argv[i], &return_status);
 		if (status == -1)
 			continue ;
 		status = already_exists(&argv[i], *envp, status, 0);
@@ -126,5 +127,5 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 		if (add_var(argv, envp, vars, i) == -1)
 			return (-1);
 	}
-	return (vars->cmd.last_exit_status);
+	return (return_status);
 }

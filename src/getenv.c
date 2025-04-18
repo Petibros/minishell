@@ -7,7 +7,8 @@ char	*ft_getenv(char **envp, char *var)
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(envp[i], var, ft_strlen(var)) == 0 && envp[i][ft_strlen(var)] == '=')
+		if (ft_strncmp(envp[i], var, ft_strlen(var)) == 0
+			&& envp[i][ft_strlen(var)] == '=')
 			return (envp[i] + ft_strlen(var) + 1);
 		++i;
 	}
