@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/07 07:07:04 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/15 17:34:19 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	rl_clear_history();
 	status = vars->cmd.last_exit_status;
-	exit_and_free(vars, status);
+	exit_and_free(vars, status, true);
 	return (status);
 }

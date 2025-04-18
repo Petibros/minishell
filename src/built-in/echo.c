@@ -29,12 +29,13 @@ static int	get_beginning(char **argv, bool *option)
 	return (i);
 }
 
-void	echo(char **argv, char **envp)
+int	echo(char **argv, char **envp)
 {
 	bool	option;
 	int		beginning;
 	int		status;
 
+	(void) envp;
 	option = false;
 	status = 0;
 	beginning = get_beginning(argv, &option);
@@ -51,7 +52,5 @@ void	echo(char **argv, char **envp)
 	}
 	if (!option)
 		write(1, "\n", 1);
-	free_string_array(argv);
-	free_string_array(envp);
-	exit(status);
+	return (status);
 }

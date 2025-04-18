@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 23:32:42 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/13 07:49:50 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,19 +51,21 @@ int	cd(char **argv, t_vars *vars)
 	char	old_pwd[PATH_MAX];
 
 	getcwd(old_pwd, PATH_MAX);
-	if (!argv[1] && chdir(vars->home_path) == -1)
+	if (!argv[1] && chdir(ft_getenv(vars->env.envp, "HOME")) == -1)
 	{
-		perror("cd");
+		write(2, "cd: HOME not set\n", 17);
 		return (1);
 	}
 	else if (argv[2])
 	{
-		write(2, "cd: too many arguments", 22);
+		write(2, "cd: too many arguments\n", 23);
 		return (1);
 	}
-	else if (chdir(argv[1]) == -1)
+	else if (argv[1] && chdir(argv[1]) == -1)
 	{
-		perror("cd");
+		write(2, "cd: no such file or directory: ", 32);
+		write(2, argv[1], ft_strlen(argv[1]));
+		write(2, "\n", 1);
 		return (1);
 	}
 	if (!change_pwd(vars, old_pwd))

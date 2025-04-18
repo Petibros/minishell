@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:36:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/03 22:53:27 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/15 17:35:08 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,23 @@ static int	verif_argv(char *argv)
 	return (0);
 }
 
-void	exit_and_free(t_vars *vars, int status)
+void	exit_and_free(t_vars *vars, int status, bool write_exit)
 {
 	int	term;
 
-	term = open("/dev/tty", O_WRONLY);
+	term = -2;
+	if (write_exit)
+		term = open("/dev/tty", O_WRONLY);
 	if (term == -1)
 		perror("cannot write exit in term");
 	free_all(vars, NULL, false);
-	if (term != -1)
+	if (term > -1)
 		write(term, "exit\n", 5);
 	close(term);
 	exit(status);
 }
 
-int	exit_built_in(char **argv, t_vars *vars)
+int	exit_built_in(char **argv, t_vars *vars, bool write_exit)
 {
 	int	exit_status;
 
@@ -78,6 +80,6 @@ int	exit_built_in(char **argv, t_vars *vars)
 			exit_status = 2;
 		}
 	}
-	exit_and_free(vars, exit_status);
+	exit_and_free(vars, exit_status, write_exit);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: npapash <npapash@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 03:11:38 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/22 03:11:38 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/18 15:15:22 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_nodes	*handle_parentheses(t_token **token, char **envp)
 	}
 	node->is_operator = 1;
 	node->operator_type = TOKEN_SUBSHELL;
-	node->right = inner_cmd;
+	node->left = inner_cmd;
 	
 	// Handle redirections after the closing parenthesis
 	if (*token && ((*token)->type == TOKEN_REDIR_IN || (*token)->type == TOKEN_REDIR_OUT
