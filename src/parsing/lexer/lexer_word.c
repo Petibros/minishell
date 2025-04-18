@@ -12,6 +12,12 @@
 
 #include "parsing.h"
 
+static int	is_dollar_operator(char *input, int pos)
+{
+	return (input[pos] == '$' && input[pos + 1] && 
+		(input[pos + 1] == '>' || input[pos + 1] == '<'));
+}
+
 static int	get_word_len(char *input)
 {
 	int		len;
@@ -19,8 +25,7 @@ static int	get_word_len(char *input)
 
 	len = 0;
 	quote = 0;
-	while (input[len] && (!is_operator_char(input[len]) || quote)
-		&& (!is_whitespace(input[len]) || quote))
+	while (input[len])
 	{
 		if (input[len] == '\'' || input[len] == '\"')
 		{
@@ -28,6 +33,18 @@ static int	get_word_len(char *input)
 				quote = input[len];
 			else if (quote == input[len])
 				quote = 0;
+		}
+		if (!quote)
+		{
+			if (is_whitespace(input[len]) || 
+				(is_operator_char(input[len]) && !is_dollar_operator(input, len)))
+				break;
+			if (is_dollar_operator(input, len))
+			{
+				if (len == 0)
+					len = 2;  // Return $> as a single token
+				break;
+			}
 		}
 		len++;
 	}

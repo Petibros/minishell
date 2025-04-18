@@ -13,6 +13,55 @@
 #include "minishell.h"
 #include "parsing.h"
 
+static int	is_redirection(t_token_type type)
+{
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
+}
+
+static int	is_dollar_operator(const char *value)
+{
+	return (value && value[0] == '$' && 
+		(value[1] == '>' || value[1] == '<') && value[2] == '\0');
+}
+
+static int	validate_redirection(t_token *next)
+{
+	if (!next || next->type != TOKEN_WORD)
+		return (0);
+	if (next->next && next->next->type == TOKEN_LPAREN)
+		return (0);
+	if (next->type == TOKEN_WORD && is_dollar_operator(next->value))
+		return (0);
+	return (1);
+}
+
+static int	validate_parentheses_content(t_token *current)
+{
+	// Skip the opening parenthesis
+	current = current->next;
+	
+	// Empty parentheses
+	if (!current || current->type == TOKEN_RPAREN)
+		return (0);
+
+	// Check for invalid redirections before closing parenthesis
+	while (current && current->type != TOKEN_RPAREN)
+	{
+		if (is_redirection(current->type) && !validate_redirection(current->next))
+			return (0);
+		if (current->type == TOKEN_WORD && is_dollar_operator(current->value))
+			return (0);
+		current = current->next;
+	}
+
+	// Missing closing parenthesis
+	if (!current || current->type != TOKEN_RPAREN)
+		return (0);
+
+	return (1);
+}
+
 static int	validate_syntax(t_token *tokens)
 {
 	t_token	*current;
@@ -28,13 +77,12 @@ static int	validate_syntax(t_token *tokens)
 		next = current->next;
 		if (current->type == TOKEN_PIPE && (!next || next->type == TOKEN_PIPE))
 			return (0);
-		if (current->type == TOKEN_REDIR_IN || current->type == TOKEN_REDIR_OUT
-			|| current->type == TOKEN_APPEND || current->type == TOKEN_HEREDOC)
-		{
-			if (!next || next->type != TOKEN_WORD || 
-				(next->next && next->next->type == TOKEN_LPAREN))
-				return (0);
-		}
+		if (is_redirection(current->type) && !validate_redirection(next))
+			return (0);
+		if (current->type == TOKEN_LPAREN && !validate_parentheses_content(current))
+			return (0);
+		if (current->type == TOKEN_WORD && is_dollar_operator(current->value))
+			return (0);
 		current = next;
 	}
 	return (1);
@@ -52,6 +100,7 @@ int	parse_line(t_vars *vars)
 	if (!validate_syntax(tokens))
 	{
 		free_token(tokens);
+		vars->cmd.last_exit_status = 2;  // Set syntax error status
 		return (0);
 	}
 	expand_variables_in_tokens(&tokens, vars->cmd.last_exit_status,
