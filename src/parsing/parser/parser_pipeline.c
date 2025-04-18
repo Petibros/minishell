@@ -12,13 +12,13 @@
 
 #include "parsing.h"
 
-static t_nodes	*handle_subshell(t_token **token, char **envp)
+static t_nodes	*handle_subshell(t_token **token, char **envp, t_vars *vars)
 {
 	t_nodes	*node;
 	t_nodes	*inner_cmd;
 
 	*token = (*token)->next;
-	inner_cmd = parse_and_or(token, envp);
+	inner_cmd = parse_and_or(token, envp, vars);
 	if (!inner_cmd)
 		return (NULL);
 	if (!*token || (*token)->type != TOKEN_RPAREN)
@@ -39,27 +39,27 @@ static t_nodes	*handle_subshell(t_token **token, char **envp)
 	return (node);
 }
 
-static t_nodes	*get_next_command(t_token **token, char **envp)
+static t_nodes	*get_next_command(t_token **token, char **envp, t_vars *vars)
 {
 	if ((*token)->type == TOKEN_LPAREN)
-		return (handle_subshell(token, envp));
-	return (parse_command(token, envp));
+		return (handle_subshell(token, envp, vars));
+	return (parse_command(token, envp, vars));
 }
 
-t_nodes	*parse_pipeline(t_token **token, char **envp)
+t_nodes	*parse_pipeline(t_token **token, char **envp, t_vars *vars)
 {
 	t_nodes	*first_cmd;
 	t_nodes	*current;
 	t_nodes	*next_cmd;
 
-	first_cmd = get_next_command(token, envp);
+	first_cmd = get_next_command(token, envp, vars);
 	if (!first_cmd)
 		return (NULL);
 	current = first_cmd;
 	while (*token && (*token)->type == TOKEN_PIPE)
 	{
 		*token = (*token)->next;
-		next_cmd = get_next_command(token, envp);
+		next_cmd = get_next_command(token, envp, vars);
 		if (!next_cmd)
 		{
 			free_node(first_cmd);

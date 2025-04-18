@@ -53,7 +53,7 @@ static t_nodes	*process_token_loop(t_token_loop_ctx *ctx)
 	return (ctx->node);
 }
 
-t_nodes	*parse_atom(t_token **token, char **envp)
+t_nodes	*parse_atom(t_token **token, char **envp, t_vars *vars)
 {
 	t_nodes				*node;
 	t_token				*word_tokens;
@@ -63,7 +63,7 @@ t_nodes	*parse_atom(t_token **token, char **envp)
 	if (!*token)
 		return (NULL);
 	if ((*token)->type == TOKEN_LPAREN)
-		return (handle_parentheses(token, envp));
+		return (handle_parentheses(token, envp, vars));
 	node = create_node();
 	if (!node)
 		return (NULL);

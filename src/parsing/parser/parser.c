@@ -3,21 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: npapash <npapash@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 03:18:12 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:18:12 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/22 03:11:38 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/22 03:11:38 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-t_nodes	*parse(t_token *token, char **envp)
+t_nodes	*parse(t_token *token, char **envp, t_vars *vars)
 {
 	t_nodes	*ast;
 
-	ast = parse_and_or(&token, envp);
-	if (!ast || (token && token->type != TOKEN_EOF))
+	if (!token)
+		return (NULL);
+	ast = parse_and_or(&token, envp, vars);
+	if (!ast || token)
 	{
 		free_node(ast);
 		return (NULL);

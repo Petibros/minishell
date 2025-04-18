@@ -56,10 +56,12 @@ int	parse_line(t_vars *vars)
 	}
 	expand_variables_in_tokens(&tokens, vars->cmd.last_exit_status,
 		vars->env.envp);
-	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp);
+	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp, vars);
 	if (!vars->cmd.cmds)
 	{
 		free_token(tokens);
+		if (vars->cmd.last_exit_status == 2)  // Check if error was due to syntax error
+			return (0);
 		return (1);
 	}
 	expand_wildcards(vars->cmd.cmds);

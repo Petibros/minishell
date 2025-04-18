@@ -50,7 +50,7 @@ void	advance_token(t_token **token, int count)
 	}
 }
 
-t_nodes	*handle_parentheses(t_token **token, char **envp)
+t_nodes	*handle_parentheses(t_token **token, char **envp, t_vars *vars)
 {
 	t_nodes	*node;
 	t_nodes	*inner_cmd;
@@ -58,7 +58,13 @@ t_nodes	*handle_parentheses(t_token **token, char **envp)
 	if (!*token || (*token)->type != TOKEN_LPAREN)
 		return (NULL);
 	*token = (*token)->next;
-	inner_cmd = parse_expression(token, 0, envp);
+	if (*token && (*token)->type == TOKEN_RPAREN)
+	{
+		*token = (*token)->next;
+		vars->cmd.last_exit_status = 2;  // Set syntax error status
+		return (NULL);
+	}
+	inner_cmd = parse_expression(token, 0, envp, vars);
 	if (!inner_cmd)
 		return (NULL);
 	if (!*token || (*token)->type != TOKEN_RPAREN)
