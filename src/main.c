@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 18:17:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/15 17:34:19 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:12:03 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	main(int argc, char **argv, char **envp)
 	}
 	while (true)
 	{
+		vars->sa_setup = &setup_signals;
 		actualize_env(vars);
 		if (get_prompt(vars) == -1)
 			break ;

@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 16:22:21 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:19:22 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 				dup2(vars->cmd.fd_out, 1);
 				close_child_fds(vars, vars->cmd.pipes);//fonction qui close tous les fds ouverts du processus fils
 				setup_signals_subshell();
+				vars->sa_setup = &setup_signals_subshell;
 				res = search_binary_tree(vars, cmds->left, 0, 0);
 				status = wait_processes(vars->cmd.last_exit_status, vars->cmd.last_pid);
 				close_pipe(vars->cmd.pipes, 3);
@@ -96,7 +97,10 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 				exit(status);
 			}
 			else if (pid > 0)
+			{
+				vars->cmd.last_pid = pid;
 				return (0);
+			}
 		}
 		res = recursive_call(vars, cmds, (int[2]){pipe_in, pipe_out}, true);
 		if (res == -1 || res == 130)
@@ -164,7 +168,6 @@ void	execute(t_vars *vars, t_nodes *cmds)
 
 	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
-	vars->cmd.last_pid = 0;
 	status = search_binary_tree(vars, cmds, false, false);
 	if (status == 130 || status == -1)
 	{

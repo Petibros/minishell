@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 16:19:24 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:06:26 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct s_vars
 	char	*line;
 	t_env	env;
 	t_cmds	cmd;
+	void	(*sa_setup)(void);
 	char	abs_path[PATH_MAX];
 	char	*home_path;
 	char	*user;

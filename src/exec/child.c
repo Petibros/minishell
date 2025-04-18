@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 16:13:52 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 20:11:19 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	is_built_in(char **argv, char **envp, t_vars *vars)
 	else if (ft_strncmp(argv[0], "pwd", 4) == 0)
 		status = pwd(argv, envp);
 	else if (ft_strncmp(argv[0], "export", 7) == 0)
-		status = export_var(argv, &envp, vars);
+		status = export_var(argv, &vars->env.envp, vars);
 	else if (ft_strncmp(argv[0], "unset", 6) == 0)
 		status = unset(argv, vars);
 	else if (ft_strncmp(argv[0], "cd", 3) == 0)

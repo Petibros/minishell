@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:04:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/02 20:40:44 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:49:08 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,14 @@ int	unset(char **argv, t_vars *vars)
 		if (is_unset(argv, vars->env.envp[i]))
 		{
 			tmp_i = i;
-			while (vars->env.envp[tmp_i])
+			free(vars->env.envp[tmp_i]);
+			vars->env.envp[tmp_i] = NULL;
+			while (vars->env.envp[tmp_i + 1])
 			{
 				vars->env.envp[tmp_i] = vars->env.envp[tmp_i + 1];
 				++tmp_i;
 			}
+			vars->env.envp[tmp_i] = NULL;
 			--vars->env.current_size;
 		}
 		++i;

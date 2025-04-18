@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 20:30:13 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/16 01:50:46 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:12:33 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd)
 		vars->cmd.last_exit_status = 130;
 		*fd = -3;
 	}
-	setup_signals();
+	vars->sa_setup();
 }
 
 int	here_doc(int fd, char *limiter)

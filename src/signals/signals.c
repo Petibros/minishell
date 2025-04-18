@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 08:06:22 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/16 01:48:21 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 18:08:42 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	setup_signals_heredoc(void)
 	struct sigaction	sa_int;
 
 	sa_int.sa_handler = handle_sigint_heredoc;
-	sa_int.sa_flags = 0;
+	sa_int.sa_flags = SA_RESTART;
 	sigemptyset(&sa_int.sa_mask);
 	sigaction(SIGINT, &sa_int, NULL);
 }
