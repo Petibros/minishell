@@ -31,7 +31,8 @@ static int	validate_syntax(t_token *tokens)
 		if (current->type == TOKEN_REDIR_IN || current->type == TOKEN_REDIR_OUT
 			|| current->type == TOKEN_APPEND || current->type == TOKEN_HEREDOC)
 		{
-			if (!next || next->type != TOKEN_WORD)
+			if (!next || next->type != TOKEN_WORD || 
+				(next->next && next->next->type == TOKEN_LPAREN))
 				return (0);
 		}
 		current = next;
