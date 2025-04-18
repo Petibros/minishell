@@ -58,6 +58,11 @@ char	*get_var_name(char *str, int *i)
 
 char	*handle_special_var_cases(char *str, int *i, int exit_status)
 {
+	if (str[*i] == '*')
+	{
+		(*i)++;
+		return (ft_strdup(""));
+	}
 	if (str[*i] == '?')
 	{
 		(*i)++;
