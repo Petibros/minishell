@@ -47,7 +47,7 @@ int	parse_line(t_vars *vars)
 		return (0);
 	tokens = lexer(vars->line);
 	if (!tokens)
-		return (0);
+		return (1);
 	if (!validate_syntax(tokens))
 	{
 		free_token(tokens);
