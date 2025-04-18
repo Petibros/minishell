@@ -76,5 +76,16 @@ t_nodes	*handle_parentheses(t_token **token, char **envp)
 	node->is_operator = 1;
 	node->operator_type = TOKEN_SUBSHELL;
 	node->right = inner_cmd;
+	
+	// Handle redirections after the closing parenthesis
+	if (*token && ((*token)->type == TOKEN_REDIR_IN || (*token)->type == TOKEN_REDIR_OUT
+		|| (*token)->type == TOKEN_APPEND || (*token)->type == TOKEN_HEREDOC))
+	{
+		if (!handle_redirections(node, token, envp))
+		{
+			free_node(node);
+			return (NULL);
+		}
+	}
 	return (node);
 }
