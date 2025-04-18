@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 15:30:04 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/17 06:07:06 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:03:34 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,27 +92,22 @@ void	free_all(t_vars *vars, char **to_not_free, bool in_child)
 	vars = NULL;
 }
 
-static void	close_pipeline(int pipes[2][2], int	pipes_count, t_vars *vars)
+void	close_fds(t_vars *vars)
 {
-	if (pipes[pipes_count % 2][1] == vars->cmd.fd_out)
+	if (vars->cmd.pipes[vars->cmd.pipes_count % 2][1] == vars->cmd.fd_out)
 	{
-		pipes[pipes_count % 2][1] = 0;
-		if (pipes[(pipes_count + 1) % 2][0] == vars->cmd.fd_in)
+		vars->cmd.pipes[vars->cmd.pipes_count % 2][1] = 0;
+		if (vars->cmd.pipes[(vars->cmd.pipes_count + 1) % 2][0] ==
+			vars->cmd.fd_in)
 			vars->cmd.fd_in = 0;
-		close_pipe(pipes, (pipes_count + 1) % 2 + 1);
+		close_pipe(vars->cmd.pipes, (vars->cmd.pipes_count + 1) % 2 + 1);
 	}
 	else
 	{
-		if (pipes[pipes_count % 2][0] == vars->cmd.fd_in)
+		if (vars->cmd.pipes[vars->cmd.pipes_count % 2][0] == vars->cmd.fd_in)
 			vars->cmd.fd_in = 0;
-		close_pipe(pipes, pipes_count % 2 + 1);
+		close_pipe(vars->cmd.pipes, vars->cmd.pipes_count % 2 + 1);
 	}
-}
-
-void	close_fds(t_vars *vars)
-{
-	close_pipeline(vars->cmd.pipes, vars->cmd.pipes_count, vars);
-	close_pipeline(vars->cmd.pipes_subshell, vars->cmd.pipes_count_sub, vars);
 	if (vars->cmd.fd_in > 2)
 		close(vars->cmd.fd_in);
 	if (vars->cmd.fd_out > 2)

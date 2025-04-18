@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/17 06:01:31 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:19:24 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,7 @@ typedef struct s_cmds
 	int				last_exit_status;
 	int				last_pid;
 	int				pipes[2][2];
-	int				pipes_subshell[2][2];
 	int				pipes_count;
-	int				pipes_count_sub;
 	bool			is_heredoc;
 	int				fd_in;
 	int				fd_out;
@@ -91,6 +89,9 @@ int		env(char **argv, char **envp);
 int		exit_built_in(char **argv, t_vars *vars, bool write_exit);
 char	*get_var(char *argv);
 //EXECUTION
+void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in);
+void	get_fd_out(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_out);
+void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars);
 void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd);
 int		here_doc(int fd, char *limiter);
 void	execute(t_vars *vars, t_nodes *cmds);
@@ -107,8 +108,7 @@ char	*ft_getenv(char **envp, char *var);
 int		get_prompt(t_vars *vars);
 //FREE AND CLOSE
 void	exit_and_free(t_vars *vars, int status, bool write_exit);
-void	close_child_fds(t_vars *vars, int pipes[2][2],
-			int pipes_subshell[2][2]);
+void	close_child_fds(t_vars *vars, int pipes[2][2]);
 void	exit_fd_error(t_vars *vars, int pipes[2][2]);
 void	exit_no_cmd(t_vars *vars, int pipes[2][2]);
 void	exit_error(char *path, char **envp, char **argv, int status);

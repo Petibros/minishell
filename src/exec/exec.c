@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 01:38:03 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:22:21 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,6 @@
 
 static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 				int pipe_in, int pipe_out);
-
-static int	is_next_to_subshell(t_nodes *cmds)
-{
-	if (cmds && ((cmds->is_operator && cmds->operator_type == TOKEN_SUBSHELL)
-			|| (cmds->right && cmds->right->is_operator
-				&& cmds->right->operator_type == TOKEN_SUBSHELL)))
-		return (1);
-	return (0);
-}
-
 static int	recursive_call(t_vars *vars, t_nodes *cmds,
 		int is_pipe[2], bool call_left)
 {
@@ -40,10 +30,7 @@ static int	recursive_call(t_vars *vars, t_nodes *cmds,
 	{
 		if (cmds->operator_type == TOKEN_PIPE)
 		{
-			if (is_next_to_subshell(cmds->left))
-				res = search_binary_tree(vars, cmds->right, 2, is_pipe[1]);
-			else
-				res = search_binary_tree(vars, cmds->right, 1, is_pipe[1]);
+			res = search_binary_tree(vars, cmds->right, 1, is_pipe[1]);
 		}
 		else
 			res = search_binary_tree(vars, cmds->right, 0, is_pipe[1]);
@@ -51,16 +38,12 @@ static int	recursive_call(t_vars *vars, t_nodes *cmds,
 	return (res);
 }
 
-static void	init_pipes(int pipes[2][2], int pipes_subshell[2][2])
+static void	init_pipes(int pipes[2][2])
 {
 	pipes[0][0] = 0;
 	pipes[0][1] = 0;
 	pipes[1][0] = 0;
 	pipes[1][1] = 0;
-	pipes_subshell[0][0] = 0;
-	pipes_subshell[0][1] = 0;
-	pipes_subshell[1][0] = 0;
-	pipes_subshell[1][1] = 0;
 }
 
 static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
@@ -78,24 +61,37 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 	{
 		if (cmds->operator_type == TOKEN_SUBSHELL)
 		{
-			if (pipe_out == 1)
+			get_fd_in(vars, cmds, (int [2]){pipe_in, pipe_out},
+				&vars->cmd.fd_in);
+			get_fd_out(vars, cmds, (int [2]){pipe_in, pipe_out},
+				&vars->cmd.fd_out);
+			if (vars->cmd.fd_in <= -2)
 			{
-				++vars->cmd.pipes_count_sub;
-				if (vars->cmd.pipes_count_sub > 2)
-					close_pipe(vars->cmd.pipes_subshell, (vars->cmd.pipes_count_sub % 2) + 1);
-				pipe(vars->cmd.pipes_subshell[vars->cmd.pipes_count_sub % 2]);
-				pipe_out = 2;
+				close_fds(vars);
+				if (vars->cmd.fd_in == -3)
+					return (130);
+				return (-1);
+			}
+			if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+			{
+				close_fds(vars);
+				vars->cmd.last_exit_status = 0;
+				if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
+					vars->cmd.last_exit_status = 1;
+				return (0);
 			}
 			pid = fork();
 			if (pid == -1)
 				return (-1);
 			else if (pid == 0)
 			{
+				dup2(vars->cmd.fd_in, 0);
+				dup2(vars->cmd.fd_out, 1);
+				close_child_fds(vars, vars->cmd.pipes);//fonction qui close tous les fds ouverts du processus fils
 				setup_signals_subshell();
-				res = search_binary_tree(vars, cmds->left, pipe_in, pipe_out);
+				res = search_binary_tree(vars, cmds->left, 0, 0);
 				status = wait_processes(vars->cmd.last_exit_status, vars->cmd.last_pid);
 				close_pipe(vars->cmd.pipes, 3);
-				close_pipe(vars->cmd.pipes_subshell, 3);
 				free_all(vars, NULL, false);
 				exit(status);
 			}
@@ -166,9 +162,8 @@ void	execute(t_vars *vars, t_nodes *cmds)
 {
 	int	status;
 
-	init_pipes(vars->cmd.pipes, vars->cmd.pipes_subshell);
+	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
-	vars->cmd.pipes_count_sub = 0;
 	vars->cmd.last_pid = 0;
 	status = search_binary_tree(vars, cmds, false, false);
 	if (status == 130 || status == -1)

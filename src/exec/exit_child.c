@@ -6,24 +6,19 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:08:45 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/17 01:33:36 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:19:56 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	close_child_fds(t_vars *vars, int pipes[2][2], int pipes_subshell[2][2])
+void	close_child_fds(t_vars *vars, int pipes[2][2])
 {
-	if (vars->cmd.fd_in == pipes[0][0] || vars->cmd.fd_in == pipes[1][0]
-			|| vars->cmd.fd_in == pipes_subshell[0][0]
-			|| vars->cmd.fd_in == pipes_subshell[1][0])
+	if (vars->cmd.fd_in == pipes[0][0] || vars->cmd.fd_in == pipes[1][0])
 		vars->cmd.fd_in = 0;
-	if (vars->cmd.fd_out == pipes[0][1] || vars->cmd.fd_out == pipes[1][1]
-			|| vars->cmd.fd_out == pipes_subshell[0][1]
-			|| vars->cmd.fd_out == pipes_subshell[1][1])
+	if (vars->cmd.fd_out == pipes[0][1] || vars->cmd.fd_out == pipes[1][1])
 		vars->cmd.fd_out = 0;
 	close_pipe(pipes, 3);
-	close_pipe(pipes_subshell, 3);
 	if (vars->cmd.fd_in > 2)
 		close(vars->cmd.fd_in);
 	if (vars->cmd.fd_out > 2)

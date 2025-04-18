@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 15:22:22 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:18:37 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
 	}
 }
 
-static void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
+void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
 {
 	*fd_in = 0;
 	if (cmds->heredoc)
@@ -71,35 +71,20 @@ static void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
 		return ;
 	if (cmds->file_in)
 		open_fd(&cmds->file_in, fd_in, 1, vars);
-	else if (is_pipe[0] >= 1)
-	{
-		if (is_pipe[0] == 1)
-			*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
-		else
-			*fd_in = vars->cmd.pipes_subshell
-			[vars->cmd.pipes_count_sub % 2][0];
-	}
+	else if (is_pipe[0] == 1)
+		*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
 }
 
-static void	get_fd_out(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_out)
+void	get_fd_out(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_out)
 {
 	*fd_out = 1;
 	if (cmds->file_out)
 		open_fd(&cmds->file_out, fd_out, 3, vars);
-	else if (is_pipe[1] >= 1)
+	else if (is_pipe[1] == 1)
 	{
-		if (is_pipe[1] == 1)
-		{
-			++vars->cmd.pipes_count;
-			pipe(vars->cmd.pipes[vars->cmd.pipes_count % 2]);
-			*fd_out = vars->cmd.pipes[vars->cmd.pipes_count % 2][1];
-		}
-		else if (vars->cmd.pipes_count_sub > 1)
-			*fd_out = vars->cmd.pipes_subshell
-			[(vars->cmd.pipes_count_sub + 1) % 2][1];
-		else
-			*fd_out = vars->cmd.pipes_subshell
-			[vars->cmd.pipes_count_sub % 2][1];
+		++vars->cmd.pipes_count;
+		pipe(vars->cmd.pipes[vars->cmd.pipes_count % 2]);
+		*fd_out = vars->cmd.pipes[vars->cmd.pipes_count % 2][1];
 	}
 }
 
@@ -168,7 +153,6 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 
 	status = 0;
 	vars->cmd.last_pid = 0;
-	printf("%s : in: %d, out: %d\n", cmds->argv[0], is_pipe[0], is_pipe[1]);
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
 	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe

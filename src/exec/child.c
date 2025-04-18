@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/17 01:35:51 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/18 16:13:52 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	envp = vars->env.envp;
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
-	close_child_fds(vars, vars->cmd.pipes, vars->cmd.pipes_subshell);//fonction qui close tous les fds ouverts du processus fils
+	close_child_fds(vars, vars->cmd.pipes);//fonction qui close tous les fds ouverts du processus fils
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))
