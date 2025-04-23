@@ -50,7 +50,21 @@ static void	process_quotes(char *str, char *result, int *j)
 	while (str[i])
 	{
 		if (!quote && is_quote(str[i]))
+		{
 			quote = str[i];
+			if (quote == '\'')  // For single quotes, copy everything literally
+			{
+				i++;
+				while (str[i] && str[i] != '\'')
+				{
+					result[(*j)++] = str[i++];
+				}
+				if (str[i] == '\'')
+					i++;
+				quote = 0;
+				continue;
+			}
+		}
 		else if (quote && str[i] == quote)
 			quote = 0;
 		else

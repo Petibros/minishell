@@ -15,11 +15,18 @@
 
 static void	process_char(t_quote_ctx *ctx, char *tmp)
 {
+	static int	in_squote = 0;
+
 	if (ctx->str[*(ctx->i)] == '\'')
+	{
+		if (!in_squote)
+			in_squote = 1;
 		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
-	else if (ctx->str[*(ctx->i)] == '"')
+		in_squote = 0;  // Reset after handling the quote
+	}
+	else if (!in_squote && ctx->str[*(ctx->i)] == '"')
 		ctx->result = handle_double_quote_char(ctx);
-	else if (ctx->str[*(ctx->i)] == '$')
+	else if (!in_squote && ctx->str[*(ctx->i)] == '$')
 	{
 		tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
 		if (tmp)
@@ -36,7 +43,21 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 		}
 	}
 	else
-		ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
+	{
+		if (in_squote)
+		{
+			// Inside single quotes, copy character literally
+			tmp = ft_substr(ctx->str, *(ctx->i), 1);
+			if (tmp)
+			{
+				ctx->result = ft_strjoin_free(ctx->result, tmp);
+				free(tmp);
+			}
+			(*(ctx->i))++;
+		}
+		else
+			ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
+	}
 }
 
 static char	*extract_variable_part(char *result, char *var_in_result,
@@ -71,9 +92,24 @@ static char	*post_process_expansion(char *result, char *str)
 	char	*start;
 	char	*var_in_result;
 	int		var_len;
+	int		in_squote;
+	int		i;
 
 	if (!result || !ft_strchr(str, '$'))
 		return (result);
+	
+	// Check if the $ is inside single quotes
+	in_squote = 0;
+	i = 0;
+	while (str[i] && str[i] != '$')
+	{
+		if (str[i] == '\'')
+			in_squote = !in_squote;
+		i++;
+	}
+	if (in_squote)  // If $ is inside single quotes, don't expand
+		return (result);
+
 	start = ft_strchr(str, '$');
 	if (!start || (!ft_isalpha(*(start + 1)) && *(start + 1) != '_'))
 		return (result);

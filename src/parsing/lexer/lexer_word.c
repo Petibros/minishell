@@ -27,12 +27,15 @@ static int	get_word_len(char *input)
 	quote = 0;
 	while (input[len])
 	{
-		if (input[len] == '\'' || input[len] == '\"')
+		if (!quote && (input[len] == '\'' || input[len] == '\"'))
+			quote = input[len];
+		else if (quote && input[len] == quote)
 		{
-			if (!quote)
-				quote = input[len];
-			else if (quote == input[len])
-				quote = 0;
+			if (quote == '\'')  // If in single quotes, treat everything literally
+				len++;
+			quote = 0;
+			if (!input[len])  // If we're at the end after closing quote
+				break;
 		}
 		if (!quote)
 		{

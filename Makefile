@@ -12,6 +12,7 @@
 
 NAME = minishell
 CC = cc
+OBJ_DIR = obj/
 
 CFILES =			src/main.c \
 		 			src/prompt.c \
@@ -78,7 +79,7 @@ CFILES_SIGNALS =	src/signals/signals.c \
 					src/signals/handle_sigint.c \
 					src/signals/handle_sigquit.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
+OFILES = $(addprefix $(OBJ_DIR), $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o))
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
@@ -88,13 +89,24 @@ LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
 
-$(NAME) : $(LIBFT) $(OFILES)
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)src/built-in
+	mkdir -p $(OBJ_DIR)src/exec
+	mkdir -p $(OBJ_DIR)src/parsing/lexer
+	mkdir -p $(OBJ_DIR)src/parsing/parser
+	mkdir -p $(OBJ_DIR)src/parsing/expanders
+	mkdir -p $(OBJ_DIR)src/parsing/nodes
+	mkdir -p $(OBJ_DIR)src/parsing/utils
+	mkdir -p $(OBJ_DIR)src/free
+	mkdir -p $(OBJ_DIR)src/signals
+
+$(NAME) : $(LIBFT) $(OBJ_DIR) $(OFILES)
 	$(CC) $(OFILES) $(LDFLAGS) -o $(NAME)
 
 $(LIBFT) :
 	make bonus -C libft
 
-%.o : %.c $(HEADER_PARSING) $(HEADER_LIBFT) $(HEADER)
+$(OBJ_DIR)%.o : %.c $(HEADER_PARSING) $(HEADER_LIBFT) $(HEADER)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 run : all
@@ -102,7 +114,7 @@ run : all
 
 clean :
 	make clean -C libft
-	rm -f $(OFILES)
+	rm -rf $(OBJ_DIR)
 
 fclean : clean
 	rm -f $(LIBFT)
