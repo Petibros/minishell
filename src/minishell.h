@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 18:06:26 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/24 17:51:47 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <termios.h>
 # include "parsing/types.h"
 # include "libft.h"
 # include "parsing.h"
@@ -65,14 +66,15 @@ typedef struct s_cmds
 
 typedef struct s_vars
 {
-	char	*line;
-	t_env	env;
-	t_cmds	cmd;
-	void	(*sa_setup)(void);
-	char	abs_path[PATH_MAX];
-	char	*home_path;
-	char	*user;
-	char	*prompt;
+	char			*line;
+	t_env			env;
+	t_cmds			cmd;
+	struct termios	terminal;
+	void			(*sa_setup)(void);
+	char			abs_path[PATH_MAX];
+	char			*home_path;
+	char			*user;
+	char			*prompt;
 }	t_vars;
 
 //PARSING

@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 16:18:37 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/24 18:57:06 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 		}
 		if (pid == 0)
 		{
-			signal(SIGINT, SIG_DFL);
+			reset_signals();
 			exec_cmd(vars, cmds);
 		}
 		vars->cmd.last_pid = pid;

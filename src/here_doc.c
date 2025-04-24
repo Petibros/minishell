@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 20:30:13 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 18:12:33 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/24 14:22:31 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int	here_doc(int fd, char *limiter)
 	buffer = readline("heredoc > ");
 	if (g_signal_received == SIGINT)
 	{
+		open("/dev/stdin", O_RDONLY);
 		free(buffer);
 		return (130);
 	}
