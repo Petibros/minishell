@@ -6,13 +6,14 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 19:42:08 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/23 19:42:08 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/25 11:59:56 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
+#include "lexer_word2.h"
 
-static int	is_dollar_redir_operator(char *input, int pos)
+int	is_dollar_redir_operator(char *input, int pos)
 {
 	return (input[pos] == '$' && input[pos + 1]
 		&& (input[pos + 1] == '>' || input[pos + 1] == '<'));
@@ -22,35 +23,17 @@ static int	get_word_len(char *input)
 {
 	int		len;
 	char	quote;
+	int		result;
 
 	len = 0;
 	quote = 0;
 	while (input[len])
 	{
-		if (!quote && (input[len] == '\'' || input[len] == '\"'))
-			quote = input[len];
-		else if (quote && input[len] == quote)
-		{
-			if (quote == '\'')
-				len++;
-			quote = 0;
-			if (!input[len])
-				break ;
-		}
-		if (!quote)
-		{
-			if (is_whitespace(input[len])
-				|| (is_operator_char(input[len])
-					&& !is_dollar_redir_operator(input, len)))
-				break ;
-			if (is_dollar_redir_operator(input, len))
-			{
-				if (len == 0)
-					len = 2;
-				break ;
-			}
-		}
-		len++;
+		result = process_word_char(input, &len, &quote);
+		if (result == 1)
+			break ;
+		if (result == 2)
+			return (2);
 	}
 	return (len);
 }

@@ -6,18 +6,12 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:46:56 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/25 11:50:43 by npapash          ###   ########.fr       */
+/*   Updated: 2025/04/25 12:05:04 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 #include "pratt_utils3.h"
-
-static int	is_redirection_token(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
-}
 
 static t_nodes	*handle_empty_parentheses(t_token **token, t_vars *vars)
 {

@@ -36,6 +36,7 @@ CFILES_EXEC =		src/exec/exec.c \
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \
 					src/parsing/lexer/lexer_word.c \
+					src/parsing/lexer/lexer_word2.c \
 					src/parsing/parser/parser.c \
 					src/parsing/parser/parser_node.c \
 					src/parsing/parser/parser_command.c \
