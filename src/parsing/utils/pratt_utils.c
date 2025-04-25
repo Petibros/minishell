@@ -6,7 +6,7 @@
 /*   By: npapash <npapash@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 03:11:38 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/18 15:15:22 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 11:46:56 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,50 +48,4 @@ void	advance_token(t_token **token, int count)
 		*token = (*token)->next;
 		i++;
 	}
-}
-
-t_nodes	*handle_parentheses(t_token **token, char **envp, t_vars *vars)
-{
-	t_nodes	*node;
-	t_nodes	*inner_cmd;
-
-	if (!*token || (*token)->type != TOKEN_LPAREN)
-		return (NULL);
-	*token = (*token)->next;
-	if (*token && (*token)->type == TOKEN_RPAREN)
-	{
-		*token = (*token)->next;
-		vars->cmd.last_exit_status = 2;
-		return (NULL);
-	}
-	inner_cmd = parse_expression(token, 0, envp, vars);
-	if (!inner_cmd)
-		return (NULL);
-	if (!*token || (*token)->type != TOKEN_RPAREN)
-	{
-		free_node(inner_cmd);
-		return (NULL);
-	}
-	*token = (*token)->next;
-	node = create_node();
-	if (!node)
-	{
-		free_node(inner_cmd);
-		return (NULL);
-	}
-	node->is_operator = 1;
-	node->operator_type = TOKEN_SUBSHELL;
-	node->left = inner_cmd;
-	if (*token && ((*token)->type == TOKEN_REDIR_IN
-			|| (*token)->type == TOKEN_REDIR_OUT
-			|| (*token)->type == TOKEN_APPEND
-			|| (*token)->type == TOKEN_HEREDOC))
-	{
-		if (!handle_redirections(node, token, envp))
-		{
-			free_node(node);
-			return (NULL);
-		}
-	}
-	return (node);
 }

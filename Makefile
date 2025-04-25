@@ -63,6 +63,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/nodes/pratt_node_op.c \
 					src/parsing/nodes/pratt_node_cmd.c \
 					src/parsing/utils/pratt_utils.c \
+					src/parsing/utils/pratt_utils2.c \
+					src/parsing/utils/pratt_utils3.c \
 					src/parsing/utils/quote_utils.c \
 					src/parsing/utils/quote_utils2.c \
 					src/parsing/utils/quote_utils3.c \
