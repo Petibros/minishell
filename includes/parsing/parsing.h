@@ -28,8 +28,8 @@
 # include "wildcard_expander.h"
 # include "minishell.h"
 
-/* AST Printing */
-void	print_ast(t_nodes *root);
-void	print_ast_recursive(t_nodes *node, int depth);
+/* Token Printing */
+void	print_tokens(t_token *head);
+void	print_token(t_token *token);
 
 #endif
