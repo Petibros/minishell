@@ -16,7 +16,7 @@ static t_nodes	*init_command_parsing(void)
 {
 	t_nodes	*node;
 
-	node = create_parser_node();
+	node = create_node();
 	if (!node)
 		return (NULL);
 	return (node);

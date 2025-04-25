@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = minishell
-CC = cc
+CC = clang -flto=full 
 OBJ_DIR = obj/
 
 CFILES =			src/main.c \
@@ -37,7 +37,6 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \
 					src/parsing/lexer/lexer_word.c \
 					src/parsing/lexer/lexer_word2.c \
-					src/parsing/parser/parser_node.c \
 					src/parsing/parser/parser_command.c \
 					src/parsing/parser/parser_command_utils.c \
 					src/parsing/parser/parser_pipeline.c \

@@ -27,7 +27,7 @@ static t_nodes	*handle_subshell(t_token **token, char **envp, t_vars *vars)
 		return (NULL);
 	}
 	*token = (*token)->next;
-	node = create_parser_node();
+	node = create_node();
 	if (!node)
 	{
 		free_node(inner_cmd);

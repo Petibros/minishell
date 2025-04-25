@@ -45,6 +45,13 @@ static char	*handle_closing_quote(t_quote_ctx *ctx, int start)
 	return (ctx->result);
 }
 
+static int	is_valid_dollar_sequence(t_quote_ctx *ctx)
+{
+	return (ft_isalpha(ctx->str[*(ctx->i) + 1])
+			|| ctx->str[*(ctx->i) + 1] == '_'
+			|| ctx->str[*(ctx->i) + 1] == '?');
+}
+
 static char	*process_double_quote_content(t_quote_ctx *ctx)
 {
 	int		start;
@@ -57,10 +64,7 @@ static char	*process_double_quote_content(t_quote_ctx *ctx)
 	start = *(ctx->i);
 	while (ctx->str[*(ctx->i)] && ctx->str[*(ctx->i)] != '"')
 	{
-		if (ctx->str[*(ctx->i)] == '$'
-			&& (ft_isalpha(ctx->str[*(ctx->i) + 1])
-				|| ctx->str[*(ctx->i) + 1] == '_'
-				|| ctx->str[*(ctx->i) + 1] == '?'))
+		if (ctx->str[*(ctx->i)] == '$' && is_valid_dollar_sequence(ctx))
 		{
 			if (start != *(ctx->i))
 				ctx->result = append_substring(ctx->result, ctx->str,
