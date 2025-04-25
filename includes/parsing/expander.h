@@ -36,6 +36,7 @@ typedef struct s_token_processor_ctx
 
 // var_expander.c
 char		*expand_variables(char *str, int exit_status, char **envp);
+char		*post_process_expansion(char *result, char *str);
 
 // var_expander_utils1.c
 void		expand_variables_in_node(t_nodes *node, int exit_status, \
@@ -53,6 +54,17 @@ char		*get_var_value(char *var_name, int exit_status, char **envp);
 char		*get_var_name(char *str, int *i);
 char		*handle_special_var_cases(char *str, int *i, int exit_status);
 char		*handle_underscore_case(char *var_name, int exit_status, char **envp);
+
+// var_expander_utils4.c
+char		*handle_dollar_sign(t_quote_ctx *ctx);
+char		*handle_in_squote(t_quote_ctx *ctx);
+char		*extract_variable_part(char *result, char *var_in_result, int var_len);
+int			get_var_length(char *var_name);
+
+// var_expander_utils5.c
+int			find_next_dollar(char *str, int *in_squote);
+char		*process_variable(char *result, char *start);
+void		process_char(t_quote_ctx *ctx);
 
 // wildcard_expander.c
 int			is_pattern_match(const char *pattern, const char *str);

@@ -13,107 +13,18 @@
 #include "parsing.h"
 #include "expander.h"
 
-static void	process_char(t_quote_ctx *ctx, char *tmp)
-{
-	static int	in_squote = 0;
-
-	if (ctx->str[*(ctx->i)] == '\'')
-	{
-		if (!in_squote)
-			in_squote = 1;
-		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
-		in_squote = 0;
-	}
-	else if (!in_squote && ctx->str[*(ctx->i)] == '"')
-		ctx->result = handle_double_quote_char(ctx);
-	else if (!in_squote && ctx->str[*(ctx->i)] == '$')
-	{
-		tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
-		if (tmp)
-		{
-			ctx->result = ft_strjoin_free(ctx->result, tmp);
-			free(tmp);
-		}
-		else if (ctx->str[*(ctx->i) + 1] == '\0')
-		{
-			tmp = ft_strdup("$");
-			ctx->result = ft_strjoin_free(ctx->result, tmp);
-			free(tmp);
-			(*(ctx->i))++;
-		}
-	}
-	else
-	{
-		if (in_squote)
-		{
-			tmp = ft_substr(ctx->str, *(ctx->i), 1);
-			if (tmp)
-			{
-				ctx->result = ft_strjoin_free(ctx->result, tmp);
-				free(tmp);
-			}
-			(*(ctx->i))++;
-		}
-		else
-			ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
-	}
-}
-
-static char	*extract_variable_part(char *result, char *var_in_result,
-	int var_len)
-{
-	char	*before;
-	char	*after;
-	char	*final_result;
-
-	before = ft_substr(result, 0, var_in_result - result);
-	after = ft_strdup(var_in_result + var_len + 1);
-	final_result = ft_strjoin(before, after);
-	free(before);
-	free(after);
-	free(result);
-	return (final_result);
-}
-
-static int	get_var_length(char *var_name)
-{
-	int	var_len;
-
-	var_len = 0;
-	while (var_name[var_len] && (ft_isalnum(var_name[var_len])
-			|| var_name[var_len] == '_'))
-		var_len++;
-	return (var_len);
-}
-
-static char	*post_process_expansion(char *result, char *str)
+char	*post_process_expansion(char *result, char *str)
 {
 	char	*start;
-	char	*var_in_result;
-	int		var_len;
 	int		in_squote;
-	int		i;
 
 	if (!result || !ft_strchr(str, '$'))
 		return (result);
-	in_squote = 0;
-	i = 0;
-	while (str[i] && str[i] != '$')
-	{
-		if (str[i] == '\'')
-			in_squote = !in_squote;
-		i++;
-	}
+	find_next_dollar(str, &in_squote);
 	if (in_squote)
 		return (result);
 	start = ft_strchr(str, '$');
-	if (!start || (!ft_isalpha(*(start + 1)) && *(start + 1) != '_'))
-		return (result);
-	var_len = get_var_length(start + 1);
-	var_in_result = ft_strnstr(result, start, ft_strlen(result));
-	if (!var_in_result)
-		return (result);
-	return (extract_variable_part(result, var_in_result, var_len));
+	return (process_variable(result, start));
 }
 
 char	*expand_variables(char *str, int exit_status, char **envp)
@@ -125,7 +36,7 @@ char	*expand_variables(char *str, int exit_status, char **envp)
 	if (!ctx)
 		return (NULL);
 	while (str[*(ctx->i)] && ctx->result)
-		process_char(ctx, NULL);
+		process_char(ctx);
 	result = ctx->result;
 	if (result && result[0] == '\0')
 	{
