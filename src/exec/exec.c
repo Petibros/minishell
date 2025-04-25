@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 18:19:22 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/24 19:43:27 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 			}
 		}
 		res = recursive_call(vars, cmds, (int[2]){pipe_in, pipe_out}, true);
-		if (res == -1 || res == 130)
+		if (res == -1 || res == 130 || res == 131)
 			return (res);
 		if (cmds->operator_type != TOKEN_PIPE)
 		{
@@ -112,7 +112,8 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 			if (cmds->operator_type == TOKEN_OR)
 			{
 				if (vars->cmd.last_exit_status == 130
-					|| vars->cmd.last_exit_status == 0)
+					|| vars->cmd.last_exit_status == 0
+					|| vars->cmd.last_exit_status == 131)
 					return (vars->cmd.last_exit_status);
 			}
 			else
@@ -122,7 +123,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 			}
 		}
 		res = recursive_call(vars, cmds, (int[2]){pipe_in, pipe_out}, false);
-		if (res == -1 || res == 130)
+		if (res == -1 || res == 130 || res == 131)
 			return (res);
 	}
 	else if (cmds)
@@ -153,9 +154,11 @@ int	wait_processes(int last_known_exit_status, int last_known_pid)
 		pid = waitpid(-1, &status, 0);
 	}
 	if (WIFSIGNALED(last_status) && WTERMSIG(last_status) == SIGINT)
-	{
-		g_signal_received = SIGINT;
 		return (130);
+	else if (WIFSIGNALED(last_status) && WTERMSIG(last_status) == SIGQUIT)
+	{
+		printf("Quit (core dumped)\n");
+		return (131);
 	}
 	if (last_status == -1 || !last_known_pid)
 		return (last_known_exit_status);
@@ -169,24 +172,11 @@ void	execute(t_vars *vars, t_nodes *cmds)
 	init_pipes(vars->cmd.pipes);
 	vars->cmd.pipes_count = 0;
 	status = search_binary_tree(vars, cmds, false, false);
-	if (status == 130 || status == -1)
-	{
-		close_pipe(vars->cmd.pipes, 3);
-		free_branch(vars->cmd.cmds, NULL);
-		vars->cmd.cmds = NULL;
-		g_signal_received = 0;
-		return ;
-	}
-	vars->cmd.last_exit_status = wait_processes(vars->cmd.last_exit_status, vars->cmd.last_pid);
-	if (vars->cmd.last_exit_status == 130)
-	{
-		close_pipe(vars->cmd.pipes, 3);
-		free_branch(vars->cmd.cmds, NULL);
-		vars->cmd.cmds = NULL;
-		g_signal_received = 0;
-		return ;
-	}
+	if (status != 131 && status != 130 && status != -1)
+		vars->cmd.last_exit_status = wait_processes
+			(vars->cmd.last_exit_status, vars->cmd.last_pid);
 	close_pipe(vars->cmd.pipes, 3);
 	free_branch(vars->cmd.cmds, NULL);
 	vars->cmd.cmds = NULL;
+	g_signal_received = 0;
 }

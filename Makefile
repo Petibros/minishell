@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/02 20:53:28 by sacha            ###   ########.fr        #
+#    Updated: 2025/04/24 21:05:10 by sacha            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,8 +76,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 CFILES_FREE =		src/free/free.c
 
 CFILES_SIGNALS =	src/signals/signals.c \
-					src/signals/handle_sigint.c \
-					src/signals/handle_sigquit.c
+					src/signals/handle_sigint.c
 
 OFILES = $(addprefix $(OBJ_DIR), $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o))
 LIBFT = libft/libft.a

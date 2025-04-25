@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 08:02:42 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/16 01:48:57 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/24 19:54:14 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,5 @@ void	reset_signals(void);
 void	handle_sigint(int sig);
 void	handle_sigint_heredoc(int sig);
 void	handle_sigint_subshell(int sig);
-void	handle_sigquit(int sig);
-void	ignore_signals(void);
 
 #endif
