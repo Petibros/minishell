@@ -6,17 +6,17 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/24 21:05:10 by sacha            ###   ########.fr        #
+#    Updated: 2025/04/25 18:10:53 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 
-CFILES =			src/main.c \
-		 			src/prompt.c \
-		 			src/getenv.c \
-		 			src/here_doc.c
+CFILES_SHELL =		src/shell_gestion/main.c \
+		 			src/shell_gestion/prompt.c \
+		 			src/shell_gestion/getenv.c \
+					src/shell_gestion/minishell.c
 
 CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/unset.c \
@@ -30,7 +30,12 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 CFILES_EXEC =		src/exec/exec.c \
 					src/exec/pipe.c \
 					src/exec/child.c \
-					src/exec/exit_child.c
+					src/exec/exit_child.c \
+					src/exec/wait.c \
+					src/exec/file_descriptors.c \
+					src/exec/get_path.c \
+					src/exec/here_doc.c \
+					src/exec/exec_utils.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \
@@ -72,17 +77,18 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/array_utils.c \
 					src/parsing/utils/print_ast.c
 
-CFILES_FREE =		src/free/free.c
+CFILES_FREE =		src/free/free.c \
+					src/free/close.c
 
 CFILES_SIGNALS =	src/signals/signals.c \
 					src/signals/handle_sigint.c
 
-OFILES = $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
+OFILES = $(CFILES_SHELL:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
 HEADER_LIBFT = libft/libft.h 
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals -I includes/exec
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)

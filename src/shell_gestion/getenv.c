@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   getenv.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/25 17:34:42 by sacgarci          #+#    #+#             */
+/*   Updated: 2025/04/25 17:34:43 by sacgarci         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*ft_getenv(char **envp, char *var)
@@ -56,7 +68,7 @@ int	transfer_env(char **envp, t_vars *vars)
 	int	i;
 
 	i = 0;
-	while (envp[i])
+	while (envp && envp[i])
 		++i;
 	vars->env.current_size = i + 1;
 	vars->env.alloc_size = i + 1;
@@ -64,7 +76,7 @@ int	transfer_env(char **envp, t_vars *vars)
 	if (!vars->env.envp)
 		return (-1);
 	i = 0;
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		vars->env.envp[i] = ft_strdup(envp[i]);
 		if (!vars->env.envp[i])
@@ -72,7 +84,8 @@ int	transfer_env(char **envp, t_vars *vars)
 		++i;
 	}
 	vars->env.envp[i] = NULL;
-	sort_env(&vars->env.envp);
+	if (vars->env.envp[0])
+		sort_env(&vars->env.envp);
 	return (1);
 }
 

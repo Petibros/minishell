@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 04:42:54 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 15:01:32 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,23 @@ static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX], int update_env)
 	char	pwd[PATH_MAX];
 	char	**tmp_export;
 
+	if (!update_env)
+		write(2, "Cannot update OLDPWD var\n", 25);
 	if (!getcwd(pwd, PATH_MAX) && !update_env)
 	{
-		perror("cd");
-		return (1);
+		write(2, "Cannot update PWD var\n", 22);
+		perror("cd: getcwd");
+		return (0);
 	}
 	tmp_export = malloc(3 * sizeof(char *));
 	if (!tmp_export)
-		return (0);
-	if (!join_and_export("OLDPWD=", old_pwd, tmp_export, vars))
-		return (0);
+		return (-1);
+	if (update_env && !join_and_export("OLDPWD=", old_pwd, tmp_export, vars))
+		return (-1);
 	if (!join_and_export("PWD=", pwd, tmp_export, vars))
-		return (0);
+		return (-1);
 	free(tmp_export);
-	return (1);
+	return (0);
 }
 
 int	cd(char **argv, t_vars *vars)
@@ -75,7 +78,5 @@ int	cd(char **argv, t_vars *vars)
 		write(2, "\n", 1);
 		return (1);
 	}
-	if (!change_pwd(vars, old_pwd, update_env))
-		return (-1);
-	return (0);
+	return (change_pwd(vars, old_pwd, update_env));
 }

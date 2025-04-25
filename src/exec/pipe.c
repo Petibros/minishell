@@ -6,87 +6,11 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/24 18:57:06 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 17:17:17 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	close_pipe(int pipes[2][2], int to_close)
-{
-	if (to_close == 1)
-	{
-		if (pipes[0][0] > 0)
-			close(pipes[0][0]);
-		pipes[0][0] = 0;
-		if (pipes[0][1] > 0)
-			close(pipes[0][1]);
-		pipes[0][1] = 0;
-	}
-	else if (to_close == 2)
-	{
-		if (pipes[1][0] > 0)
-			close(pipes[1][0]);
-		pipes[1][0] = 0;
-		if (pipes[1][1] > 0)
-			close(pipes[1][1]);
-		pipes[1][1] = 0;
-	}
-	else if (to_close == 3)
-	{
-		close_pipe(pipes, 1);
-		close_pipe(pipes, 2);
-	}
-}
-
-void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
-{
-	t_redir	*files;
-
-	files = *redirs;
-	while (files && *fd != -1)
-	{
-		if (fd_type == 2)
-			heredoc_gestion(vars, files, fd);
-		else if (fd_type == 3 && files->append)
-			*fd = open(files->filename, O_WRONLY | O_APPEND | O_CREAT, 0777);
-		else if (fd_type == 3)
-			*fd = open(files->filename, O_WRONLY | O_TRUNC | O_CREAT, 0777);
-		else if (fd_type == 1)
-			*fd = open(files->filename, O_RDONLY);
-		if (*fd == -1)
-			perror(files->filename);
-		files = files->next;
-		if (files && *fd != -1)
-			close(*fd);
-	}
-}
-
-void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
-{
-	*fd_in = 0;
-	if (cmds->heredoc)
-		open_fd(&cmds->heredoc, fd_in, 2, vars);
-	if (*fd_in <= -2)
-		return ;
-	if (cmds->file_in)
-		open_fd(&cmds->file_in, fd_in, 1, vars);
-	else if (is_pipe[0] == 1)
-		*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
-}
-
-void	get_fd_out(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_out)
-{
-	*fd_out = 1;
-	if (cmds->file_out)
-		open_fd(&cmds->file_out, fd_out, 3, vars);
-	else if (is_pipe[1] == 1)
-	{
-		++vars->cmd.pipes_count;
-		pipe(vars->cmd.pipes[vars->cmd.pipes_count % 2]);
-		*fd_out = vars->cmd.pipes[vars->cmd.pipes_count % 2][1];
-	}
-}
 
 static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 {
@@ -146,52 +70,46 @@ static int	is_built_in(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	return (status);
 }
 
-int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
+static int	fork_routine(t_vars *vars, t_nodes *cmds)
 {
 	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("error during fork");
+		return (-1);
+	}
+	if (pid == 0)
+	{
+		reset_signals();
+		exec_cmd(vars, cmds);
+	}
+	vars->cmd.last_pid = pid;
+	return (0);
+}
+
+int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
+{
 	int	status;
 
 	status = 0;
 	vars->cmd.last_pid = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
-	get_fd_in(vars, cmds, is_pipe, &vars->cmd.fd_in);//fd_in priorite au fichier specifie puis here_doc puis pipe
-	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);//fd_out priorite au fichier specifie puis pipe
-//	printf("%s: out: %d, in: %d , count : %d\n", cmds->argv[0], vars->cmd.fd_out, vars->cmd.fd_in, vars->cmd.pipes_count_sub);
-	if (vars->cmd.fd_in <= -2)
-	{
-		close_fds(vars);
-		if (vars->cmd.fd_in == -3)
-			return (130);
-		return (-1);
-	}
-	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1
-		|| !cmds->argv || !cmds->argv[0])
+	status = get_fds(vars, cmds, is_pipe);
+	if (status != 0)
+		return (status);
+	if (!cmds->argv || !cmds->argv[0])
 	{
 		close_fds(vars);
 		vars->cmd.last_exit_status = 0;
-		if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
-			vars->cmd.last_exit_status = 1;
 		return (0);
 	}
 	status = is_built_in(vars, cmds, is_pipe);
 	if (status == -1)
 		perror("malloc error");
-	if (status == -2)
-	{
-		status = 0;
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("error during fork");
-			return (-1);
-		}
-		if (pid == 0)
-		{
-			reset_signals();
-			exec_cmd(vars, cmds);
-		}
-		vars->cmd.last_pid = pid;
-	}
+	else if (status == -2)
+		status = fork_routine(vars, cmds);
 	return (status);
 }

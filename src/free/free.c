@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 15:30:04 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 16:03:34 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 18:08:37 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,26 +90,4 @@ void	free_all(t_vars *vars, char **to_not_free, bool in_child)
 	if (vars)
 		free(vars);
 	vars = NULL;
-}
-
-void	close_fds(t_vars *vars)
-{
-	if (vars->cmd.pipes[vars->cmd.pipes_count % 2][1] == vars->cmd.fd_out)
-	{
-		vars->cmd.pipes[vars->cmd.pipes_count % 2][1] = 0;
-		if (vars->cmd.pipes[(vars->cmd.pipes_count + 1) % 2][0] ==
-			vars->cmd.fd_in)
-			vars->cmd.fd_in = 0;
-		close_pipe(vars->cmd.pipes, (vars->cmd.pipes_count + 1) % 2 + 1);
-	}
-	else
-	{
-		if (vars->cmd.pipes[vars->cmd.pipes_count % 2][0] == vars->cmd.fd_in)
-			vars->cmd.fd_in = 0;
-		close_pipe(vars->cmd.pipes, vars->cmd.pipes_count % 2 + 1);
-	}
-	if (vars->cmd.fd_in > 2)
-		close(vars->cmd.fd_in);
-	if (vars->cmd.fd_out > 2)
-		close(vars->cmd.fd_out);
 }
