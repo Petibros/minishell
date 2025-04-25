@@ -14,22 +14,32 @@
 #include "expander.h"
 #include "libft.h"
 
-char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
+static char	*extract_base_value(char *var_name, int exit_status, char **envp,
+	char **underscore_pos)
 {
-	char	*underscore_pos;
 	char	*base_var;
 	char	*base_value;
-	char	*result;
-	char	*next_var;
 
-	underscore_pos = ft_strchr(var_name, '_');
-	if (!underscore_pos || underscore_pos == var_name)
+	*underscore_pos = ft_strchr(var_name, '_');
+	if (!*underscore_pos || *underscore_pos == var_name)
 		return (NULL);
-	base_var = ft_substr(var_name, 0, underscore_pos - var_name);
+	base_var = ft_substr(var_name, 0, *underscore_pos - var_name);
 	if (!base_var)
 		return (NULL);
 	base_value = get_var_value(base_var, exit_status, envp);
 	free(base_var);
+	return (base_value);
+}
+
+char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
+{
+	char	*underscore_pos;
+	char	*base_value;
+	char	*next_var;
+	char	*result;
+
+	base_value = extract_base_value(var_name, exit_status,
+			envp, &underscore_pos);
 	if (!base_value)
 		return (NULL);
 	next_var = get_var_value(underscore_pos + 1, exit_status, envp);
