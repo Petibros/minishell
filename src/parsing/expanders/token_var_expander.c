@@ -15,30 +15,39 @@
 
 static char	*process_var_token(char *token_value, char **envp);
 
+static char	*handle_dollar_following(char *after_var, char *token_value,
+			char **envp)
+{
+	char	*new_value;
+	char	*expanded;
+
+	if (*after_var == '$')
+	{
+		if (*(after_var + 1) == '\0')
+		{
+			new_value = ft_strdup("$");
+			free(token_value);
+			return (new_value);
+		}
+		expanded = process_var_token(ft_strdup(after_var), envp);
+		if (!expanded)
+			expanded = ft_strdup("");
+		free(token_value);
+		return (expanded);
+	}
+	new_value = ft_strdup(after_var);
+	free(token_value);
+	return (new_value);
+}
+
 static char	*handle_var_value(char *token_value, int var_len, char **envp)
 {
 	char	*after_var;
-	char	*new_value;
-	char	*expanded;
 
 	if (token_value[var_len])
 	{
 		after_var = token_value + var_len;
-		if (*after_var == '$')
-		{
-			if (*(after_var + 1) == '\0')
-			{
-				new_value = ft_strdup("$");
-				free(token_value);
-				return (new_value);
-			}
-			expanded = process_var_token(ft_strdup(after_var), envp);
-			free(token_value);
-			return (expanded ? expanded : ft_strdup(""));
-		}
-		new_value = ft_strdup(after_var);
-		free(token_value);
-		return (new_value);
+		return (handle_dollar_following(after_var, token_value, envp));
 	}
 	free(token_value);
 	return (ft_strdup(""));
@@ -62,20 +71,17 @@ static char	*handle_dollar_continuation(char *token_value, char *var_value,
 	return (ft_strdup(var_value));
 }
 
-static char	*process_var_token(char *token_value, char **envp)
+static char	*extract_var_and_get_value(char *token_value, int *var_len,
+			char **envp)
 {
 	char	*var_name;
 	char	*var_value;
-	char	*result;
-	int		var_len;
 
-	if (!token_value || !token_value[0])
-		return (NULL);
-	var_len = 1;
-	while (token_value[var_len]
-		&& (ft_isalnum(token_value[var_len]) || token_value[var_len] == '_'))
-		var_len++;
-	var_name = ft_substr(token_value, 1, var_len - 1);
+	*var_len = 1;
+	while (token_value[*var_len]
+		&& (ft_isalnum(token_value[*var_len]) || token_value[*var_len] == '_'))
+		(*var_len)++;
+	var_name = ft_substr(token_value, 1, *var_len - 1);
 	if (!var_name)
 	{
 		free(token_value);
@@ -83,6 +89,18 @@ static char	*process_var_token(char *token_value, char **envp)
 	}
 	var_value = ft_getenv(envp, var_name);
 	free(var_name);
+	return (var_value);
+}
+
+static char	*process_var_token(char *token_value, char **envp)
+{
+	char	*var_value;
+	char	*result;
+	int		var_len;
+
+	if (!token_value || !token_value[0])
+		return (NULL);
+	var_value = extract_var_and_get_value(token_value, &var_len, envp);
 	if (!var_value)
 		return (handle_var_value(token_value, var_len, envp));
 	if (token_value[var_len] == '$')
