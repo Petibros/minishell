@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/25 18:10:53 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/04/25 18:14:15 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/echo.c
 
 CFILES_EXEC =		src/exec/exec.c \
-					src/exec/pipe.c \
+					src/exec/setup_exec.c \
 					src/exec/child.c \
 					src/exec/exit_child.c \
 					src/exec/wait.c \
