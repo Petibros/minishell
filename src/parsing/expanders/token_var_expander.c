@@ -33,8 +33,8 @@ static char	*handle_var_value(char *token_value, int var_len, char **envp)
 				return (new_value);
 			}
 			expanded = process_var_token(ft_strdup(after_var), envp);
-			if (expanded)
-				return (expanded);
+			free(token_value);
+			return (expanded ? expanded : ft_strdup(""));
 		}
 		new_value = ft_strdup(after_var);
 		free(token_value);
@@ -69,11 +69,18 @@ static char	*process_var_token(char *token_value, char **envp)
 	char	*result;
 	int		var_len;
 
+	if (!token_value || !token_value[0])
+		return (NULL);
 	var_len = 1;
 	while (token_value[var_len]
 		&& (ft_isalnum(token_value[var_len]) || token_value[var_len] == '_'))
 		var_len++;
 	var_name = ft_substr(token_value, 1, var_len - 1);
+	if (!var_name)
+	{
+		free(token_value);
+		return (NULL);
+	}
 	var_value = ft_getenv(envp, var_name);
 	free(var_name);
 	if (!var_value)

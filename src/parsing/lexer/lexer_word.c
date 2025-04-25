@@ -45,6 +45,8 @@ char	*get_word(char **input)
 	int		i;
 
 	len = get_word_len(*input);
+	if (len <= 0)
+		return (NULL);
 	word = malloc(sizeof(char) * (len + 1));
 	if (!word)
 		return (NULL);

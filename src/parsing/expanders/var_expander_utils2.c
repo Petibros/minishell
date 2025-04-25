@@ -26,18 +26,20 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 	if (!underscore_pos || underscore_pos == var_name)
 		return (NULL);
 	base_var = ft_substr(var_name, 0, underscore_pos - var_name);
+	if (!base_var)
+		return (NULL);
 	base_value = get_var_value(base_var, exit_status, envp);
 	free(base_var);
 	if (!base_value)
 		return (NULL);
 	next_var = get_var_value(underscore_pos + 1, exit_status, envp);
-	if (next_var)
+	if (!next_var)
 	{
-		result = ft_strjoin(base_value, next_var);
-		free(next_var);
+		free(base_value);
+		return (NULL);
 	}
-	else
-		result = ft_strdup(base_value);
+	result = ft_strjoin(base_value, next_var);
+	free(next_var);
 	free(base_value);
 	return (result);
 }
