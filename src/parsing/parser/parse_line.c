@@ -13,8 +13,27 @@
 #include "minishell.h"
 #include "parsing.h"
 
+static char	*get_error_token(t_token *tokens)
+{
+	t_token *current;
+
+	current = tokens;
+	while (current && current->next)
+	{
+		if ((current->next->type == TOKEN_PIPE || current->next->type == TOKEN_AND 
+			|| current->next->type == TOKEN_OR) && !current->next->next)
+			return (current->next->value);
+		current = current->next;
+	}
+	if (current && (current->type == TOKEN_PIPE || current->type == TOKEN_AND 
+		|| current->type == TOKEN_OR))
+		return (current->value);
+	return (NULL);
+}
+
 static int	handle_syntax_error(t_token *tokens, t_vars *vars)
 {
+	print_syntax_error(get_error_token(tokens));
 	free_token(tokens);
 	vars->cmd.last_exit_status = 2;
 	return (0);

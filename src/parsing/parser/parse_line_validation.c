@@ -33,16 +33,18 @@ int	validate_parentheses_content(t_token *current)
 	return (1);
 }
 
-static int	validate_pipe_sequence(t_token *current, t_token *next)
+static int	validate_operator_sequence(t_token *current, t_token *next)
 {
-	if (current->type == TOKEN_PIPE && (!next || next->type == TOKEN_PIPE))
+	if ((current->type == TOKEN_PIPE || current->type == TOKEN_AND 
+		|| current->type == TOKEN_OR) && (!next || next->type == TOKEN_PIPE 
+		|| next->type == TOKEN_AND || next->type == TOKEN_OR))
 		return (0);
 	return (1);
 }
 
 static int	validate_token(t_token *current, t_token *next)
 {
-	if (!validate_pipe_sequence(current, next))
+	if (!validate_operator_sequence(current, next))
 		return (0);
 	if (is_redirection(current->type) && !validate_redirection(next))
 		return (0);
@@ -62,7 +64,8 @@ int	validate_syntax(t_token *tokens)
 	if (!tokens)
 		return (0);
 	current = tokens;
-	if (current->type == TOKEN_PIPE)
+	if (current->type == TOKEN_PIPE || current->type == TOKEN_AND 
+		|| current->type == TOKEN_OR)
 		return (0);
 	while (current)
 	{
