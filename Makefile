@@ -45,6 +45,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/parser/pratt_parser.c \
 					src/parsing/parser/pratt_parser_atom.c \
 					src/parsing/parser/parse_line.c \
+					src/parsing/parser/parse_line_validation.c \
+					src/parsing/parser/parse_line_validation_utils.c \
 					src/parsing/expanders/quote_handler.c \
 					src/parsing/expanders/var_expander.c \
 					src/parsing/expanders/var_expander_utils1.c \

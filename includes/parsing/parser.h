@@ -19,6 +19,15 @@
 typedef struct s_vars t_vars;
 
 // Processing contexts
+typedef struct s_and_or_ctx
+{
+	t_nodes		*current;
+	t_token		**token;
+	t_token_type	op_type;
+	char		**envp;
+	t_vars		*vars;
+}	t_and_or_ctx;
+
 typedef struct s_token_loop_ctx
 {
 	t_nodes		*node;
@@ -45,6 +54,13 @@ t_nodes		*parse_pipeline(t_token **token, char **envp, t_vars *vars);
 t_nodes		*parse_command(t_token **token, char **envp, t_vars *vars);
 t_nodes		*create_parser_node(void);
 t_nodes		*pratt_parse(t_token *token, char **envp, t_vars *vars);
+
+// Validation functions
+int			is_redirection(t_token_type type);
+int			is_dollar_operator(const char *value);
+int			validate_redirection(t_token *next);
+int			validate_parentheses_content(t_token *current);
+int			validate_syntax(t_token *tokens);
 
 // Parser command utils
 t_token		*create_word_token(t_token *src);

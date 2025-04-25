@@ -46,41 +46,42 @@ static t_nodes	*get_next_and_or_cmd(t_token **token, char **envp, t_vars *vars)
 	return (parse_pipeline(token, envp, vars));
 }
 
-static int	process_next_cmd(t_nodes *current, t_token **token,
-			t_token_type op_type, char **envp, t_vars *vars)
+static int	process_next_cmd(t_and_or_ctx *ctx)
 {
 	t_nodes	*next_cmd;
 
-	next_cmd = get_next_and_or_cmd(token, envp, vars);
+	next_cmd = get_next_and_or_cmd(ctx->token, ctx->envp, ctx->vars);
 	if (!next_cmd)
 		return (0);
-	current->is_operator = 1;
-	current->operator_type = op_type;
-	current->right = next_cmd;
+	ctx->current->is_operator = 1;
+	ctx->current->operator_type = ctx->op_type;
+	ctx->current->right = next_cmd;
 	return (1);
 }
 
 t_nodes	*parse_and_or(t_token **token, char **envp, t_vars *vars)
 {
 	t_nodes			*first_cmd;
-	t_nodes			*current;
-	t_token_type	op_type;
+	t_and_or_ctx	ctx;
 
 	first_cmd = parse_pipeline(token, envp, vars);
 	if (!first_cmd)
 		return (NULL);
-	current = first_cmd;
+	ctx.current = first_cmd;
 	while (*token && ((*token)->type == TOKEN_AND
 			|| (*token)->type == TOKEN_OR))
 	{
-		op_type = (*token)->type;
+		ctx.op_type = (*token)->type;
+		ctx.token = token;
+		ctx.envp = envp;
+		ctx.vars = vars;
 		*token = (*token)->next;
-		if (!process_next_cmd(current, token, op_type, envp, vars))
+		if (!process_next_cmd(&ctx))
 		{
 			free_node(first_cmd);
 			return (NULL);
 		}
-		current = current->right;
+		ctx.current = ctx.current->right;
 	}
 	return (first_cmd);
 }

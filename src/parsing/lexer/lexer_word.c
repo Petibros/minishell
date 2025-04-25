@@ -12,7 +12,7 @@
 
 #include "parsing.h"
 
-static int	is_dollar_operator(char *input, int pos)
+static int	is_dollar_redir_operator(char *input, int pos)
 {
 	return (input[pos] == '$' && input[pos + 1]
 		&& (input[pos + 1] == '>' || input[pos + 1] == '<'));
@@ -41,9 +41,9 @@ static int	get_word_len(char *input)
 		{
 			if (is_whitespace(input[len])
 				|| (is_operator_char(input[len])
-					&& !is_dollar_operator(input, len)))
+					&& !is_dollar_redir_operator(input, len)))
 				break ;
-			if (is_dollar_operator(input, len))
+			if (is_dollar_redir_operator(input, len))
 			{
 				if (len == 0)
 					len = 2;
