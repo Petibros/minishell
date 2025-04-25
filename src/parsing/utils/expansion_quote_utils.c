@@ -34,15 +34,3 @@ char	*handle_single_quote(char *str, int *i, char *result)
 		(*i)++;
 	return (result);
 }
-
-int	copy_expanded_entries(char **new_argv, int j, char *arg)
-{
-	int	count;
-	int	old_j;
-
-	old_j = j;
-	count = expand_wildcard_entry(arg, new_argv, &j);
-	if (count > 0)
-		return (j);
-	return (old_j + 1);
-}

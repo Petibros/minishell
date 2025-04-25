@@ -49,21 +49,3 @@ char	*remove_quotes(char *str)
 	result[j] = '\0';
 	return (result);
 }
-
-int	check_quotes(char *str)
-{
-	char	quote;
-	int		i;
-
-	quote = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (!quote && (str[i] == '\'' || str[i] == '\"'))
-			quote = str[i];
-		else if (quote && str[i] == quote)
-			quote = 0;
-		i++;
-	}
-	return (!quote);
-}

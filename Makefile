@@ -37,7 +37,6 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \
 					src/parsing/lexer/lexer_word.c \
 					src/parsing/lexer/lexer_word2.c \
-					src/parsing/parser/parser.c \
 					src/parsing/parser/parser_node.c \
 					src/parsing/parser/parser_command.c \
 					src/parsing/parser/parser_command_utils.c \
@@ -59,10 +58,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/expanders/wildcard_expander_utils.c \
 					src/parsing/expanders/token_var_expander.c \
 					src/parsing/expanders/token_processor.c \
-					src/parsing/expanders/token_wildcard_expander.c \
 					src/parsing/nodes/pratt_node.c \
 					src/parsing/nodes/pratt_node_op.c \
-					src/parsing/nodes/pratt_node_cmd.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/pratt_utils2.c \
 					src/parsing/utils/pratt_utils3.c \
@@ -78,7 +75,6 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c \
-					src/parsing/utils/array_utils.c
 
 CFILES_FREE =		src/free/free.c
 

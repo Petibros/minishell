@@ -31,21 +31,3 @@ char	*handle_regular_char(char *str, int *i, char *result)
 	(*i)++;
 	return (tmp);
 }
-
-char	*handle_quote_char(char *str, int *i, char *result)
-{
-	char	quote;
-	int		start;
-
-	quote = str[(*i)];
-	(*i)++;
-	start = *i;
-	while (str[*i] && str[*i] != quote)
-		(*i)++;
-	if (str[*i] == quote)
-	{
-		result = append_substring(result, str, start, *i);
-		(*i)++;
-	}
-	return (result);
-}

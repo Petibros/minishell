@@ -22,30 +22,3 @@ int	get_precedence(t_token_type type)
 		return (1);
 	return (0);
 }
-
-int	count_word_tokens(t_token **token)
-{
-	int		count;
-	t_token	*current;
-
-	count = 0;
-	current = *token;
-	while (current && current->type == TOKEN_WORD)
-	{
-		count++;
-		current = current->next;
-	}
-	return (count);
-}
-
-void	advance_token(t_token **token, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count && *token)
-	{
-		*token = (*token)->next;
-		i++;
-	}
-}
