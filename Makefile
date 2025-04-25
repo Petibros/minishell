@@ -65,6 +65,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/quote_utils.c \
 					src/parsing/utils/quote_utils2.c \
+					src/parsing/utils/quote_utils3.c \
 					src/parsing/utils/redirection_utils1.c \
 					src/parsing/utils/redirection_utils2.c \
 					src/parsing/utils/redirection_utils3.c \
