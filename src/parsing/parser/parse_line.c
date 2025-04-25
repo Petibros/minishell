@@ -15,18 +15,20 @@
 
 static char	*get_error_token(t_token *tokens)
 {
-	t_token *current;
+	t_token	*current;
 
 	current = tokens;
 	while (current && current->next)
 	{
-		if ((current->next->type == TOKEN_PIPE || current->next->type == TOKEN_AND 
-			|| current->next->type == TOKEN_OR) && !current->next->next)
+		if ((current->next->type == TOKEN_PIPE
+				|| current->next->type == TOKEN_AND
+				|| current->next->type == TOKEN_OR)
+			&& !current->next->next)
 			return (current->next->value);
 		current = current->next;
 	}
-	if (current && (current->type == TOKEN_PIPE || current->type == TOKEN_AND 
-		|| current->type == TOKEN_OR))
+	if (current && (current->type == TOKEN_PIPE || current->type == TOKEN_AND
+			|| current->type == TOKEN_OR))
 		return (current->value);
 	return (NULL);
 }

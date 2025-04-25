@@ -48,8 +48,8 @@ static char	*handle_closing_quote(t_quote_ctx *ctx, int start)
 static int	is_valid_dollar_sequence(t_quote_ctx *ctx)
 {
 	return (ft_isalpha(ctx->str[*(ctx->i) + 1])
-			|| ctx->str[*(ctx->i) + 1] == '_'
-			|| ctx->str[*(ctx->i) + 1] == '?');
+		|| ctx->str[*(ctx->i) + 1] == '_'
+		|| ctx->str[*(ctx->i) + 1] == '?');
 }
 
 static char	*process_double_quote_content(t_quote_ctx *ctx)

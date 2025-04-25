@@ -35,9 +35,9 @@ int	validate_parentheses_content(t_token *current)
 
 static int	validate_operator_sequence(t_token *current, t_token *next)
 {
-	if ((current->type == TOKEN_PIPE || current->type == TOKEN_AND 
-		|| current->type == TOKEN_OR) && (!next || next->type == TOKEN_PIPE 
-		|| next->type == TOKEN_AND || next->type == TOKEN_OR))
+	if ((current->type == TOKEN_PIPE || current->type == TOKEN_AND
+			|| current->type == TOKEN_OR) && (!next || next->type == TOKEN_PIPE
+			|| next->type == TOKEN_AND || next->type == TOKEN_OR))
 		return (0);
 	return (1);
 }
@@ -64,7 +64,7 @@ int	validate_syntax(t_token *tokens)
 	if (!tokens)
 		return (0);
 	current = tokens;
-	if (current->type == TOKEN_PIPE || current->type == TOKEN_AND 
+	if (current->type == TOKEN_PIPE || current->type == TOKEN_AND
 		|| current->type == TOKEN_OR)
 		return (0);
 	while (current)
