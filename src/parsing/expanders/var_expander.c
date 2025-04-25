@@ -35,7 +35,7 @@ char	*expand_variables(char *str, int exit_status, char **envp)
 	ctx = init_quote_context(str, exit_status, envp);
 	if (!ctx)
 		return (NULL);
-	while (str[*(ctx->i)] && ctx->result)
+	while (str[ctx->i] && ctx->result)
 		process_char(ctx);
 	result = ctx->result;
 	if (result && result[0] == '\0')
@@ -43,7 +43,6 @@ char	*expand_variables(char *str, int exit_status, char **envp)
 		free(result);
 		result = NULL;
 	}
-	free(ctx->i);
 	free(ctx);
 	return (post_process_expansion(result, str));
 }

@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 20:11:19 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 18:05:49 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	is_built_in(char **argv, char **envp, t_vars *vars)
 	}
 }
 
-static int	is_exec(char *path, int *status)
+int	is_exec(char *path, int *status)
 {
 	DIR	*dir;
 
@@ -63,49 +63,6 @@ static int	is_exec(char *path, int *status)
 	return (0);
 }
 
-static int	path_index(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
-		++i;
-	if (!envp[i])
-		return (-1);
-	return (i);
-}
-
-static char	*get_path(char *cmd, char **envp, int *status)
-{
-	int		i;
-	char	**paths;
-	char	*path;
-	char	*to_join;
-
-	i = path_index(envp);
-	if (i == -1)
-		return (ft_strjoin("./", cmd));
-	paths = ft_split(&envp[i][5], ':');
-	i = 0;
-	to_join = ft_strjoin("/", cmd);
-	while (paths && paths[i])
-	{
-		path = ft_strjoin(paths[i], to_join);
-		if (!path || is_exec(path, status) == 0)
-			break ;
-		free(path);
-		++i;
-	}
-	if (to_join)
-		free(to_join);
-	if (!paths || !paths[i])
-		path = NULL;
-	free_string_array(paths);
-	if (path)
-		*status = 0;
-	return (path);
-}
-
 void	exec_cmd(t_vars *vars, t_nodes *cmds)
 {
 	char	*path;
@@ -119,17 +76,17 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	envp = vars->env.envp;
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
-	close_child_fds(vars, vars->cmd.pipes);//fonction qui close tous les fds ouverts du processus fils
+	close_child_fds(vars, vars->cmd.pipes);
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))
 		path = ft_strdup(argv[0]);
 	else if (argv[0][0])
-		path = get_path(argv[0], envp, &status);//cherche le path dans l'environnement
+		path = get_path(argv[0], envp, &status);
 	if (status == 0 || is_exec(path, &status) == 0)
 	{
 		execve(path, argv, envp);
-		exit_error(path, envp, argv, 2);//invalid option(2)
+		exit_error(path, envp, argv, 2);
 	}
-	exit_error(path, envp, argv, status);//command not found ou path pas trouve dans l'environnement
+	exit_error(path, envp, argv, status);
 }

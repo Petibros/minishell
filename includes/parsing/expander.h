@@ -18,7 +18,7 @@
 typedef struct s_quote_ctx
 {
 	char	*str;
-	int		*i;
+	int		i;
 	char	*result;
 	int		exit_status;
 	char	**envp;

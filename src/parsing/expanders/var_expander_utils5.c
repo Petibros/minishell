@@ -46,22 +46,22 @@ void	process_char(t_quote_ctx *ctx)
 {
 	static int	in_squote = 0;
 
-	if (ctx->str[*(ctx->i)] == '\'')
+	if (ctx->str[ctx->i] == '\'')
 	{
 		if (!in_squote)
 			in_squote = 1;
-		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
+		ctx->result = handle_single_quote(ctx->str, &ctx->i, ctx->result);
 		in_squote = 0;
 	}
-	else if (!in_squote && ctx->str[*(ctx->i)] == '"')
+	else if (!in_squote && ctx->str[ctx->i] == '"')
 		ctx->result = handle_double_quote_char(ctx);
-	else if (!in_squote && ctx->str[*(ctx->i)] == '$')
+	else if (!in_squote && ctx->str[ctx->i] == '$')
 		ctx->result = handle_dollar_sign(ctx);
 	else
 	{
 		if (in_squote)
 			ctx->result = handle_in_squote(ctx);
 		else
-			ctx->result = handle_regular_char(ctx->str, ctx->i, ctx->result);
+			ctx->result = handle_regular_char(ctx->str, &ctx->i, ctx->result);
 	}
 }

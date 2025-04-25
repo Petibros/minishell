@@ -17,18 +17,18 @@ char	*handle_dollar_sign(t_quote_ctx *ctx)
 {
 	char	*tmp;
 
-	tmp = expand_env_var(ctx->str, ctx->i, ctx->exit_status, ctx->envp);
+	tmp = expand_env_var(ctx->str, &ctx->i, ctx->exit_status, ctx->envp);
 	if (tmp)
 	{
 		ctx->result = ft_strjoin_free(ctx->result, tmp);
 		free(tmp);
 	}
-	else if (ctx->str[*(ctx->i) + 1] == '\0')
+	else if (ctx->str[ctx->i + 1] == '\0')
 	{
 		tmp = ft_strdup("$");
 		ctx->result = ft_strjoin_free(ctx->result, tmp);
 		free(tmp);
-		(*(ctx->i))++;
+		ctx->i++;
 	}
 	return (ctx->result);
 }
@@ -37,13 +37,13 @@ char	*handle_in_squote(t_quote_ctx *ctx)
 {
 	char	*tmp;
 
-	tmp = ft_substr(ctx->str, *(ctx->i), 1);
+	tmp = ft_substr(ctx->str, ctx->i, 1);
 	if (tmp)
 	{
 		ctx->result = ft_strjoin_free(ctx->result, tmp);
 		free(tmp);
 	}
-	(*(ctx->i))++;
+	ctx->i++;
 	return (ctx->result);
 }
 

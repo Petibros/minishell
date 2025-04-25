@@ -83,14 +83,13 @@ t_quote_ctx	*init_quote_context(char *str, int exit_status, char **envp)
 	if (!ctx)
 		return (NULL);
 	ctx->str = str;
-	ctx->i = malloc(sizeof(int));
-	if (!ctx->i)
+	ctx->i = 0;
+	ctx->result = ft_strdup("");
+	if (!ctx->result)
 	{
 		free(ctx);
 		return (NULL);
 	}
-	*(ctx->i) = 0;
-	ctx->result = ft_strdup("");
 	ctx->exit_status = exit_status;
 	ctx->envp = envp;
 	return (ctx);

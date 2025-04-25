@@ -6,18 +6,17 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/24 21:05:10 by sacha            ###   ########.fr        #
+#    Updated: 2025/04/25 18:14:15 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
-CC = clang -flto=full 
-OBJ_DIR = obj/
+CC = cc
 
-CFILES =			src/main.c \
-		 			src/prompt.c \
-		 			src/getenv.c \
-		 			src/here_doc.c
+CFILES_SHELL =		src/shell_gestion/main.c \
+		 			src/shell_gestion/prompt.c \
+		 			src/shell_gestion/getenv.c \
+					src/shell_gestion/minishell.c
 
 CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/unset.c \
@@ -29,9 +28,14 @@ CFILES_BUILT-IN =	src/built-in/pwd.c \
 					src/built-in/echo.c
 
 CFILES_EXEC =		src/exec/exec.c \
-					src/exec/pipe.c \
+					src/exec/setup_exec.c \
 					src/exec/child.c \
-					src/exec/exit_child.c
+					src/exec/exit_child.c \
+					src/exec/wait.c \
+					src/exec/file_descriptors.c \
+					src/exec/get_path.c \
+					src/exec/here_doc.c \
+					src/exec/exec_utils.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \
@@ -75,39 +79,29 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c \
 
-CFILES_FREE =		src/free/free.c
+CFILES_FREE =		src/free/free.c \
+					src/free/close.c
 
 CFILES_SIGNALS =	src/signals/signals.c \
 					src/signals/handle_sigint.c
 
-OFILES = $(addprefix $(OBJ_DIR), $(CFILES:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o))
+OFILES = $(CFILES_SHELL:.c=.o) $(CFILES_PARSING:.c=.o) $(CFILES_BUILT-IN:.c=.o) $(CFILES_FREE:.c=.o) $(CFILES_EXEC:.c=.o) $(CFILES_SIGNALS:.c=.o)
 LIBFT = libft/libft.a
 HEADER = src/minishell.h 
 HEADER_PARSING = includes/parsing/parsing.h  
 HEADER_LIBFT = libft/libft.h 
-CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals
+CFLAGS = -Wall -Wextra -Werror -g -I libft -I src -I includes -I includes/parsing -I includes/signals -I includes/exec
 LDFLAGS = $(LIBFT) -lreadline
 
 all : $(NAME)
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)src/built-in
-	mkdir -p $(OBJ_DIR)src/exec
-	mkdir -p $(OBJ_DIR)src/parsing/lexer
-	mkdir -p $(OBJ_DIR)src/parsing/parser
-	mkdir -p $(OBJ_DIR)src/parsing/expanders
-	mkdir -p $(OBJ_DIR)src/parsing/nodes
-	mkdir -p $(OBJ_DIR)src/parsing/utils
-	mkdir -p $(OBJ_DIR)src/free
-	mkdir -p $(OBJ_DIR)src/signals
-
-$(NAME) : $(LIBFT) $(OBJ_DIR) $(OFILES)
+$(NAME) : $(LIBFT) $(OFILES)
 	$(CC) $(OFILES) $(LDFLAGS) -o $(NAME)
 
 $(LIBFT) :
 	make bonus -C libft
 
-$(OBJ_DIR)%.o : %.c $(HEADER_PARSING) $(HEADER_LIBFT) $(HEADER)
+%.o : %.c $(HEADER_PARSING) $(HEADER_LIBFT) $(HEADER)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 run : all
@@ -115,7 +109,7 @@ run : all
 
 clean :
 	make clean -C libft
-	rm -rf $(OBJ_DIR)
+	rm -f $(OFILES)
 
 fclean : clean
 	rm -f $(LIBFT)
