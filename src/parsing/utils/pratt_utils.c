@@ -14,11 +14,9 @@
 
 int	get_precedence(t_token_type type)
 {
-	if (type == TOKEN_OR)
-		return (3);
 	if (type == TOKEN_PIPE)
-		return (2);
-	if (type == TOKEN_AND)
+		return (3);
+	if (type == TOKEN_AND || type == TOKEN_OR)
 		return (1);
 	return (0);
 }
