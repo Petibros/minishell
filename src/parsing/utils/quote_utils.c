@@ -52,7 +52,7 @@ static void	process_quotes(char *str, char *result, int *j)
 		if (!quote && is_quote(str[i]))
 		{
 			quote = str[i];
-			if (quote == '\'')  // For single quotes, copy everything literally
+			if (quote == '\'')
 			{
 				i++;
 				while (str[i] && str[i] != '\'')
@@ -62,7 +62,7 @@ static void	process_quotes(char *str, char *result, int *j)
 				if (str[i] == '\'')
 					i++;
 				quote = 0;
-				continue;
+				continue ;
 			}
 		}
 		else if (quote && str[i] == quote)

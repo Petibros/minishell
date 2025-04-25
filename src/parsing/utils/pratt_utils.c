@@ -61,7 +61,7 @@ t_nodes	*handle_parentheses(t_token **token, char **envp, t_vars *vars)
 	if (*token && (*token)->type == TOKEN_RPAREN)
 	{
 		*token = (*token)->next;
-		vars->cmd.last_exit_status = 2;  // Set syntax error status
+		vars->cmd.last_exit_status = 2;
 		return (NULL);
 	}
 	inner_cmd = parse_expression(token, 0, envp, vars);
@@ -82,10 +82,10 @@ t_nodes	*handle_parentheses(t_token **token, char **envp, t_vars *vars)
 	node->is_operator = 1;
 	node->operator_type = TOKEN_SUBSHELL;
 	node->left = inner_cmd;
-	
-	// Handle redirections after the closing parenthesis
-	if (*token && ((*token)->type == TOKEN_REDIR_IN || (*token)->type == TOKEN_REDIR_OUT
-		|| (*token)->type == TOKEN_APPEND || (*token)->type == TOKEN_HEREDOC))
+	if (*token && ((*token)->type == TOKEN_REDIR_IN
+			|| (*token)->type == TOKEN_REDIR_OUT
+			|| (*token)->type == TOKEN_APPEND
+			|| (*token)->type == TOKEN_HEREDOC))
 	{
 		if (!handle_redirections(node, token, envp))
 		{

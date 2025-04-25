@@ -38,13 +38,15 @@ static void	print_redirection_list(t_redir *redir, char *op)
 
 static void	print_redirections(t_nodes *node)
 {
+	t_redir	*out;
+
 	write(2, " file_in: ", 11);
 	if (node->file_in)
 		print_redirection_list(node->file_in, "<");
 	write(2, " file_out: ", 12);
 	if (node->file_out)
 	{
-		t_redir *out = node->file_out;
+		out = node->file_out;
 		while (out)
 		{
 			ft_putchar_fd(' ', 2);

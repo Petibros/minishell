@@ -12,7 +12,8 @@
 
 #include "parsing.h"
 
-static t_nodes	*handle_operator(t_nodes *left, t_token **token, char **envp, t_vars *vars)
+static t_nodes	*handle_operator(t_nodes *left, t_token **token,
+				char **envp, t_vars *vars)
 {
 	t_nodes			*right;
 	t_nodes			*op_node;
@@ -34,7 +35,8 @@ static t_nodes	*handle_operator(t_nodes *left, t_token **token, char **envp, t_v
 	return (op_node);
 }
 
-t_nodes	*parse_expression(t_token **token, int min_precedence, char **envp, t_vars *vars)
+t_nodes	*parse_expression(t_token **token, int min_precedence,
+			char **envp, t_vars *vars)
 {
 	t_nodes	*left;
 	t_nodes	*new_left;

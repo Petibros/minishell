@@ -14,9 +14,9 @@
 
 t_nodes	*parse_command(t_token **token, char **envp, t_vars *vars)
 {
-	t_nodes	*node;
-	t_token	*word_tokens;
-	int		word_count;
+	t_nodes		*node;
+	t_token		*word_tokens;
+	int			word_count;
 	t_cmd_ctx	ctx;
 
 	if (!*token)

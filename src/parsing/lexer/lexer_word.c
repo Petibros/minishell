@@ -14,8 +14,8 @@
 
 static int	is_dollar_operator(char *input, int pos)
 {
-	return (input[pos] == '$' && input[pos + 1] && 
-		(input[pos + 1] == '>' || input[pos + 1] == '<'));
+	return (input[pos] == '$' && input[pos + 1]
+		&& (input[pos + 1] == '>' || input[pos + 1] == '<'));
 }
 
 static int	get_word_len(char *input)
@@ -31,22 +31,23 @@ static int	get_word_len(char *input)
 			quote = input[len];
 		else if (quote && input[len] == quote)
 		{
-			if (quote == '\'')  // If in single quotes, treat everything literally
+			if (quote == '\'')
 				len++;
 			quote = 0;
-			if (!input[len])  // If we're at the end after closing quote
-				break;
+			if (!input[len])
+				break ;
 		}
 		if (!quote)
 		{
-			if (is_whitespace(input[len]) || 
-				(is_operator_char(input[len]) && !is_dollar_operator(input, len)))
-				break;
+			if (is_whitespace(input[len])
+				|| (is_operator_char(input[len])
+					&& !is_dollar_operator(input, len)))
+				break ;
 			if (is_dollar_operator(input, len))
 			{
 				if (len == 0)
-					len = 2;  // Return $> as a single token
-				break;
+					len = 2;
+				break ;
 			}
 		}
 		len++;

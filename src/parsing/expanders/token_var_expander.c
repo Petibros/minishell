@@ -95,7 +95,8 @@ void	expand_token_value(t_token *token, int exit_status, char **envp)
 
 	if (!token || !token->value || !ft_strchr(token->value, '$'))
 		return ;
-	if (token->value[0] == '$' && token->value[1] == '*' && token->value[2] == '\0')
+	if (token->value[0] == '$' && token->value[1] == '*'
+		&& token->value[2] == '\0')
 	{
 		free(token->value);
 		token->value = ft_strdup("");

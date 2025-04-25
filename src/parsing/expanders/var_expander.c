@@ -22,7 +22,7 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 		if (!in_squote)
 			in_squote = 1;
 		ctx->result = handle_single_quote(ctx->str, ctx->i, ctx->result);
-		in_squote = 0;  // Reset after handling the quote
+		in_squote = 0;
 	}
 	else if (!in_squote && ctx->str[*(ctx->i)] == '"')
 		ctx->result = handle_double_quote_char(ctx);
@@ -46,7 +46,6 @@ static void	process_char(t_quote_ctx *ctx, char *tmp)
 	{
 		if (in_squote)
 		{
-			// Inside single quotes, copy character literally
 			tmp = ft_substr(ctx->str, *(ctx->i), 1);
 			if (tmp)
 			{
@@ -97,8 +96,6 @@ static char	*post_process_expansion(char *result, char *str)
 
 	if (!result || !ft_strchr(str, '$'))
 		return (result);
-	
-	// Check if the $ is inside single quotes
 	in_squote = 0;
 	i = 0;
 	while (str[i] && str[i] != '$')
@@ -107,9 +104,8 @@ static char	*post_process_expansion(char *result, char *str)
 			in_squote = !in_squote;
 		i++;
 	}
-	if (in_squote)  // If $ is inside single quotes, don't expand
+	if (in_squote)
 		return (result);
-
 	start = ft_strchr(str, '$');
 	if (!start || (!ft_isalpha(*(start + 1)) && *(start + 1) != '_'))
 		return (result);

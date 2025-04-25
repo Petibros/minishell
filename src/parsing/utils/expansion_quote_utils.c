@@ -18,26 +18,20 @@ char	*handle_single_quote(char *str, int *i, char *result)
 	int		start;
 	char	*tmp;
 
-	start = *i;  // Remember the position of the opening quote
-	(*i)++;      // Skip the opening quote
-
-	// Find the closing quote
+	start = *i;
+	(*i)++;
 	while (str[*i] && str[*i] != '\'')
 		(*i)++;
-
 	if (*i > start)
 	{
-		// Include everything from opening quote to closing quote
 		tmp = ft_substr(str, start, *i - start + 1);
 		if (!tmp)
 			return (NULL);
 		result = ft_strjoin_free(result, tmp);
 		free(tmp);
 	}
-
 	if (str[*i] == '\'')
-		(*i)++;  // Skip the closing quote
-
+		(*i)++;
 	return (result);
 }
 
