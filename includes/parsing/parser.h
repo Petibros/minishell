@@ -15,17 +15,15 @@
 
 # include "lexer.h"
 
-// Forward declaration
-typedef struct s_vars t_vars;
+typedef struct s_vars	t_vars;
 
-// Processing contexts
 typedef struct s_and_or_ctx
 {
-	t_nodes		*current;
-	t_token		**token;
+	t_nodes			*current;
+	t_token			**token;
 	t_token_type	op_type;
-	char		**envp;
-	t_vars		*vars;
+	char			**envp;
+	t_vars			*vars;
 }	t_and_or_ctx;
 
 typedef struct s_token_loop_ctx
@@ -37,7 +35,6 @@ typedef struct s_token_loop_ctx
 	char		**envp;
 }	t_token_loop_ctx;
 
-// Command processing context
 typedef struct s_cmd_ctx
 {
 	t_nodes		*node;
@@ -55,7 +52,7 @@ t_nodes		*parse_command(t_token **token, char **envp, t_vars *vars);
 t_nodes		*create_parser_node(void);
 t_nodes		*pratt_parse(t_token *token, char **envp, t_vars *vars);
 
-// Validation functions
+// Check functions
 int			is_redirection(t_token_type type);
 int			is_dollar_operator(const char *value);
 int			validate_redirection(t_token *next);
@@ -70,7 +67,8 @@ int			process_command_token(t_cmd_ctx *ctx);
 int			build_argv(t_nodes *node, t_token *word_tokens, int word_count);
 
 // Pratt parser functions
-t_nodes		*parse_expression(t_token **token, int min_precedence, char **envp, t_vars *vars);
+t_nodes		*parse_expression(t_token **token, int min_precedence,
+				char **envp, t_vars *vars);
 t_nodes		*parse_atom(t_token **token, char **envp, t_vars *vars);
 t_nodes		*handle_parentheses(t_token **token, char **envp, t_vars *vars);
 int			get_precedence(t_token_type type);
