@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/13 07:49:50 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/25 04:42:54 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,16 @@ static int	join_and_export(char *var_name, char *path,
 	return (1);
 }
 
-static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX])
+static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX], int update_env)
 {
 	char	pwd[PATH_MAX];
 	char	**tmp_export;
 
-	getcwd(pwd, PATH_MAX);
+	if (!getcwd(pwd, PATH_MAX) && !update_env)
+	{
+		perror("cd");
+		return (1);
+	}
 	tmp_export = malloc(3 * sizeof(char *));
 	if (!tmp_export)
 		return (0);
@@ -49,8 +53,11 @@ static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX])
 int	cd(char **argv, t_vars *vars)
 {
 	char	old_pwd[PATH_MAX];
+	int		update_env;
 
-	getcwd(old_pwd, PATH_MAX);
+	update_env = 1;
+	if (!getcwd(old_pwd, PATH_MAX))
+		update_env = 0;
 	if (!argv[1] && chdir(ft_getenv(vars->env.envp, "HOME")) == -1)
 	{
 		write(2, "cd: HOME not set\n", 17);
@@ -68,7 +75,7 @@ int	cd(char **argv, t_vars *vars)
 		write(2, "\n", 1);
 		return (1);
 	}
-	if (!change_pwd(vars, old_pwd))
+	if (!change_pwd(vars, old_pwd, update_env))
 		return (-1);
 	return (0);
 }
