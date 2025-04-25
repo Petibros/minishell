@@ -73,5 +73,14 @@ void		handle_empty_token(t_token **tokens, t_token *current,
 t_token		*process_token(t_token **tokens, t_token *current,
 				t_token_processor_ctx *ctx);
 char		*ft_strjoin_array(char **array, char *delimiter);
+void		expand_variables_in_tokens(t_token **tokens, int exit_status,
+				char **envp);
+void		expand_token_value(t_token *token, int exit_status, char **envp);
+char		*process_var_token(char *token_value, char **envp);
+char		*handle_dollar_following(char *after_var, char *token_value,
+				char **envp);
+char		*handle_var_value(char *token_value, int var_len, char **envp);
+char		*handle_dollar_continuation(char *token_value, char *var_value,
+				int var_len, char **envp);
 
 #endif
