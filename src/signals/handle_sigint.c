@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 08:08:19 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/18 17:26:41 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/26 18:09:40 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-/* handle ctrl-c */
 void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -26,7 +25,6 @@ void	handle_sigint(int sig)
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
-		g_signal_received = 0;
 	}
 }
 

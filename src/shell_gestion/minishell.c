@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:34:25 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:09:07 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ int	run_shell(t_vars *vars)
 		return (0);
 	if (!vars->line[0])
 		return (1);
+	if (g_signal_received == SIGINT)
+	{
+		vars->cmd.last_exit_status = 130;
+		g_signal_received = 0;
+	}
 	add_history(vars->line);
 	if (parse_line(vars))
 		execute(vars, vars->cmd.cmds);
