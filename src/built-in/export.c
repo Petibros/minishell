@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/11 18:55:24 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/27 21:49:39 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int	is_valid(char **argv, int *status)
 	int	i;
 
 	i = 0;
-	while (argv[1][i] && (ft_isalpha(argv[1][i]) || argv[1][i] == '_'))
+	while (argv[1][i] && (ft_isalnum(argv[1][i]) || argv[1][i] == '_'))
 		++i;
 	if ((argv[1][i] != '=' && !(argv[1][i] == '+'
 		&& argv[1][i + 1] == '=')) || i == 0)

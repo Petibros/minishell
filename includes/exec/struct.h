@@ -6,12 +6,15 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:44:40 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:45:06 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/27 21:16:38 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCT_H
 # define STRUCT_H
+
+# include <stdbool.h>
+# include <limits.h>
 
 typedef struct s_env
 {
@@ -47,7 +50,6 @@ typedef struct s_vars
 	char			*line;
 	t_env			env;
 	t_cmds			cmd;
-	struct termios	terminal;
 	void			(*sa_setup)(void);
 	char			abs_path[PATH_MAX];
 	char			*home_path;
