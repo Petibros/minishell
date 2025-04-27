@@ -50,17 +50,39 @@ static char	*get_tmp(void)
 	return (heredoc_path);
 }
 
-static void	here_doc(int fd, char *limiter)
+static void	write_heredoc_line(int fd, char *buffer, t_redir *heredoc,
+	t_vars *vars)
+{
+	char	*expanded;
+
+	if (!heredoc->quoted)
+	{
+		expanded = expand_variables(buffer, vars->cmd.last_exit_status,
+				vars->env.envp);
+		if (expanded)
+		{
+			write(fd, expanded, ft_strlen(expanded));
+			free(expanded);
+		}
+		else
+			write(fd, buffer, ft_strlen(buffer));
+	}
+	else
+		write(fd, buffer, ft_strlen(buffer));
+	write(fd, "\n", 1);
+}
+
+static void	here_doc(int fd, t_redir *heredoc, t_vars *vars)
 {
 	char	*buffer;
 
 	buffer = readline("heredoc > ");
 	if (is_sigint(buffer))
 		return ;
-	while (buffer && ft_strncmp(limiter, buffer, ft_strlen(limiter) + 1))
+	while (buffer && ft_strncmp(heredoc->filename, buffer,
+			ft_strlen(heredoc->filename) + 1))
 	{
-		write(fd, buffer, ft_strlen(buffer));
-		write(fd, "\n", 1);
+		write_heredoc_line(fd, buffer, heredoc, vars);
 		free(buffer);
 		buffer = readline("heredoc > ");
 		if (is_sigint(buffer))
@@ -69,7 +91,7 @@ static void	here_doc(int fd, char *limiter)
 	if (!buffer)
 	{
 		write(2, "Warning: got end-of-file, expected: ", 36);
-		write(2, limiter, ft_strlen(limiter));
+		write(2, heredoc->filename, ft_strlen(heredoc->filename));
 		write(2, "\n", 1);
 		return ;
 	}
@@ -88,7 +110,7 @@ void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd)
 	*fd = open(heredoc_path, O_TRUNC | O_WRONLY | O_CREAT, 0777);
 	setup_signals_heredoc();
 	dup_fd = dup(0);
-	here_doc(*fd, files->filename);
+	here_doc(*fd, files, vars);
 	if (g_signal_received == SIGINT)
 		dup2(dup_fd, 0);
 	close(dup_fd);

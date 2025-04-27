@@ -42,6 +42,7 @@ typedef struct s_redir
 {
 	char			*filename;
 	bool			append;
+	int				quoted;
 	struct s_redir	*next;
 }	t_redir;
 

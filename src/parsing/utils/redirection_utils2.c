@@ -61,6 +61,10 @@ int	handle_heredoc(t_nodes *node, char *delimiter)
 	new = create_redir_node(delimiter, 0);
 	if (!new)
 		return (0);
+	if (ft_strchr(delimiter, '\'') || ft_strchr(delimiter, '\"'))
+		new->quoted = 1;
+	else
+		new->quoted = 0;
 	if (!node->heredoc)
 		node->heredoc = new;
 	else

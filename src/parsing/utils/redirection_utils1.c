@@ -28,6 +28,7 @@ t_redir	*create_redir_node(char *filename, int append)
 		return (NULL);
 	}
 	new->append = append;
+	new->quoted = 0;
 	new->next = NULL;
 	return (new);
 }
