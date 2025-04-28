@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:36:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/15 17:35:08 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/27 19:05:18 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,9 @@ static int	verif_argv(char *argv)
 
 void	exit_and_free(t_vars *vars, int status, bool write_exit)
 {
-	int	term;
-
-	term = -2;
-	if (write_exit)
-		term = open("/dev/tty", O_WRONLY);
-	if (term == -1)
-		perror("cannot write exit in term");
 	free_all(vars, NULL, false);
-	if (term > -1)
-		write(term, "exit\n", 5);
-	close(term);
+	if (write_exit)
+		write(2, "exit\n", 5);
 	exit(status);
 }
 

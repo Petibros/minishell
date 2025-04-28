@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 15:01:32 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/27 22:29:01 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	cd(char **argv, t_vars *vars)
 		write(2, "cd: HOME not set\n", 17);
 		return (1);
 	}
-	else if (argv[2])
+	else if (argv[1] && argv[2])
 	{
 		write(2, "cd: too many arguments\n", 23);
 		return (1);

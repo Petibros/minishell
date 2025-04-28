@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 20:30:13 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 15:22:14 by sacha            ###   ########.fr       */
+/*   Updated: 2025/04/28 02:52:26 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,7 @@ static void	write_heredoc_line(int fd, char *buffer, t_redir *heredoc,
 
 	if (!heredoc->quoted)
 	{
-		expanded = expand_variables(buffer, vars->cmd.last_exit_status,
-				vars->env.envp);
+		expanded = expand_heredoc(vars, buffer);
 		if (expanded)
 		{
 			write(fd, expanded, ft_strlen(expanded));

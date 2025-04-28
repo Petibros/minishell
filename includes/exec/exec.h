@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:40:00 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 18:06:11 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:30:34 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ int		get_fds(t_vars *vars, t_nodes *cmds, int is_pipe[2]);
 void	init_pipes(int pipes[2][2]);
 //HEREDOC
 void	heredoc_gestion(t_vars *vars, t_redir *files, int *fd);
+char	*expand_heredoc(t_vars *vars, char *str);
+void	expand_digits(char *str, int nbr);
+char	*get_expand_name(char *str, int *i);
 //EXECUTION
+int		count_digits(int nbr);
 int		is_exec(char *path, int *status);
 int		print_quit(void);
 char	*get_path(char *cmd, char **envp, int *status);

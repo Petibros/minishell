@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/25 18:14:15 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/04/28 15:28:01 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,8 @@ CFILES_EXEC =		src/exec/exec.c \
 					src/exec/file_descriptors.c \
 					src/exec/get_path.c \
 					src/exec/here_doc.c \
+					src/exec/expand_heredoc.c \
+					src/exec/expand_heredoc_utils.c \
 					src/exec/exec_utils.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \

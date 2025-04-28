@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:42 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:34:43 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:56:49 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	*ft_getenv(char **envp, char *var)
 {
 	int	i;
 
+	if (!var)
+		return (NULL);
 	i = 0;
 	while (envp[i])
 	{
