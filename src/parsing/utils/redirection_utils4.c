@@ -40,49 +40,19 @@ static char	*handle_wildcard_expansion(char *expanded, char *filename)
 	return (final);
 }
 
-static char *process_quotes(char *filename)
-{
-	char	*processed;
-	char	quote;
-	int		i;
-	int		j;
-
-	processed = malloc(sizeof(char) * (ft_strlen(filename) + 1));
-	if (!processed)
-		return (NULL);
-
-	i = 0;
-	j = 0;
-	quote = 0;
-	while (filename[i])
-	{
-		if (!quote && (filename[i] == '\'' || filename[i] == '\"'))
-			quote = filename[i];
-		else if (quote && filename[i] == quote)
-			quote = 0;
-		else
-			processed[j++] = filename[i];
-		i++;
-	}
-	processed[j] = '\0';
-	return (processed);
-}
-
 char	*expand_filename(char *filename, int exit_status, char **envp)
 {
 	char	*expanded;
 	char	*processed;
 	char	*final;
 
-	processed = process_quotes(filename);
+	processed = process_quotes_wrapper(filename);
 	if (!processed)
 		return (NULL);
-
 	expanded = expand_variables(processed, exit_status, envp);
 	free(processed);
 	if (!expanded)
 		return (NULL);
-
 	if (has_unquoted_wildcard(expanded))
 	{
 		final = handle_wildcard_expansion(expanded, filename);
@@ -91,23 +61,9 @@ char	*expand_filename(char *filename, int exit_status, char **envp)
 	return (expanded);
 }
 
-static int	validate_and_get_token(t_token **token, char **filename)
-{
-	if (!*token || (*token)->type != TOKEN_WORD)
-	{
-		print_syntax_error(NULL);
-		return (0);
-	}
-	*filename = (*token)->value;
-	*token = (*token)->next;
-	return (1);
-}
-
 int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 {
 	t_token_type	type;
-	char			*filename;
-	char			*expanded_filename;
 	int				result;
 
 	while (*token && ((*token)->type == TOKEN_REDIR_IN
@@ -117,23 +73,7 @@ int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 	{
 		type = (*token)->type;
 		*token = (*token)->next;
-		if (!validate_and_get_token(token, &filename))
-			return (0);
-
-		if (type == TOKEN_HEREDOC)
-		{
-			expanded_filename = process_quotes(filename);
-			if (!expanded_filename)
-				return (0);
-		}
-		else
-		{
-			expanded_filename = expand_filename(filename, 0, envp);
-			if (!expanded_filename)
-				return (0);
-		}
-		result = process_redirection(node, expanded_filename, type);
-		free(expanded_filename);
+		result = handle_redirection_type(node, token, envp, type);
 		if (!result)
 			return (0);
 	}
