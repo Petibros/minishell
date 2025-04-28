@@ -40,7 +40,7 @@ static char	*handle_wildcard_expansion(char *expanded, char *filename)
 	return (final);
 }
 
-char	*expand_filename(char *filename, int exit_status, char **envp)
+char	*expand_filename(char *filename, int exit_status, char **envp, t_token_type type)
 {
 	char	*expanded;
 	char	*processed;
@@ -53,7 +53,7 @@ char	*expand_filename(char *filename, int exit_status, char **envp)
 	free(processed);
 	if (!expanded)
 		return (NULL);
-	if (has_unquoted_wildcard(expanded))
+	if (has_unquoted_wildcard(expanded) && type != TOKEN_HEREDOC)
 	{
 		final = handle_wildcard_expansion(expanded, filename);
 		return (final);

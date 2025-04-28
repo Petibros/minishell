@@ -56,7 +56,7 @@ int	handle_redirection_type(t_nodes *node, t_token **token,
 	}
 	else
 	{
-		expanded_filename = expand_filename(filename, 0, envp);
+		expanded_filename = expand_filename(filename, 0, envp, type);
 		if (!expanded_filename)
 			return (0);
 	}
