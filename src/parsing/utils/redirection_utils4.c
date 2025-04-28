@@ -40,7 +40,8 @@ static char	*handle_wildcard_expansion(char *expanded, char *filename)
 	return (final);
 }
 
-char	*expand_filename(char *filename, int exit_status, char **envp, t_token_type type)
+char	*expand_filename(char *filename, int exit_status, char **envp,
+		t_token_type type)
 {
 	char	*expanded;
 	char	*processed;
