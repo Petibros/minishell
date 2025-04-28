@@ -22,9 +22,9 @@ char	*handle_single_quote(char *str, int *i, char *result)
 	(*i)++;
 	while (str[*i] && str[*i] != '\'')
 		(*i)++;
-	if (*i > start)
+	if (*i > start + 1)
 	{
-		tmp = ft_substr(str, start, *i - start + 1);
+		tmp = ft_substr(str, start + 1, *i - (start + 1));
 		if (!tmp)
 			return (NULL);
 		result = ft_strjoin_free(result, tmp);
