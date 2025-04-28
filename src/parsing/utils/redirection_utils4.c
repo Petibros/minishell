@@ -40,31 +40,7 @@ static char	*handle_wildcard_expansion(char *expanded, char *filename)
 	return (final);
 }
 
-char	*expand_filename(char *filename, int exit_status, char **envp)
-{
-	char	*expanded;
-
-	expanded = expand_variables(filename, exit_status, envp);
-	if (!expanded)
-		return (NULL);
-	if (has_unquoted_wildcard(expanded))
-		return (handle_wildcard_expansion(expanded, filename));
-	return (expanded);
-}
-
-static int	validate_and_get_token(t_token **token, char **filename)
-{
-	if (!*token || (*token)->type != TOKEN_WORD)
-	{
-		print_syntax_error(NULL);
-		return (0);
-	}
-	*filename = (*token)->value;
-	*token = (*token)->next;
-	return (1);
-}
-
-static char *process_heredoc_delimiter(char *filename)
+static char *process_quotes(char *filename)
 {
 	char	*processed;
 	char	quote;
@@ -92,12 +68,46 @@ static char *process_heredoc_delimiter(char *filename)
 	return (processed);
 }
 
+char	*expand_filename(char *filename, int exit_status, char **envp)
+{
+	char	*expanded;
+	char	*processed;
+	char	*final;
+
+	processed = process_quotes(filename);
+	if (!processed)
+		return (NULL);
+
+	expanded = expand_variables(processed, exit_status, envp);
+	free(processed);
+	if (!expanded)
+		return (NULL);
+
+	if (has_unquoted_wildcard(expanded))
+	{
+		final = handle_wildcard_expansion(expanded, filename);
+		return (final);
+	}
+	return (expanded);
+}
+
+static int	validate_and_get_token(t_token **token, char **filename)
+{
+	if (!*token || (*token)->type != TOKEN_WORD)
+	{
+		print_syntax_error(NULL);
+		return (0);
+	}
+	*filename = (*token)->value;
+	*token = (*token)->next;
+	return (1);
+}
+
 int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 {
 	t_token_type	type;
 	char			*filename;
 	char			*expanded_filename;
-	char			*processed_filename;
 	int				result;
 
 	while (*token && ((*token)->type == TOKEN_REDIR_IN
@@ -112,21 +122,18 @@ int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 
 		if (type == TOKEN_HEREDOC)
 		{
-			processed_filename = process_heredoc_delimiter(filename);
-			if (!processed_filename)
+			expanded_filename = process_quotes(filename);
+			if (!expanded_filename)
 				return (0);
-			result = process_redirection(node, processed_filename, type);
-			free(processed_filename);
 		}
 		else
 		{
 			expanded_filename = expand_filename(filename, 0, envp);
 			if (!expanded_filename)
 				return (0);
-			result = process_redirection(node, expanded_filename, type);
-			free(expanded_filename);
 		}
-		
+		result = process_redirection(node, expanded_filename, type);
+		free(expanded_filename);
 		if (!result)
 			return (0);
 	}
