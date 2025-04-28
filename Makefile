@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/28 15:28:01 by sacgarci         ###   ########.fr        #
+#    Updated: 2025/04/28 20:38:44 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ CC = cc
 CFILES_SHELL =		src/shell_gestion/main.c \
 		 			src/shell_gestion/prompt.c \
 		 			src/shell_gestion/getenv.c \
+		 			src/shell_gestion/getenv_utils.c \
 					src/shell_gestion/minishell.c
 
 CFILES_BUILT-IN =	src/built-in/pwd.c \

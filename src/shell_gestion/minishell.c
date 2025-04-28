@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/26 18:09:07 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:33:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,7 @@ t_vars	*setup_shell(char **envp)
 		free_all(vars, NULL, false);
 		return (NULL);
 	}
+	if (!increment_shlvl(vars))
+		perror("malloc error calling \"increment shlvl\"");
 	return (vars);
 }
