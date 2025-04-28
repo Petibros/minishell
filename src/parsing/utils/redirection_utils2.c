@@ -12,6 +12,7 @@
 
 #include "parsing.h"
 #include "redirection_utils.h"
+#include "quote_utils3.h"
 
 int	handle_input_redirection(t_nodes *node, char *filename)
 {
@@ -57,14 +58,29 @@ int	handle_heredoc(t_nodes *node, char *delimiter)
 {
 	t_redir	*new;
 	t_redir	*current;
+	char	*unquoted_delimiter;
+	int		j;
 
-	new = create_redir_node(delimiter, 0);
-	if (!new)
-		return (0);
 	if (ft_strchr(delimiter, '\'') || ft_strchr(delimiter, '\"'))
+	{
+		unquoted_delimiter = malloc(sizeof(char) * (ft_strlen(delimiter) + 1));
+		if (!unquoted_delimiter)
+			return (0);
+		process_quotes(delimiter, unquoted_delimiter, &j);
+		unquoted_delimiter[j] = '\0';
+		new = create_redir_node(unquoted_delimiter, 0);
+		free(unquoted_delimiter);
+		if (!new)
+			return (0);
 		new->quoted = 1;
+	}
 	else
+	{
+		new = create_redir_node(delimiter, 0);
+		if (!new)
+			return (0);
 		new->quoted = 0;
+	}
 	if (!node->heredoc)
 		node->heredoc = new;
 	else

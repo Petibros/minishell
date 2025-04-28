@@ -50,9 +50,8 @@ int	handle_redirection_type(t_nodes *node, t_token **token,
 		return (0);
 	if (type == TOKEN_HEREDOC)
 	{
-		expanded_filename = process_quotes_wrapper(filename);
-		if (!expanded_filename)
-			return (0);
+		result = handle_heredoc(node, filename);
+		return (result);
 	}
 	else
 	{
