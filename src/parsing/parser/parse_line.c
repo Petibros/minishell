@@ -58,7 +58,7 @@ static int	process_tokens(t_token *tokens, t_vars *vars)
 		return (handle_parse_error(tokens, vars));
 	expand_wildcards(vars->cmd.cmds);
 	handle_quotes_in_node(vars->cmd.cmds);
-	print_ast_with_redirs(vars->cmd.cmds, 0);
+	//print_ast_with_redirs(vars->cmd.cmds, 0);
 	free_token(tokens);
 	return (1);
 }

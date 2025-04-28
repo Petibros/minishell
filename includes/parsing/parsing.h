@@ -32,7 +32,4 @@
 void	print_tokens(t_token *head);
 void	print_token(t_token *token);
 
-/* AST Printing */
-void	print_ast_with_redirs(t_nodes *node, int depth);
-
 #endif

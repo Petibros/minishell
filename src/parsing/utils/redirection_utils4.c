@@ -64,11 +64,40 @@ static int	validate_and_get_token(t_token **token, char **filename)
 	return (1);
 }
 
+static char *process_heredoc_delimiter(char *filename)
+{
+	char	*processed;
+	char	quote;
+	int		i;
+	int		j;
+
+	processed = malloc(sizeof(char) * (ft_strlen(filename) + 1));
+	if (!processed)
+		return (NULL);
+
+	i = 0;
+	j = 0;
+	quote = 0;
+	while (filename[i])
+	{
+		if (!quote && (filename[i] == '\'' || filename[i] == '\"'))
+			quote = filename[i];
+		else if (quote && filename[i] == quote)
+			quote = 0;
+		else
+			processed[j++] = filename[i];
+		i++;
+	}
+	processed[j] = '\0';
+	return (processed);
+}
+
 int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 {
 	t_token_type	type;
 	char			*filename;
 	char			*expanded_filename;
+	char			*processed_filename;
 	int				result;
 
 	while (*token && ((*token)->type == TOKEN_REDIR_IN
@@ -80,11 +109,24 @@ int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 		*token = (*token)->next;
 		if (!validate_and_get_token(token, &filename))
 			return (0);
-		expanded_filename = expand_filename(filename, 0, envp);
-		if (!expanded_filename)
-			return (0);
-		result = process_redirection(node, expanded_filename, type);
-		free(expanded_filename);
+
+		if (type == TOKEN_HEREDOC)
+		{
+			processed_filename = process_heredoc_delimiter(filename);
+			if (!processed_filename)
+				return (0);
+			result = process_redirection(node, processed_filename, type);
+			free(processed_filename);
+		}
+		else
+		{
+			expanded_filename = expand_filename(filename, 0, envp);
+			if (!expanded_filename)
+				return (0);
+			result = process_redirection(node, expanded_filename, type);
+			free(expanded_filename);
+		}
+		
 		if (!result)
 			return (0);
 	}
