@@ -1,42 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   expand_heredoc_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/25 17:34:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 04:53:13 by sacgarci         ###   ########.fr       */
+/*   Created: 2025/04/28 15:18:26 by sacgarci          #+#    #+#             */
+/*   Updated: 2025/04/28 15:21:10 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_digits(int nbr)
+void	expand_digits(char *str, int nbr)
 {
 	int	n;
 
 	if (!nbr)
-		return (1);
-	n = 0;
+		str[0] = 48;
+	n = count_digits(nbr) - 1;
 	while (nbr)
 	{
+		str[n] = nbr % 10 + 48;
 		nbr /= 10;
-		++n;
+		--n;
 	}
-	return (n);
 }
 
-void	init_pipes(int pipes[2][2])
+char	*get_expand_name(char *str, int *i)
 {
-	pipes[0][0] = 0;
-	pipes[0][1] = 0;
-	pipes[1][0] = 0;
-	pipes[1][1] = 0;
-}
+	char	*var;
+	int		n;
 
-int	print_quit(void)
-{
-	printf("Quit (core dumped)\n");
-	return (131);
+	n = 0;
+	while (str[*i + n] && (ft_isalnum(str[*i + n]) || str[*i + n] == '_'))
+		++n;
+	var = malloc((n + 1) * sizeof(char));
+	if (!var)
+		return (NULL);
+	ft_strlcpy(var, &str[*i], n + 1);
+	*i += n;
+	return (var);
 }
