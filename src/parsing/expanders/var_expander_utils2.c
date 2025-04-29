@@ -57,7 +57,7 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 static char	*handle_empty_var_case(char *str, int *i, int start, char *var_name)
 {
 	free(var_name);
-	if (str[*i] == '$' || str[*i] == '\0')
+	if (str[*i] == '\0')
 	{
 		*i = start;
 		return (ft_strdup("$"));
