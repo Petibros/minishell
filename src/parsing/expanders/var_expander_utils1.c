@@ -29,22 +29,40 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 	char	*tmp;
 	int		i;
 	int		j;
+	int		in_squote;
 
 	result = ft_strdup("");
 	i = 0;
+	in_squote = 0;
 	while (arg[i])
 	{
 		j = i;
-		if (arg[i] == '$')
+		if (arg[i] == '\'')
+		{
+			in_squote = !in_squote;
+			i++;
+			while (arg[i] && arg[i] != '\'')
+				i++;
+			if (arg[i] == '\'')
+			{
+				in_squote = !in_squote;
+				i++;
+			}
+			tmp = ft_substr(arg, j, i - j);
+			result = append_expanded_segment(result, tmp);
+		}
+		else if (!in_squote && arg[i] == '$')
 		{
 			tmp = expand_env_var(arg, &i, exit_status, envp);
 			result = append_expanded_segment(result, tmp);
-			continue ;
 		}
-		while (arg[i] && arg[i] != '$')
-			i++;
-		tmp = ft_substr(arg, j, i - j);
-		result = append_expanded_segment(result, tmp);
+		else
+		{
+			while (arg[i] && arg[i] != '\'' && arg[i] != '$')
+				i++;
+			tmp = ft_substr(arg, j, i - j);
+			result = append_expanded_segment(result, tmp);
+		}
 	}
 	free(arg);
 	return (result);

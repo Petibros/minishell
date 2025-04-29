@@ -50,8 +50,9 @@ void	process_char(t_quote_ctx *ctx)
 	{
 		if (!in_squote)
 			in_squote = 1;
+		else
+			in_squote = 0;
 		ctx->result = handle_single_quote(ctx->str, &ctx->i, ctx->result);
-		in_squote = 0;
 	}
 	else if (!in_squote && ctx->str[ctx->i] == '"')
 		ctx->result = handle_double_quote_char(ctx);
