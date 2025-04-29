@@ -32,5 +32,6 @@ void	execute(t_vars *vars, t_nodes *cmds);
 int		exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2]);
 void	exec_cmd(t_vars *vars, t_nodes *cmds);
 int		wait_processes(int last_known_exit_status, int last_known_pid);
+void	expand_wildcards_in_node(t_nodes *node);
 
 #endif

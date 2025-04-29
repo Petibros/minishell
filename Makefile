@@ -37,7 +37,8 @@ CFILES_EXEC =		src/exec/exec.c \
 					src/exec/here_doc.c \
 					src/exec/expand_heredoc.c \
 					src/exec/expand_heredoc_utils.c \
-					src/exec/exec_utils.c
+					src/exec/exec_utils.c \
+					src/exec/w_expands.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \

@@ -97,6 +97,10 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	vars->cmd.last_pid = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
+	
+	// Expand wildcards in parent process
+	expand_wildcards_in_node(cmds);
+	
 	status = get_fds(vars, cmds, is_pipe);
 	if (status != 0)
 		return (status);

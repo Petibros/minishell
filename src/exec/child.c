@@ -78,7 +78,6 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, vars->cmd.pipes);
 	
-	// Perform expansions in child process before executing
 	expand_variables_in_node(cmds, vars->cmd.last_exit_status, envp);
 	handle_quotes_in_node(cmds);
 	
