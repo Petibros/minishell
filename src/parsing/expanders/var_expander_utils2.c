@@ -31,6 +31,17 @@ static char	*extract_base_value(char *var_name, int exit_status, char **envp,
 	return (base_value);
 }
 
+static char	*handle_empty_var_case(char *str, int *i, int start, char *var_name)
+{
+	free(var_name);
+	if (str[*i] == '\0' || str[*i] == '"')
+	{
+		*i = start;
+		return (ft_strdup("$"));
+	}
+	return (ft_strdup(""));
+}
+
 char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 {
 	char	*underscore_pos;
@@ -52,17 +63,6 @@ char	*handle_underscore_case(char *var_name, int exit_status, char **envp)
 	free(next_var);
 	free(base_value);
 	return (result);
-}
-
-static char	*handle_empty_var_case(char *str, int *i, int start, char *var_name)
-{
-	free(var_name);
-	if (str[*i] == '\0' || str[*i] == '"')
-	{
-		*i = start;
-		return (ft_strdup("$"));
-	}
-	return (NULL);
 }
 
 char	*expand_env_var(char *str, int *i, int exit_status, char **envp)
