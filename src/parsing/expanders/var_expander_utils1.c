@@ -68,22 +68,20 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 				result = append_expanded_segment(result, tmp);
 				i++;
 			}
-			else if (arg[i + 1] == '\'')
+			else if (arg[i + 1] == '\'' && in_dquote)
 			{
-				if (!in_dquote)
-				{
-					tmp = ft_strdup("$");
-					result = append_expanded_segment(result, tmp);
-				}
+				tmp = ft_strdup("$");
+				result = append_expanded_segment(result, tmp);
 				i++;
 			}
-			else if (arg[i + 1] == '"')
+			else if (arg[i + 1] == '"' && in_dquote)
 			{
-				if (in_dquote)
-				{
-					tmp = ft_strdup("$");
-					result = append_expanded_segment(result, tmp);
-				}
+				tmp = ft_strdup("$");
+				result = append_expanded_segment(result, tmp);
+				i++;
+			}
+			else if (arg[i + 1] == '\'' || arg[i + 1] == '"')
+			{
 				i++;
 			}
 			else
