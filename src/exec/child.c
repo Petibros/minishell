@@ -80,7 +80,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	
 	expand_variables_in_node(cmds, vars->cmd.last_exit_status, envp);
 	handle_quotes_in_node(cmds);
-	
+		
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))

@@ -39,7 +39,7 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 	while (arg[i])
 	{
 		j = i;
-		if (arg[i] == '\'')
+		if (!in_dquote && arg[i] == '\'')
 		{
 			in_squote = !in_squote;
 			i++;
@@ -56,16 +56,24 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 		else if (arg[i] == '"')
 		{
 			in_dquote = !in_dquote;
+			tmp = ft_substr(arg, j, 1);
+			result = append_expanded_segment(result, tmp);
 			i++;
 		}
 		else if (!in_squote && arg[i] == '$')
 		{
+			if ((arg[i + 1] == '\'' || arg[i + 1] == '"') && !in_dquote)
+			{
+				i++;
+				continue;
+			}
 			tmp = expand_env_var(arg, &i, exit_status, envp);
 			result = append_expanded_segment(result, tmp);
 		}
 		else
 		{
-			while (arg[i] && arg[i] != '\'' && arg[i] != '$' && arg[i] != '"')
+			while (arg[i] && (!in_dquote ? (arg[i] != '\'' && arg[i] != '$' && arg[i] != '"') 
+				: (arg[i] != '$' && arg[i] != '"')))
 				i++;
 			tmp = ft_substr(arg, j, i - j);
 			result = append_expanded_segment(result, tmp);
