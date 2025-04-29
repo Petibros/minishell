@@ -69,7 +69,9 @@ char	*handle_special_var_cases(char *str, int *i, int exit_status)
 		return (ft_itoa(exit_status));
 	}
 	if (str[*i] == '\'' || str[*i] == '"')
-		return (ft_strdup(""));
+	{
+		return (ft_strdup("$"));
+	}
 	if (str[*i] == '$')
 	{
 		(*i)++;

@@ -30,10 +30,12 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 	int		i;
 	int		j;
 	int		in_squote;
+	int		in_dquote;
 
 	result = ft_strdup("");
 	i = 0;
 	in_squote = 0;
+	in_dquote = 0;
 	while (arg[i])
 	{
 		j = i;
@@ -51,6 +53,11 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 			tmp = ft_substr(arg, j, i - j);
 			result = append_expanded_segment(result, tmp);
 		}
+		else if (arg[i] == '"')
+		{
+			in_dquote = !in_dquote;
+			i++;
+		}
 		else if (!in_squote && arg[i] == '$')
 		{
 			tmp = expand_env_var(arg, &i, exit_status, envp);
@@ -58,7 +65,7 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 		}
 		else
 		{
-			while (arg[i] && arg[i] != '\'' && arg[i] != '$')
+			while (arg[i] && arg[i] != '\'' && arg[i] != '$' && arg[i] != '"')
 				i++;
 			tmp = ft_substr(arg, j, i - j);
 			result = append_expanded_segment(result, tmp);
