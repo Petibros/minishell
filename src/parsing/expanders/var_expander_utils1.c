@@ -62,17 +62,37 @@ static char	*handle_dollar_expansion(char *arg, int exit_status, char **envp)
 		}
 		else if (!in_squote && arg[i] == '$')
 		{
-			if (arg[i + 1] == '\'' || arg[i + 1] == '"')
+			if (arg[i + 1] == '\0')
 			{
 				tmp = ft_strdup("$");
 				result = append_expanded_segment(result, tmp);
 				i++;
-				continue;
 			}
-			tmp = expand_env_var(arg, &i, exit_status, envp);
-			if (!tmp)
-				tmp = ft_strdup("");
-			result = append_expanded_segment(result, tmp);
+			else if (arg[i + 1] == '\'')
+			{
+				if (!in_dquote)
+				{
+					tmp = ft_strdup("$");
+					result = append_expanded_segment(result, tmp);
+				}
+				i++;
+			}
+			else if (arg[i + 1] == '"')
+			{
+				if (in_dquote)
+				{
+					tmp = ft_strdup("$");
+					result = append_expanded_segment(result, tmp);
+				}
+				i++;
+			}
+			else
+			{
+				tmp = expand_env_var(arg, &i, exit_status, envp);
+				if (!tmp)
+					tmp = ft_strdup("");
+				result = append_expanded_segment(result, tmp);
+			}
 		}
 		else
 		{
