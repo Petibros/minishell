@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 18:02:44 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:40:38 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ char	*ft_getenv(char **envp, char *var);
 //SHELL_GESTION
 t_vars	*setup_shell(char **envp);
 int		run_shell(t_vars *vars);
+void	swap_str(char **str_1, char **str_2);
+int		increment_shlvl(t_vars *vars);
 //READLINE PROMPT
 int		get_prompt(t_vars *vars);
 

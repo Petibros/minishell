@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:44:40 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/27 21:16:38 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:08:37 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,14 @@ typedef struct s_cmds
 
 typedef struct s_vars
 {
-	char			*line;
-	t_env			env;
-	t_cmds			cmd;
-	void			(*sa_setup)(void);
-	char			abs_path[PATH_MAX];
-	char			*home_path;
-	char			*user;
-	char			*prompt;
+	char	*line;
+	t_env	env;
+	t_cmds	cmd;
+	void	(*sa_setup)(void);
+	char	abs_path[PATH_MAX];
+	char	*home_path;
+	char	*user;
+	char	*prompt;
 }	t_vars;
 
 #endif

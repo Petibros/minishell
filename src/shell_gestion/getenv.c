@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:42 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 00:56:49 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:38:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,54 @@ char	*ft_getenv(char **envp, char *var)
 	return (NULL);
 }
 
-void	swap_str(char **str_1, char **str_2)
+static int	fill_argv_shlvl(char *var_ptr, int i, char **argv)
 {
-	char	*tmp;
+	char	*nb;
 
-	tmp = *str_1;
-	*str_1 = *str_2;
-	*str_2 = tmp;
+	argv[0] = "export";
+	if (!var_ptr || var_ptr[i])
+		argv[1] = ft_strdup("SHLVL=0");
+	else
+	{
+		nb = ft_itoa(atoi(var_ptr) + 1);
+		argv[1] = ft_strjoin("SHLVL=", nb);
+		if (nb)
+			free(nb);
+	}
+	argv[2] = NULL;
+	if (!argv[1])
+	{
+		free(argv);
+		return (0);
+	}
+	return (1);
 }
 
-void	sort_env(char ***envp)
+int	increment_shlvl(t_vars *vars)
+{
+	char	*var_ptr;
+	char	**argv;
+	int		status;
+	int		i;
+
+	i = 0;
+	argv = malloc(3 * sizeof(char *));
+	if (!argv)
+		return (0);
+	var_ptr = ft_getenv(vars->env.envp, "SHLVL");
+	while (var_ptr && ft_isdigit(var_ptr[i]))
+		++i;
+	if (!fill_argv_shlvl(var_ptr, i, argv))
+		return (0);
+	status = export_var(argv, &vars->env.envp, vars);
+	free(argv[1]);
+	free(argv);
+	if (status == -1)
+		return (0);
+	return (1);
+}
+
+static void	sort_env(char ***envp)
 {
 	int		i;
 	int		limit;
@@ -89,11 +127,4 @@ int	transfer_env(char **envp, t_vars *vars)
 	if (vars->env.envp[0])
 		sort_env(&vars->env.envp);
 	return (1);
-}
-
-void	actualize_env(t_vars *vars)
-{
-	vars->user = ft_getenv(vars->env.envp, "USER");
-	vars->home_path = ft_getenv(vars->env.envp, "HOME");
-	getcwd(vars->abs_path, PATH_MAX);
 }
