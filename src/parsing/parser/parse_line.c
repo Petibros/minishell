@@ -51,13 +51,10 @@ static int	handle_parse_error(t_token *tokens, t_vars *vars)
 
 static int	process_tokens(t_token *tokens, t_vars *vars)
 {
-	expand_variables_in_tokens(&tokens, vars->cmd.last_exit_status,
-		vars->env.envp);
+	// Removed expansions from parsing phase - they will happen in execution phase
 	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp, vars);
 	if (!vars->cmd.cmds)
 		return (handle_parse_error(tokens, vars));
-	expand_wildcards(vars->cmd.cmds);
-	handle_quotes_in_node(vars->cmd.cmds);
 	free_token(tokens);
 	return (1);
 }
