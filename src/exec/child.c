@@ -77,10 +77,9 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, vars->cmd.pipes);
+
+	new_expand_variables_in_node(cmds, envp, vars);
 	
-	expand_variables_in_node(cmds, vars->cmd.last_exit_status, envp);
-	handle_quotes_in_node(cmds);
-		
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))

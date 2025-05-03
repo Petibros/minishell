@@ -57,6 +57,7 @@ static int	is_built_in(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	status = which_built_in(cmds->argv);
 	if (!status || is_pipe[0] || is_pipe[1])
 		return (-2);
+	new_expand_variables_in_node(cmds, vars->env.envp, vars);
 	if (status == 1)
 		status = export_var(cmds->argv, &vars->env.envp, vars);
 	else if (status == 2)
@@ -97,9 +98,6 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	vars->cmd.last_pid = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
-	
-	// Expand wildcards in parent process
-	expand_wildcards_in_node(cmds);
 	
 	status = get_fds(vars, cmds, is_pipe);
 	if (status != 0)

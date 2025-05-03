@@ -55,4 +55,7 @@ int		increment_shlvl(t_vars *vars);
 //READLINE PROMPT
 int		get_prompt(t_vars *vars);
 
+//Exec parse
+void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars);
+
 #endif

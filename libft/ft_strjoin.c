@@ -12,29 +12,39 @@
 
 #include "libft.h"
 
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/11 05:01:27 by npapashv          #+#    #+#             */
+/*   Updated: 2025/01/23 08:14:10 by npapashv         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int		i;
-	int		j;
-	char	*result;
+	char	*joined;
+	int		l1;
+	int		l2;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
-	i = 0;
-	j = 0;
-	result = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (!result)
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	l1 = ft_strlen(s1);
+	l2 = ft_strlen(s2);
+	joined = ft_calloc(l1 + l2 + 1, sizeof(char));
+	if (!joined)
 		return (NULL);
-	while (s1[i])
-	{
-		result[i] = s1[i];
-		i++;
-	}
-	while (s2[j])
-	{
-		result[i + j] = s2[j];
-		j++;
-	}
-	result[i + j] = '\0';
-	return (result);
+	ft_memcpy(joined, s1, l1);
+	ft_memcpy(joined + l1, s2, l2);
+	return (joined);
 }
+
