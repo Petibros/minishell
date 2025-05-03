@@ -133,6 +133,7 @@ static char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
         free(tmp);
         free(var_value);
         str = new_skip_var(dollar);
+        free(dollar);
 		dollar = new_find_next_expansion(str, &is_in_double_quote);
 	}
     if (!str)
@@ -147,17 +148,16 @@ static  void    join_hole(char **argv)
     char    *tmp;
     int     i;
     
-    i = 1;
-    while   (argv[i])
+    i = 0;
+    while   (argv[i + 1])
     {
-        tmp = argv[i - 1];
-        argv[i - 1] = argv[i];
-        argv[i] = tmp;
+        tmp = argv[i];
+        argv[i] = argv[i + 1];
+        argv[i + 1] = tmp;
         ++i;
     }
-    tmp = argv[i - 1];
-    argv[i - 1] = argv[i];
-    argv[i] = tmp;
+    free(argv[i]);
+    argv[i] = NULL;
 }
 
 void    new_expand_argv(char **argv, char **envp, t_vars *vars)
