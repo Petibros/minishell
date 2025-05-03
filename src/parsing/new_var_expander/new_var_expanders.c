@@ -138,25 +138,23 @@ static char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
 	}
     if (!str)
         return (current);
-    pre_str = ft_substr(str, 0, dollar - str);
+    pre_str = ft_strdup(str);
     current = new_add_pre_str(current, pre_str);
 	return (current);
 }
 
 static  void    join_hole(char **argv)
 {
-    char    *tmp;
     int     i;
     
+    free(argv[0]);
+    argv[0] = NULL;
     i = 0;
     while   (argv[i + 1])
     {
-        tmp = argv[i];
         argv[i] = argv[i + 1];
-        argv[i + 1] = tmp;
         ++i;
     }
-    free(argv[i]);
     argv[i] = NULL;
 }
 
