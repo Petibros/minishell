@@ -95,7 +95,7 @@ static char    *new_skip_var(char *dollar)
 
 static char	*new_find_next_expansion(char *str, int *is_in_double_quote)
 {
-    while (*str)
+    while (str && *str)
     {
         if (*str == '"')
             *is_in_double_quote = !*is_in_double_quote;
@@ -133,7 +133,6 @@ static char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
         free(tmp);
         free(var_value);
         str = new_skip_var(dollar);
-        free(dollar);
 		dollar = new_find_next_expansion(str, &is_in_double_quote);
 	}
     if (!str)
@@ -161,13 +160,16 @@ static  void    join_hole(char **argv)
 void    new_expand_argv(char **argv, char **envp, t_vars *vars)
 {
     int     i;
+    char    *tmp;
 
     if (!argv)
         return ;
     i = 0;
     while (argv[i])
     {
+        tmp = argv[i];
         argv[i] = new_get_expanded_str(argv[i], envp, vars);
+        free(tmp);
         if (!argv[i] || argv[i][0] == '\0')
         {
             join_hole(argv + i);
