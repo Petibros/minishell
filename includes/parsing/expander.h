@@ -82,5 +82,6 @@ char		*handle_dollar_following(char *after_var, char *token_value,
 char		*handle_var_value(char *token_value, int var_len, char **envp);
 char		*handle_dollar_continuation(char *token_value, char *var_value,
 				int var_len, char **envp);
+char		**supra_split(char const *s, char *seps);
 
 #endif

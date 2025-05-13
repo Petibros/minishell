@@ -164,7 +164,7 @@ static char	**new_split_expanded_string(char *expanded)
 
 	if (!expanded)
 		return (NULL);
-	result = ft_split(expanded, ' ');
+	result = supra_split(expanded, " ");
 	if (!result)
 		return (NULL);
 	return (result);
@@ -233,7 +233,6 @@ static void    new_expand_redirs(t_redir *redirs)
     {
         tmp = redirs->filename;
         redirs->filename = new_expand_wildcard(redirs->filename);
-        new_remove_quotes(redirs->filename);
         free(tmp);
         redirs = redirs->next;
     }

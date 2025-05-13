@@ -58,6 +58,8 @@ static int	is_built_in(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	if (!status || is_pipe[0] || is_pipe[1])
 		return (-2);
 	new_expand_variables_in_node(cmds, vars->env.envp, vars);
+	new_expand_wildcards_in_node(cmds);
+	remove_all_quotes(cmds);
 	if (status == 1)
 		status = export_var(cmds->argv, &vars->env.envp, vars);
 	else if (status == 2)

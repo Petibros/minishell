@@ -59,6 +59,7 @@ int		get_prompt(t_vars *vars);
 void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars);
 void	new_expand_wildcards_in_node(t_nodes *node);
 void    new_remove_quotes(char *str);
-
+char	**supra_split(char const *s, char *seps);
+void    remove_all_quotes(t_nodes *node);
 
 #endif
