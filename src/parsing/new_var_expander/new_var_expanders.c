@@ -175,7 +175,7 @@ void    new_expand_argv(char **argv, char **envp, t_vars *vars)
             join_hole(argv + i);
             continue ;
         }
-        //new_remove_quotes(argv[i]);
+        new_remove_quotes(argv[i]);
         ++i;
     }
 }
@@ -190,7 +190,7 @@ static void    new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
     {
         tmp = redirs->filename;
         redirs->filename = new_get_expanded_str(redirs->filename, envp, vars);
-        //new_remove_quotes(redirs->filename);
+        new_remove_quotes(redirs->filename);
         free(tmp);
         redirs = redirs->next;
     }
