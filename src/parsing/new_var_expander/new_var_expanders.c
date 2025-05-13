@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static  void    new_remove_quotes(char *str)
+void    new_remove_quotes(char *str)
 {
     char    quote;
     char    *matching_quote;
@@ -175,7 +175,7 @@ void    new_expand_argv(char **argv, char **envp, t_vars *vars)
             join_hole(argv + i);
             continue ;
         }
-        new_remove_quotes(argv[i]);
+        //new_remove_quotes(argv[i]);
         ++i;
     }
 }
@@ -190,7 +190,7 @@ static void    new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
     {
         tmp = redirs->filename;
         redirs->filename = new_get_expanded_str(redirs->filename, envp, vars);
-        new_remove_quotes(redirs->filename);
+        //new_remove_quotes(redirs->filename);
         free(tmp);
         redirs = redirs->next;
     }
@@ -198,16 +198,18 @@ static void    new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
 
 void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars)
 {
+    char    **argv;
+
 	if (!node)
 		return ;
-	if (node->argv)
-	{
-        new_expand_argv(node->argv, envp, vars);
-		new_expand_redirs(node->file_in, envp, vars);
-		new_expand_redirs(node->file_out, envp, vars);
-	}
-	if (node->left)
-		new_expand_variables_in_node(node->left, envp, vars);
-	if (node->right)
-		new_expand_variables_in_node(node->right, envp, vars);
+    argv = node->argv;
+    if (argv)
+    {
+        new_expand_argv(argv, envp, vars);
+        node->argv = argv;
+    }
+    if (node->file_in)
+        new_expand_redirs(node->file_in, envp, vars);
+    if (node->file_out)
+        new_expand_redirs(node->file_out, envp, vars);
 }

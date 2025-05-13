@@ -72,14 +72,15 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 
 	path = NULL;
 	status = 1;
-	argv = cmds->argv;
 	envp = vars->env.envp;
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, vars->cmd.pipes);
 
 	new_expand_variables_in_node(cmds, envp, vars);
-	
+	new_expand_wildcards_in_node(cmds);
+
+	argv = cmds->argv;
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))

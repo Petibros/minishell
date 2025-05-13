@@ -83,7 +83,8 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/wildcard_utils.c \
 					src/parsing/utils/wildcard_utils2.c \
 					src/parsing/utils/quote_handler_utils.c \
-					src/parsing/new_var_expander/new_var_expanders.c
+					src/parsing/new_var_expander/new_var_expanders.c \
+					src/parsing/new_var_expander/new_wildcard_expanders.c
 
 CFILES_FREE =		src/free/free.c \
 					src/free/close.c
