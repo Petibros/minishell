@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:35:02 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:35:03 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:49:45 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,12 @@ int	get_fds(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	get_fd_out(vars, cmds, is_pipe, &vars->cmd.fd_out);
 	if (vars->cmd.fd_in <= -2)
 	{
-		close_fds(vars);
 		if (vars->cmd.fd_in == -3)
 			return (130);
 		return (-1);
 	}
 	if (vars->cmd.fd_in == -1 || vars->cmd.fd_out == -1)
 	{
-		close_fds(vars);
 		vars->cmd.last_exit_status = 1;
 		return (1);
 	}

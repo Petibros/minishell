@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 16:51:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 20:40:38 by marvin           ###   ########.fr       */
+/*   Updated: 2025/05/13 17:04:08 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int		get_prompt(t_vars *vars);
 //Exec parse
 void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars);
 void	new_expand_wildcards_in_node(t_nodes *node);
-void    new_remove_quotes(char *str);
+void	new_remove_quotes(char *str);
 char	**supra_split(char const *s, char *seps);
-void    remove_all_quotes(t_nodes *node);
+void	remove_all_quotes(t_nodes *node);
 
 #endif

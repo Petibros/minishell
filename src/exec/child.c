@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 18:05:49 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:32:50 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,10 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	path = NULL;
 	status = 1;
 	envp = vars->env.envp;
+	argv = cmds->argv;
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
-	
 	close_child_fds(vars, vars->cmd.pipes);
-
-	argv = cmds->argv;
 	is_built_in(argv, envp, vars);
 	free_all(vars, argv, true);
 	if (ft_strchr(argv[0], '/'))

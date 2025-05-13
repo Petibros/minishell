@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe.c                                             :+:      :+:    :+:   */
+/*   setup_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:17:17 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/13 16:47:09 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,13 +100,11 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	vars->cmd.last_pid = 0;
 	if (actualize_env_last_cmd(vars, cmds) == -1)
 		return (-1);
-	
 	status = get_fds(vars, cmds, is_pipe);
 	if (status != 0)
 		return (status);
 	if (!cmds->argv || !cmds->argv[0])
 	{
-		close_fds(vars);
 		vars->cmd.last_exit_status = 0;
 		return (0);
 	}
