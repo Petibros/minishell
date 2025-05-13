@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 23:24:00 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 15:45:42 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/13 23:15:37 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,29 +44,31 @@ static void	calc_len(t_vars *vars, char *str, int *n)
 static int	compare_after_dollar(t_vars *vars, char *str,
 		char *expanded, int *i)
 {
-	int		n;
 	char	*var_name;
 	char	*var_ptr;
 
-	n = 0;
-	*i += 1;
 	var_name = get_expand_name(str, i);
 	if (!var_name)
 		return (-1);
+	else if (!*var_name && !(str[*i - 1] == '$' && str[*i] == '?'))
+	{
+		free(var_name);
+		return (-2);
+	}
 	var_ptr = ft_getenv(vars->env.envp, var_name);
 	free(var_name);
 	if (var_ptr)
 	{
 		ft_strlcpy(expanded, var_ptr, ft_strlen(var_ptr) + 1);
-		n = ft_strlen(var_ptr);
+		return (ft_strlen(var_ptr));
 	}
 	else if (!var_ptr && str[*i - 1] == '$' && str[*i] == '?')
 	{
-		expand_digits(expanded, vars->cmd.last_exit_status);
-		n = count_digits(vars->cmd.last_exit_status);
 		*i += 1;
+		expand_digits(expanded, vars->cmd.last_exit_status);
+		return (count_digits(vars->cmd.last_exit_status));
 	}
-	return (n);
+	return (0);
 }
 
 static int	go_through_string(t_vars *vars, char *str, char *expanded)
@@ -81,14 +83,17 @@ static int	go_through_string(t_vars *vars, char *str, char *expanded)
 	{
 		if (str[i] == '$')
 		{
+			++i;
 			n = compare_after_dollar(vars, str, &expanded[j], &i);
-			if (n == -1)
+			if (n >= 0)
 			{
-				free(expanded);
-				return (0);
+				j += n;
+				continue ;
 			}
-			j += n;
-			continue ;
+			else if (n == -1)
+				return (0);
+			else if (n == -2)
+				--i;
 		}
 		expanded[j++] = str[i++];
 	}
@@ -102,6 +107,7 @@ char	*expand_heredoc(t_vars *vars, char *str)
 
 	n = 0;
 	calc_len(vars, str, &n);
+	printf("%d\n", n);
 	if (n != -1)
 		expanded = ft_calloc(1 + n, sizeof(char));
 	if (n == -1 || !expanded)
@@ -111,6 +117,7 @@ char	*expand_heredoc(t_vars *vars, char *str)
 	}
 	if (!go_through_string(vars, str, expanded))
 	{
+		free(expanded);
 		perror("In expand heredoc");
 		return (NULL);
 	}

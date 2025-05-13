@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:42 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 20:38:22 by marvin           ###   ########.fr       */
+/*   Updated: 2025/05/13 17:50:40 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	fill_argv_shlvl(char *var_ptr, int i, char **argv)
 		argv[1] = ft_strdup("SHLVL=0");
 	else
 	{
-		nb = ft_itoa(atoi(var_ptr) + 1);
+		nb = ft_itoa(ft_atoi(var_ptr) + 1);
 		argv[1] = ft_strjoin("SHLVL=", nb);
 		if (nb)
 			free(nb);

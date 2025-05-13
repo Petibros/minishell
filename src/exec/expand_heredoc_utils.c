@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 15:18:26 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 15:21:10 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:05:05 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,9 @@ char	*get_expand_name(char *str, int *i)
 	int		n;
 
 	n = 0;
-	while (str[*i + n] && (ft_isalnum(str[*i + n]) || str[*i + n] == '_'))
+	while (str[*i + n]
+		&& (ft_isalnum(str[*i + n]) || str[*i + n] == '_')
+		&& !ft_isdigit(str[*i]))
 		++n;
 	var = malloc((n + 1) * sizeof(char));
 	if (!var)
