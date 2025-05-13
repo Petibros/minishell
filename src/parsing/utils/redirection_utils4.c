@@ -11,32 +11,21 @@
 /* ************************************************************************** */
 
 #include "parsing.h"
-#include "wildcard_expander.h"
 #include "redirection_utils.h"
 
 static char	*handle_wildcard_expansion(char *expanded, char *filename)
 {
 	char	*final;
-	char	**matches;
-	int		count;
 
-	count = count_matching_entries(expanded);
-	if (count <= 0)
-	{
-		free(expanded);
+	if (!expanded)
 		return (ft_strdup(filename));
-	}
-	matches = collect_matching_entries(expanded, count);
-	if (!matches || !matches[0])
-	{
-		free(expanded);
-		if (matches)
-			free_array(matches);
-		return (ft_strdup(filename));
-	}
-	final = ft_strdup(matches[0]);
+	final = new_expand_wildcard(expanded);
 	free(expanded);
-	free_array(matches);
+	if (!final || final[0] == '\0')
+	{
+		free(final);
+		return (ft_strdup(filename));
+	}
 	return (final);
 }
 
@@ -46,15 +35,17 @@ char	*expand_filename(char *filename, int exit_status, char **envp,
 	char	*expanded;
 	char	*processed;
 	char	*final;
+	t_vars	vars;
 
 	processed = process_quotes_wrapper(filename);
 	if (!processed)
 		return (NULL);
-	expanded = expand_variables(processed, exit_status, envp);
+	vars.cmd.last_exit_status = exit_status;
+	expanded = new_get_expanded_str(processed, envp, &vars);
 	free(processed);
 	if (!expanded)
 		return (NULL);
-	if (has_unquoted_wildcard(expanded) && type != TOKEN_HEREDOC)
+	if (ft_strchr(expanded, '*') && type != TOKEN_HEREDOC)
 	{
 		final = handle_wildcard_expansion(expanded, filename);
 		return (final);

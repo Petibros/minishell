@@ -109,7 +109,7 @@ static char	*new_find_next_expansion(char *str, int *is_in_double_quote)
     return (NULL);
 }
 
-static char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
+char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
 {
 	char	*current;
 	char	*dollar;
@@ -142,6 +142,71 @@ static char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
 	return (current);
 }
 
+static int	new_count_array_size(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array && array[i])
+		i++;
+	return (i);
+}
+
+static char	**new_split_expanded_string(char *expanded)
+{
+	char	**result;
+
+	if (!expanded)
+		return (NULL);
+	result = supra_split(expanded, " ");
+	if (!result)
+		return (NULL);
+	return (result);
+}
+
+static void	new_free_arr(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array && array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+static char	**new_join_string_arrays(char **arr1, char **arr2)
+{
+	char	**result;
+	int		size1;
+	int		size2;
+	int		i;
+	int		j;
+
+	size1 = new_count_array_size(arr1);
+	size2 = new_count_array_size(arr2);
+	result = malloc(sizeof(char *) * (size1 + size2 + 1));
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (arr1 && arr1[i])
+	{
+		result[j++] = ft_strdup(arr1[i]);
+		i++;
+	}
+	i = 0;
+	while (arr2 && arr2[i])
+	{
+		result[j++] = ft_strdup(arr2[i]);
+		i++;
+	}
+	result[j] = NULL;
+	return (result);
+}
+
 static  void    join_hole(char **argv)
 {
     int     i;
@@ -155,6 +220,55 @@ static  void    join_hole(char **argv)
         ++i;
     }
     argv[i] = NULL;
+}
+
+char	**new_expand_argv_with_split(char **argv, char **envp, t_vars *vars)
+{
+    int     i;
+    char    *expanded;
+    char    **split_result;
+    char    **result;
+    char    **new_result;
+
+    if (!argv)
+        return (NULL);
+    
+    result = malloc(sizeof(char *) * 1);
+    if (!result)
+        return (NULL);
+    result[0] = NULL;
+    
+    i = 0;
+    while (argv[i])
+    {
+        expanded = new_get_expanded_str(argv[i], envp, vars);
+        if (expanded)
+        {
+            if (expanded[0] == '\0')
+            {
+                free(expanded);
+                i++;
+                continue;
+            }
+            
+            split_result = new_split_expanded_string(expanded);
+            if (split_result)
+            {
+                new_result = new_join_string_arrays(result, split_result);
+                new_free_arr(result);
+                new_free_arr(split_result);
+                result = new_result;
+                if (!result)
+                {
+                    free(expanded);
+                    return (NULL);
+                }
+            }
+            free(expanded);
+        }
+        i++;
+    }
+    return (result);
 }
 
 void    new_expand_argv(char **argv, char **envp, t_vars *vars)
@@ -197,14 +311,16 @@ static void    new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
 void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars)
 {
     char    **argv;
+    char    **new_argv;
 
 	if (!node)
 		return ;
     argv = node->argv;
     if (argv)
     {
-        new_expand_argv(argv, envp, vars);
-        node->argv = argv;
+        new_argv = new_expand_argv_with_split(argv, envp, vars);
+        new_free_arr(argv);
+        node->argv = new_argv;
     }
     if (node->file_in)
         new_expand_redirs(node->file_in, envp, vars);

@@ -24,8 +24,7 @@
 # include "parser.h"
 # include "nodes.h"
 # include "utils.h"
-# include "expander.h"
-# include "wildcard_expander.h"
+# include "new_var_expander.h"
 # include "minishell.h"
 
 /* Token Printing */

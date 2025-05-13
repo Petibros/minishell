@@ -3,49 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   quote_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/18 20:09:08 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/25 11:34:38 by npapash          ###   ########.fr       */
+/*   Created: 2025/05/13 10:05:12 by npapashv          #+#    #+#             */
+/*   Updated: 2025/05/13 10:05:12 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
-#include "quote_utils3.h"
+#include "quote_utils.h"
 
-static int	count_chars_without_quotes(char *str)
+void	process_quotes(const char *input, char *output, int *j)
 {
-	int		count;
-	char	quote;
 	int		i;
+	int		in_single_quote;
+	int		in_double_quote;
 
-	count = 0;
-	quote = 0;
 	i = 0;
-	while (str[i])
+	*j = 0;
+	in_single_quote = 0;
+	in_double_quote = 0;
+	while (input[i])
 	{
-		if (!quote && (str[i] == '\'' || str[i] == '\"'))
-			quote = str[i];
-		else if (quote && str[i] == quote)
-			quote = 0;
-		else
-			count++;
-		i++;
+		if (input[i] == '\'' && !in_double_quote)
+		{
+			in_single_quote = !in_single_quote;
+			i++;
+			continue ;
+		}
+		else if (input[i] == '\"' && !in_single_quote)
+		{
+			in_double_quote = !in_double_quote;
+			i++;
+			continue ;
+		}
+		output[(*j)++] = input[i++];
 	}
-	return (count);
-}
-
-char	*remove_quotes(char *str)
-{
-	char	*result;
-	int		j;
-
-	if (!str)
-		return (NULL);
-	result = malloc(sizeof(char) * (count_chars_without_quotes(str) + 1));
-	if (!result)
-		return (NULL);
-	process_quotes(str, result, &j);
-	result[j] = '\0';
-	return (result);
 }

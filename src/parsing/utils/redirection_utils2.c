@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 04:04:44 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 04:04:44 by npapash          ###   ########.fr       */
+/*   Created: 2025/03/24 04:09:05 by npapash           #+#    #+#             */
+/*   Updated: 2025/03/24 04:09:05 by npapash          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 #include "redirection_utils.h"
-#include "quote_utils3.h"
+#include "quote_utils.h"
 
 int	handle_input_redirection(t_nodes *node, char *filename)
 {
