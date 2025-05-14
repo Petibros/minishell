@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 00:12:27 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/14 18:07:36 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/15 00:26:00 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,35 +309,25 @@ void	new_expand_argv(char **argv, char **envp, t_vars *vars)
 	}
 }
 
-static void	new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars, int *status)
+static void	new_expand_redirs(t_redir *redirs, t_vars *vars)
 {
 	char	*tmp;
-	char	**check_expand;
 
 	if (!redirs)
 		return ;
 	while (redirs)
 	{
+		redirs->old_filename = ft_strdup(redirs->filename);
+		printf("%s\n%s\n", redirs->filename, redirs->old_filename);
 		tmp = redirs->filename;
-		redirs->filename = new_get_expanded_str(redirs->filename, envp, vars);
-		check_expand = supra_split(redirs->filename, " ");
-		if (!check_expand || (check_expand[0] && check_expand[1]))
-		{
-			*status = 2;
-			vars->cmd.last_exit_status = 1;
-			write(2, tmp, ft_strlen(tmp));
-			write(2, ": ambiguous redirect\n", 21);
-			free_string_array(check_expand);
-			free(tmp);
-			return ;
-		}
-		free_string_array(check_expand);
+		redirs->filename
+			= new_get_expanded_str(redirs->filename, vars->env.envp, vars);
 		free(tmp);
 		redirs = redirs->next;
 	}
 }
 
-void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars, int *status)
+void	new_expand_variables_in_node(t_nodes *node, t_vars *vars)
 {
 	char	**argv;
 	char	**new_argv;
@@ -347,12 +337,12 @@ void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars, int 
 	argv = node->argv;
 	if (argv)
 	{
-		new_argv = new_expand_argv_with_split(argv, envp, vars);
+		new_argv = new_expand_argv_with_split(argv, vars->env.envp, vars);
 		new_free_arr(argv);
 		node->argv = new_argv;
 	}
-	if (*status != 2 && node->file_in)
-		new_expand_redirs(node->file_in, envp, vars, status);
-	if (*status != 2 && node->file_out)
-		new_expand_redirs(node->file_out, envp, vars, status);
+	if (node->file_in)
+		new_expand_redirs(node->file_in, vars);
+	if (node->file_out)
+		new_expand_redirs(node->file_out, vars);
 }

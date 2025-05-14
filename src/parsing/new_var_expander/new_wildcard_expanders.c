@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:23:03 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/14 18:02:53 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/15 00:20:40 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,7 +299,7 @@ static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 
 	if (!redirs)
 		return ;
-	while (redirs)
+	while (redirs && *status != 2)
 	{
 		tmp = redirs->filename;
 		redirs->filename = new_expand_wildcard(redirs->filename);
@@ -308,14 +308,13 @@ static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 		{
 			*status = 2;
 			vars->cmd.last_exit_status = 1;
-			write(2, tmp, ft_strlen(tmp));
+			if (redirs->old_filename)
+				write(2, redirs->old_filename, ft_strlen(redirs->old_filename));
 			write(2, ": ambiguous redirect\n", 21);
-			free_string_array(check_expand);
-			free(tmp);
-			return ;
 		}
 		free_string_array(check_expand);
 		free(tmp);
+		free(redirs->old_filename);
 		redirs = redirs->next;
 	}
 }
@@ -332,8 +331,8 @@ void	new_expand_wildcards_in_node(t_nodes *node, t_vars *vars, int *status)
 		node->argv = new_expand_wildcards_array(argv);
 		new_free_arr(argv);
 	}
-	if (*status != 2 && node->file_in)
+	if (node->file_in)
 		new_expand_redirs(node->file_in, vars, status);
-	if (*status != 2 && node->file_out)
+	if (node->file_out)
 		new_expand_redirs(node->file_out, vars, status);
 }

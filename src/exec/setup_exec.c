@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/14 18:06:16 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/14 23:52:43 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	int	status;
 
 	status = 0;
-	new_expand_variables_in_node(cmds, vars->env.envp, vars, &status);
+	new_expand_variables_in_node(cmds, vars);
 	new_expand_wildcards_in_node(cmds, vars, &status);
 	remove_all_quotes(cmds);
 	vars->cmd.last_pid = 0;

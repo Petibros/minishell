@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 22:22:17 by npapash           #+#    #+#             */
-/*   Updated: 2025/04/04 22:53:42 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/14 23:42:49 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_token
 typedef struct s_redir
 {
 	char			*filename;
+	char			*old_filename;
 	bool			append;
 	int				quoted;
 	struct s_redir	*next;
