@@ -234,50 +234,55 @@ static  void    join_hole(char **argv)
 	argv[i] = NULL;
 }
 
-char	**new_expand_argv_with_split(char **argv, char **envp, t_vars *vars)
+char    **new_expand_single_argv(char *arg, char **envp, t_vars *vars, char **result)
 {
-	int		i;
-	char	*expanded;
-	char	**split_result;
-	char	**result;
-	char	**new_result;
+    char    *expanded;
+    char    **split_result;
+    char    **new_result;
 
-	if (!argv)
-		return (NULL);
-	result = malloc(sizeof(char *) * 1);
-	if (!result)
-		return (NULL);
-	result[0] = NULL;
-	i = 0;
-	while (argv[i])
-	{
-		expanded = new_get_expanded_str(argv[i], envp, vars);
-		if (expanded)
-		{
-			if (expanded[0] == '\0')
-			{
-				free(expanded);
-				i++;
-				continue ;
-			}
-			split_result = new_split_expanded_string(expanded);
-			if (split_result)
-			{
-				new_result = new_join_string_arrays(result, split_result);
-				new_free_arr(result);
-				new_free_arr(split_result);
-				result = new_result;
-				if (!result)
-				{
-					free(expanded);
-					return (NULL);
-				}
-			}
-			free(expanded);
-		}
-		i++;
-	}
-	return (result);
+    expanded = new_get_expanded_str(arg, envp, vars);
+    if (!expanded || expanded[0] == '\0')
+    {
+        free(expanded);
+        return (result);
+    }
+    split_result = new_split_expanded_string(expanded);
+    if (split_result)
+    {
+        new_result = new_join_string_arrays(result, split_result);
+        new_free_arr(result);
+        new_free_arr(split_result);
+        result = new_result;
+        if (!result)
+        {
+            free(expanded);
+            return (NULL);
+        }
+    }
+    free(expanded);
+    return (result);
+}
+
+char    **new_expand_argv_with_split(char **argv, char **envp, t_vars *vars)
+{
+    int     i;
+    char    **result;
+
+    if (!argv)
+        return (NULL);
+    result = malloc(sizeof(char *) * 1);
+    if (!result)
+        return (NULL);
+    result[0] = NULL;
+    i = 0;
+    while (argv[i])
+    {
+        result = new_expand_single_argv(argv[i], envp, vars, result);
+        if (!result)
+            return (NULL);
+        i++;
+    }
+    return (result);
 }
 
 void	new_expand_argv(char **argv, char **envp, t_vars *vars)
