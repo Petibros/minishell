@@ -6,14 +6,14 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:23:03 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/14 09:28:31 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/14 11:12:21 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char **handle_expansion(char **result, char *str);
-char **merge_and_free(char **result, char **temp);
+char	**handle_expansion(char **result, char *str);
+char	**merge_and_free(char **result, char **temp);
 
 static void	new_free_arr(char **array)
 {
@@ -36,7 +36,7 @@ static int	new_match_pattern(const char *pattern, const char *str)
 		return (0);
 	if (*pattern == '*')
 		return (new_match_pattern(pattern + 1, str)
-				|| new_match_pattern(pattern, str + 1));
+			|| new_match_pattern(pattern, str + 1));
 	if (*pattern == *str)
 		return (new_match_pattern(pattern + 1, str + 1));
 	return (0);
@@ -85,83 +85,91 @@ static int	new_should_expand(const char *str, int pos)
 	return (!in_single);
 }
 
-static char *handle_no_matches(char *str, char **matches)
+static char	*handle_no_matches(char *str, char **matches)
 {
-    new_free_arr(matches);
-    return (ft_strdup(str));
+	new_free_arr(matches);
+	return (ft_strdup(str));
 }
 
-static int add_match(char ***matches, int *count, char *str, char *d_name)
+static int	add_match(char ***matches, int *count, char *str, char *d_name)
 {
-    char **new_matches;
+	char	**new_matches;
 
-    new_matches = realloc(*matches, sizeof(char *) * (*count + 1));
-    if (!new_matches)
-        return (-1);
-    *matches = new_matches;
-    if (ft_strncmp(str, "./", 2) == 0)
-        (*matches)[*count] = ft_strjoin("./", d_name);
-    else
-        (*matches)[*count] = ft_strdup(d_name);
-    if (!(*matches)[*count])
-        return (-1);
-    (*count)++;
-    return (0);
+	new_matches = realloc(*matches, sizeof(char *) * (*count + 1));
+	if (!new_matches)
+		return (-1);
+	*matches = new_matches;
+	if (ft_strncmp(str, "./", 2) == 0)
+		(*matches)[*count] = ft_strjoin("./", d_name);
+	else
+		(*matches)[*count] = ft_strdup(d_name);
+	if (!(*matches)[*count])
+		return (-1);
+	(*count)++;
+	return (0);
 }
 
-static int process_directory(DIR *dir, char *pattern, char ***matches)
+static int	process_directory(DIR *dir, char *pattern, char ***matches)
 {
-    struct dirent *entry;
-    int count;
+	struct dirent	*entry;
+	int				count;
 
-    count = 0;
-    while ((entry = readdir(dir)))
-    {
-        if ((pattern[0] == '.' || entry->d_name[0] != '.')
-            && new_match_pattern(pattern, entry->d_name))
-        {
-            if (add_match(matches, &count, pattern, entry->d_name) == -1)
-                return (-1);
-        }
-    }
-    return (count);
+	count = 0;
+	entry = readdir(dir);
+	while (entry)
+	{
+		if ((pattern[0] == '.' || entry->d_name[0] != '.')
+			&& new_match_pattern(pattern, entry->d_name))
+		{
+			if (add_match(matches, &count, pattern, entry->d_name) == -1)
+				return (-1);
+		}
+		entry = readdir(dir);
+	}
+	return (count);
 }
 
-static void free_matches(char **matches, int count)
+static void	free_matches(char **matches, int count)
 {
-    while (--count >= 0)
-        free(matches[count]);
-    free(matches);
+	while (count >= 1)
+	{
+		free(matches[count - 1]);
+		--count;
+	}
+	free(matches);
 }
 
-static char *new_process_wildcards(char *str)
+static char	*new_process_wildcards(char *str)
 {
-    DIR     *dir;
-    char    **matches;
-    int     count;
-    char    *result;
-    char    *pattern;
+	DIR		*dir;
+	char	**matches;
+	int		count;
+	char	*result;
+	char	*pattern;
 
-    dir = opendir(".");
-    if (!str || !dir)
-        return (ft_strdup(str));
-    matches = malloc(sizeof(char *));
-    if (!matches)
+	dir = opendir(".");
+	if (!str || !dir)
+		return (ft_strdup(str));
+	matches = malloc(sizeof(char *));
+	if (!matches)
 	{
 		closedir(dir);
 		return (handle_no_matches(str, matches));
 	}
-    count = 0;
-    pattern = (ft_strncmp(str, "./", 2) == 0) ? str + 2 : str;
-    count = process_directory(dir, pattern, &matches);
-    closedir(dir);
-    if (count == -1)
-        return (handle_no_matches(str, matches));
-    result = new_join_matches(matches, count);
-    free_matches(matches, count);
-    return (result ? result : ft_strdup(str));
+	count = 0;
+	pattern = str;
+	if (ft_strncmp(str, "./", 2) == 0)
+		pattern = str + 2;
+	count = process_directory(dir, pattern, &matches);
+	closedir(dir);
+	if (count == -1)
+		return (handle_no_matches(str, matches));
+	result = new_join_matches(matches, count);
+	free_matches(matches, count);
+	if (result)
+		return (result);
+	return (ft_strdup(str));
 }
-
 
 char	*new_expand_wildcard(char *str)
 {
@@ -196,35 +204,35 @@ static int	new_count_array_size(char **array)
 	return (i);
 }
 
-static char    **new_copy_array(char **src, char **dest, int *index)
+static char	**new_copy_array(char **src, char **dest, int *index)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (src && src[i])
-    {
-        dest[*index] = ft_strdup(src[i]);
-        (*index)++;
-        i++;
-    }
-    return (dest);
+	i = 0;
+	while (src && src[i])
+	{
+		dest[*index] = ft_strdup(src[i]);
+		(*index)++;
+		i++;
+	}
+	return (dest);
 }
 
-static char    **new_join_string_arrays(char **arr1, char **arr2)
+static char	**new_join_string_arrays(char **arr1, char **arr2)
 {
-    char    **result;
-    int     total_size;
-    int     j;
+	char	**result;
+	int		total_size;
+	int		j;
 
-    total_size = new_count_array_size(arr1) + new_count_array_size(arr2);
-    result = malloc(sizeof(char *) * (total_size + 1));
-    if (!result)
-        return (NULL);
-    j = 0;
-    result = new_copy_array(arr1, result, &j);
-    result = new_copy_array(arr2, result, &j);
-    result[j] = NULL;
-    return (result);
+	total_size = new_count_array_size(arr1) + new_count_array_size(arr2);
+	result = malloc(sizeof(char *) * (total_size + 1));
+	if (!result)
+		return (NULL);
+	j = 0;
+	result = new_copy_array(arr1, result, &j);
+	result = new_copy_array(arr2, result, &j);
+	result[j] = NULL;
+	return (result);
 }
 
 static char	**new_split_expanded_string(char *expanded)
@@ -239,50 +247,52 @@ static char	**new_split_expanded_string(char *expanded)
 	return (result);
 }
 
-char **new_expand_wildcards_array(char **array)
+char	**new_expand_wildcards_array(char **array)
 {
-    char **result = malloc(sizeof(char *) * 1);
-    int i;
+	char	**result;
+	int		i;
 
-    if (!array || !result)
-        return (NULL);
-    result[0] = NULL;
-    i = 0;
-    while (array[i])
-    {
-        result = handle_expansion(result, array[i]);
-        if (!result)
-            return (NULL);
-        i++;
-    }
-    return (result);
+	result = malloc(sizeof(char *) * 1);
+	if (!array || !result)
+		return (NULL);
+	result[0] = NULL;
+	i = 0;
+	while (array[i])
+	{
+		result = handle_expansion(result, array[i]);
+		if (!result)
+			return (NULL);
+		i++;
+	}
+	return (result);
 }
 
-char **handle_expansion(char **result, char *str)
+char	**handle_expansion(char **result, char *str)
 {
-    char *expanded = new_expand_wildcard(str);
-    char **temp;
+	char	*expanded;
+	char	**temp;
 
-    if (!expanded)
-        return (result);
-    temp = new_split_expanded_string(expanded);
-    free(expanded);
-    if (!temp)
-        return (result);
-    return (merge_and_free(result, temp));
+	expanded = new_expand_wildcard(str);
+	if (!expanded)
+		return (result);
+	temp = new_split_expanded_string(expanded);
+	free(expanded);
+	if (!temp)
+		return (result);
+	return (merge_and_free(result, temp));
 }
 
-char **merge_and_free(char **result, char **temp)
+char	**merge_and_free(char **result, char **temp)
 {
-    char **new_result = new_join_string_arrays(result, temp);
+	char	**new_result;
 
-    new_free_arr(result);
-    new_free_arr(temp);
-    return (new_result);
+	new_result = new_join_string_arrays(result, temp);
+	new_free_arr(result);
+	new_free_arr(temp);
+	return (new_result);
 }
 
-
-static void    new_expand_redirs(t_redir *redirs)
+static void	new_expand_redirs(t_redir *redirs)
 {
 	char	*tmp;
 
