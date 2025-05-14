@@ -111,37 +111,46 @@ static char	*new_find_next_expansion(char *str, int *is_in_double_quote)
 	return (NULL);
 }
 
-char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
+char    *new_handle_expansions(char **str, char **envp, t_vars *vars, int *is_in_double_quote)
 {
-	char	*current;
-	char	*dollar;
-	char	*var_value;
-	char	*pre_str;
-	char	*tmp;
-	int		is_in_double_quote;
+    char    *current;
+    char    *dollar;
+    char    *pre_str;
+    char    *var_value;
+    char    *tmp;
 
-	if (!str)
-		return (NULL);
-	is_in_double_quote = 0;
-	current = NULL;
-	dollar = new_find_next_expansion(str, &is_in_double_quote);
-	while (*str && dollar)
-	{
-		pre_str = ft_substr(str, 0, dollar - str);
-		current = new_add_pre_str(current, pre_str);
-		var_value = new_get_var_value(dollar, envp, vars);
-		tmp = current;
-		current = ft_strjoin(current, var_value);
-		free(tmp);
-		free(var_value);
-		str = new_skip_var(dollar);
-		dollar = new_find_next_expansion(str, &is_in_double_quote);
-	}
-	if (!str)
-		return (current);
-	pre_str = ft_strdup(str);
-	current = new_add_pre_str(current, pre_str);
-	return (current);
+    current = NULL;
+    dollar = new_find_next_expansion(*str, is_in_double_quote);
+    while (**str && dollar)
+    {
+        pre_str = ft_substr(*str, 0, dollar - *str);
+        current = new_add_pre_str(current, pre_str);
+        var_value = new_get_var_value(dollar, envp, vars);
+        tmp = current;
+        current = ft_strjoin(current, var_value);
+        free(tmp);
+        free(var_value);
+        *str = new_skip_var(dollar);
+        dollar = new_find_next_expansion(*str, is_in_double_quote);
+    }
+    return (current);
+}
+
+char    *new_get_expanded_str(char *str, char **envp, t_vars *vars)
+{
+    char    *current;
+    char    *pre_str;
+    int     is_in_double_quote;
+
+    if (!str)
+        return (NULL);
+    is_in_double_quote = 0;
+    current = new_handle_expansions(&str, envp, vars, &is_in_double_quote);
+    if (!(*str))
+        return (current);
+    pre_str = ft_strdup(str);
+    current = new_add_pre_str(current, pre_str);
+    return (current);
 }
 
 static int	new_count_array_size(char **array)
