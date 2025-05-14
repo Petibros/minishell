@@ -188,7 +188,7 @@ static void	new_free_arr(char **array)
 	free(array);
 }
 
-char    **new_copy_array(char **src, char **dest, int *index)
+static char    **new_copy_array(char **src, char **dest, int *index)
 {
     int i;
 

@@ -149,34 +149,35 @@ static int	new_count_array_size(char **array)
 	return (i);
 }
 
-static char	**new_join_string_arrays(char **arr1, char **arr2)
+static char    **new_copy_array(char **src, char **dest, int *index)
 {
-	char	**result;
-	int		size1;
-	int		size2;
-	int		i;
-	int		j;
+    int i;
 
-	size1 = new_count_array_size(arr1);
-	size2 = new_count_array_size(arr2);
-	result = malloc(sizeof(char *) * (size1 + size2 + 1));
-	if (!result)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (arr1 && arr1[i])
-	{
-		result[j++] = ft_strdup(arr1[i]);
-		i++;
-	}
-	i = 0;
-	while (arr2 && arr2[i])
-	{
-		result[j++] = ft_strdup(arr2[i]);
-		i++;
-	}
-	result[j] = NULL;
-	return (result);
+    i = 0;
+    while (src && src[i])
+    {
+        dest[*index] = ft_strdup(src[i]);
+        (*index)++;
+        i++;
+    }
+    return (dest);
+}
+
+static char    **new_join_string_arrays(char **arr1, char **arr2)
+{
+    char    **result;
+    int     total_size;
+    int     j;
+
+    total_size = new_count_array_size(arr1) + new_count_array_size(arr2);
+    result = malloc(sizeof(char *) * (total_size + 1));
+    if (!result)
+        return (NULL);
+    j = 0;
+    result = new_copy_array(arr1, result, &j);
+    result = new_copy_array(arr2, result, &j);
+    result[j] = NULL;
+    return (result);
 }
 
 static char	**new_split_expanded_string(char *expanded)
