@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 03:10:42 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/01/07 20:29:03 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/14 09:30:29 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	ft_strncpy(char *dest, char const *src, int n)
 	dest[i] = '\0';
 }
 
-static int	is_separator(char c, char *seps)
+static int	is_sep(char c, char *seps)
 {
 	int	i;
 
@@ -84,9 +84,9 @@ static int	fill_array(char const *s, char *seps, char **array, int count)
 	i = 0;
 	while (j < count)
 	{
-		if (is_separator(s[i], seps) && !is_in_quotes(s, i) && is_separator(s[i - 1], seps))
+		if (is_sep(s[i], seps) && !is_in_quotes(s, i) && is_sep(s[i - 1], seps))
 			start = -1;
-		else if ((is_separator(s[i], seps) && !is_in_quotes(s, i)) || s[i] == '\0')
+		else if ((is_sep(s[i], seps) && !is_in_quotes(s, i)) || s[i] == '\0')
 		{
 			array[j] = malloc((start + 1) * sizeof(char));
 			if (!array[j])
@@ -111,10 +111,10 @@ static int	numstring(char const *s, char *seps)
 	i = 0;
 	while (s[i])
 	{
-		if (is_separator(s[i], seps) && !is_in_quotes(s, i) 
-			&& (i == 0 || !is_separator(s[i - 1], seps) || s[i + 1] == '\0'))
+		if (is_sep(s[i], seps) && !is_in_quotes(s, i)
+			&& (i == 0 || !is_sep(s[i - 1], seps) || s[i + 1] == '\0'))
 			count++;
-		else if (s[i + 1] == '\0' && !is_separator(s[i], seps))
+		else if (s[i + 1] == '\0' && !is_sep(s[i], seps))
 			count++;
 		i++;
 	}
@@ -130,7 +130,7 @@ char	**supra_split(char const *s, char *seps)
 	if (!s || !seps)
 		return (NULL);
 	i = 0;
-	while (s[i] && is_separator(s[i], seps) && !is_in_quotes(s, i))
+	while (s[i] && is_sep(s[i], seps) && !is_in_quotes(s, i))
 		i++;
 	count = numstring(&s[i], seps);
 	array = malloc((count + 1) * sizeof(char *));
