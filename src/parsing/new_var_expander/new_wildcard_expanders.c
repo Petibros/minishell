@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:23:03 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/15 00:20:40 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/15 00:33:58 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,7 +314,8 @@ static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 		}
 		free_string_array(check_expand);
 		free(tmp);
-		free(redirs->old_filename);
+		if (redirs->old_filename)
+			free(redirs->old_filename);
 		redirs = redirs->next;
 	}
 }
