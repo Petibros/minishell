@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 23:24:00 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/13 23:15:37 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:04 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ char	*expand_heredoc(t_vars *vars, char *str)
 
 	n = 0;
 	calc_len(vars, str, &n);
-	printf("%d\n", n);
 	if (n != -1)
 		expanded = ft_calloc(1 + n, sizeof(char));
 	if (n == -1 || !expanded)
