@@ -6,13 +6,13 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/13 16:47:09 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:06:16 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
+static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds, int i)
 {
 	char	**to_export;
 	int		status;
@@ -22,7 +22,11 @@ static int	actualize_env_last_cmd(t_vars *vars, t_nodes *cmds)
 		return (-1);
 	to_export[0] = "export";
 	if (cmds->argv && cmds->argv[0])
-		to_export[1] = ft_strjoin("_=", cmds->argv[0]);
+	{
+		while (cmds->argv[i])
+			++i;
+		to_export[1] = ft_strjoin("_=", cmds->argv[i - 1]);
+	}
 	else
 		to_export[1] = ft_strjoin("_=", "");
 	if (!to_export[1])
@@ -93,13 +97,15 @@ int	exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 {
 	int	status;
 
-	new_expand_variables_in_node(cmds, vars->env.envp, vars);
-	new_expand_wildcards_in_node(cmds);
-	remove_all_quotes(cmds);
 	status = 0;
+	new_expand_variables_in_node(cmds, vars->env.envp, vars, &status);
+	new_expand_wildcards_in_node(cmds, vars, &status);
+	remove_all_quotes(cmds);
 	vars->cmd.last_pid = 0;
-	if (actualize_env_last_cmd(vars, cmds) == -1)
+	if (actualize_env_last_cmd(vars, cmds, 0) == -1)
 		return (-1);
+	if (status == 2)
+		return (0);
 	status = get_fds(vars, cmds, is_pipe);
 	if (status != 0)
 		return (status);

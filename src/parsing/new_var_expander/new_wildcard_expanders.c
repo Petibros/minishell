@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:23:03 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/14 11:12:21 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:02:53 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,9 +292,10 @@ char	**merge_and_free(char **result, char **temp)
 	return (new_result);
 }
 
-static void	new_expand_redirs(t_redir *redirs)
+static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 {
 	char	*tmp;
+	char	**check_expand;
 
 	if (!redirs)
 		return ;
@@ -302,12 +303,24 @@ static void	new_expand_redirs(t_redir *redirs)
 	{
 		tmp = redirs->filename;
 		redirs->filename = new_expand_wildcard(redirs->filename);
+		check_expand = supra_split(redirs->filename, " ");
+		if (!check_expand || (check_expand[0] && check_expand[1]))
+		{
+			*status = 2;
+			vars->cmd.last_exit_status = 1;
+			write(2, tmp, ft_strlen(tmp));
+			write(2, ": ambiguous redirect\n", 21);
+			free_string_array(check_expand);
+			free(tmp);
+			return ;
+		}
+		free_string_array(check_expand);
 		free(tmp);
 		redirs = redirs->next;
 	}
 }
 
-void	new_expand_wildcards_in_node(t_nodes *node)
+void	new_expand_wildcards_in_node(t_nodes *node, t_vars *vars, int *status)
 {
 	char	**argv;
 
@@ -319,8 +332,8 @@ void	new_expand_wildcards_in_node(t_nodes *node)
 		node->argv = new_expand_wildcards_array(argv);
 		new_free_arr(argv);
 	}
-	if (node->file_in)
-		new_expand_redirs(node->file_in);
-	if (node->file_out)
-		new_expand_redirs(node->file_out);
+	if (*status != 2 && node->file_in)
+		new_expand_redirs(node->file_in, vars, status);
+	if (*status != 2 && node->file_out)
+		new_expand_redirs(node->file_out, vars, status);
 }

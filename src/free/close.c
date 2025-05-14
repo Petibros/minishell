@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:48 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 17:34:48 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/14 22:53:00 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,6 @@ void	close_fds(t_vars *vars)
 		close(vars->cmd.fd_in);
 	if (vars->cmd.fd_out > 2)
 		close(vars->cmd.fd_out);
+	vars->cmd.fd_in = 0;
+	vars->cmd.fd_out = 1;
 }

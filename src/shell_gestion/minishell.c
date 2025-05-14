@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 20:33:36 by marvin           ###   ########.fr       */
+/*   Updated: 2025/05/14 22:44:23 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ t_vars	*setup_shell(char **envp)
 		return (NULL);
 	vars->cmd.cmds = NULL;
 	vars->cmd.last_exit_status = 0;
+	vars->cmd.fd_in = 0;
+	vars->cmd.fd_out = 1;
 	if (transfer_env(envp, vars) == -1)
 	{
 		free_all(vars, NULL, false);

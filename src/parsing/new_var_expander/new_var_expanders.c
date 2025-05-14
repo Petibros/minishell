@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 00:12:27 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/14 11:00:54 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:07:36 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	new_remove_quotes(char *str)
 	char	quote;
 	char	*matching_quote;
 
-	while (*str)
+	while (str && *str)
 	{
 		if (*str != '"' && *str != '\'')
 		{
@@ -309,9 +309,10 @@ void	new_expand_argv(char **argv, char **envp, t_vars *vars)
 	}
 }
 
-static void	new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
+static void	new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars, int *status)
 {
 	char	*tmp;
+	char	**check_expand;
 
 	if (!redirs)
 		return ;
@@ -319,12 +320,24 @@ static void	new_expand_redirs(t_redir *redirs, char **envp, t_vars *vars)
 	{
 		tmp = redirs->filename;
 		redirs->filename = new_get_expanded_str(redirs->filename, envp, vars);
+		check_expand = supra_split(redirs->filename, " ");
+		if (!check_expand || (check_expand[0] && check_expand[1]))
+		{
+			*status = 2;
+			vars->cmd.last_exit_status = 1;
+			write(2, tmp, ft_strlen(tmp));
+			write(2, ": ambiguous redirect\n", 21);
+			free_string_array(check_expand);
+			free(tmp);
+			return ;
+		}
+		free_string_array(check_expand);
 		free(tmp);
 		redirs = redirs->next;
 	}
 }
 
-void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars)
+void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars, int *status)
 {
 	char	**argv;
 	char	**new_argv;
@@ -338,8 +351,8 @@ void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars)
 		new_free_arr(argv);
 		node->argv = new_argv;
 	}
-	if (node->file_in)
-		new_expand_redirs(node->file_in, envp, vars);
-	if (node->file_out)
-		new_expand_redirs(node->file_out, envp, vars);
+	if (*status != 2 && node->file_in)
+		new_expand_redirs(node->file_in, envp, vars, status);
+	if (*status != 2 && node->file_out)
+		new_expand_redirs(node->file_out, envp, vars, status);
 }

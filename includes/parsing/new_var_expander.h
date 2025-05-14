@@ -6,7 +6,7 @@
 /*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 09:50:12 by npapashv          #+#    #+#             */
-/*   Updated: 2025/05/13 09:50:12 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/14 17:36:17 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@
 # include "types.h"
 
 /* Variable expansion functions */
-void	new_expand_variables_in_node(t_nodes *node, char **envp, t_vars *vars);
+void	new_expand_variables_in_node(t_nodes *node, char **envp,
+			t_vars *vars, int *status);
 void	new_expand_argv(char **argv, char **envp, t_vars *vars);
 char	*new_get_expanded_str(char *str, char **envp, t_vars *vars);
 
 /* Wildcard expansion functions */
-void	new_expand_wildcards_in_node(t_nodes *node);
+void	new_expand_wildcards_in_node(t_nodes *node, t_vars *vars, int *status);
 char	**new_expand_wildcards_array(char **array);
 char	*new_expand_wildcard(char *str);
 
