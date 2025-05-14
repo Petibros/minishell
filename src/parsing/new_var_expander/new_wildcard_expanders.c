@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+static void	new_free_arr(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array && array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
 static int	new_match_pattern(const char *pattern, const char *str)
 {
 	if (*pattern == '\0' && *str == '\0')
@@ -69,52 +82,83 @@ static int	new_should_expand(const char *str, int pos)
 	return (!in_single);
 }
 
-static char	*new_process_wildcards(char *str)
+static char *handle_no_matches(char *str, char **matches)
 {
-	DIR				*dir;
-	struct dirent	*entry;
-	char			**matches;
-	int				count;
-	char			*result;
-	char			*pattern;
-
-	dir = opendir(".");
-	if (!str || !dir)
-		return (ft_strdup(str));
-	matches = malloc(sizeof(char *) * 1024);
-	if (!matches)
-		return (ft_strdup(str));
-	count = 0;
-	pattern = str;
-	if (ft_strncmp(str, "./", 2) == 0)
-		pattern = str + 2;
-	entry = readdir(dir);
-	while (entry && count < 1024)
-	{
-		if ((pattern[0] == '.' || entry->d_name[0] != '.')
-			&& new_match_pattern(pattern, entry->d_name))
-		{
-			if (ft_strncmp(str, "./", 2) == 0)
-			{
-				matches[count] = ft_strjoin("./", entry->d_name);
-			}
-			else
-			{
-				matches[count] = ft_strdup(entry->d_name);
-			}
-			count++;
-		}
-		entry = readdir(dir);
-	}
-	closedir(dir);
-	result = new_join_matches(matches, count);
-	while (--count >= 0)
-		free(matches[count]);
-	free(matches);
-	if (!result)
-		result = ft_strdup(str);
-	return (result);
+    new_free_arr(matches);
+    return (ft_strdup(str));
 }
+
+static int add_match(char ***matches, int *count, char *str, char *d_name)
+{
+    char **new_matches;
+
+    new_matches = realloc(*matches, sizeof(char *) * (*count + 1));
+    if (!new_matches)
+        return (-1);
+    *matches = new_matches;
+    if (ft_strncmp(str, "./", 2) == 0)
+        (*matches)[*count] = ft_strjoin("./", d_name);
+    else
+        (*matches)[*count] = ft_strdup(d_name);
+    if (!(*matches)[*count])
+        return (-1);
+    (*count)++;
+    return (0);
+}
+
+static int process_directory(DIR *dir, char *pattern, char ***matches)
+{
+    struct dirent *entry;
+    int count;
+
+    count = 0;
+    while ((entry = readdir(dir)))
+    {
+        if ((pattern[0] == '.' || entry->d_name[0] != '.')
+            && new_match_pattern(pattern, entry->d_name))
+        {
+            if (add_match(matches, &count, pattern, entry->d_name) == -1)
+                return (-1);
+        }
+    }
+    return (count);
+}
+
+static void free_matches(char **matches, int count)
+{
+    while (--count >= 0)
+        free(matches[count]);
+    free(matches);
+}
+
+static char *new_process_wildcards(char *str)
+{
+    DIR     *dir;
+    char    **matches;
+    int     count;
+    char    *result;
+    char    *pattern;
+
+    dir = opendir(".");
+    if (!str || !dir)
+        return (ft_strdup(str));
+    matches = malloc(sizeof(char *));
+    if (!matches)
+	{
+		closedir(dir);
+		return (handle_no_matches(str, matches));
+	}
+    count = 0;
+    pattern = (ft_strncmp(str, "./", 2) == 0) ? str + 2 : str;
+    count = process_directory(dir, pattern, &matches);
+    closedir(dir);
+    if (count == -1)
+        return (handle_no_matches(str, matches));
+    result = new_join_matches(matches, count);
+    free_matches(matches, count);
+    return (result ? result : ft_strdup(str));
+}
+
 
 char	*new_expand_wildcard(char *str)
 {
@@ -190,19 +234,6 @@ static char	**new_split_expanded_string(char *expanded)
 	if (!result)
 		return (NULL);
 	return (result);
-}
-
-static void	new_free_arr(char **array)
-{
-	int	i;
-
-	i = 0;
-	while (array && array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
 }
 
 char	**new_expand_wildcards_array(char **array)
