@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+char **handle_expansion(char **result, char *str);
+char **merge_and_free(char **result, char **temp);
+
 static void	new_free_arr(char **array)
 {
 	int	i;
@@ -236,45 +239,48 @@ static char	**new_split_expanded_string(char *expanded)
 	return (result);
 }
 
-char	**new_expand_wildcards_array(char **array)
+char **new_expand_wildcards_array(char **array)
 {
-	char	**result;
-	char	**temp;
-	char	*expanded;
-	char	**new_result;
-	int		i;
+    char **result = malloc(sizeof(char *) * 1);
+    int i;
 
-	if (!array)
-		return (NULL);
-	result = malloc(sizeof(char *) * 1);
-	if (!result)
-		return (NULL);
-	result[0] = NULL;
-	i = 0;
-	while (array[i])
-	{
-		expanded = new_expand_wildcard(array[i]);
-		if (expanded)
-		{
-			temp = new_split_expanded_string(expanded);
-			if (temp)
-			{
-				new_result = new_join_string_arrays(result, temp);
-				new_free_arr(result);
-				new_free_arr(temp);
-				result = new_result;
-				if (!result)
-				{
-					free(expanded);
-					return (NULL);
-				}
-			}
-			free(expanded);
-		}
-		i++;
-	}
-	return (result);
+    if (!array || !result)
+        return (NULL);
+    result[0] = NULL;
+    i = 0;
+    while (array[i])
+    {
+        result = handle_expansion(result, array[i]);
+        if (!result)
+            return (NULL);
+        i++;
+    }
+    return (result);
 }
+
+char **handle_expansion(char **result, char *str)
+{
+    char *expanded = new_expand_wildcard(str);
+    char **temp;
+
+    if (!expanded)
+        return (result);
+    temp = new_split_expanded_string(expanded);
+    free(expanded);
+    if (!temp)
+        return (result);
+    return (merge_and_free(result, temp));
+}
+
+char **merge_and_free(char **result, char **temp)
+{
+    char **new_result = new_join_string_arrays(result, temp);
+
+    new_free_arr(result);
+    new_free_arr(temp);
+    return (new_result);
+}
+
 
 static void    new_expand_redirs(t_redir *redirs)
 {
