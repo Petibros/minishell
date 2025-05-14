@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/04/28 20:38:44 by marvin           ###   ########.fr        #
+#    Updated: 2025/05/14 09:32:51 by npapashv         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,8 +38,7 @@ CFILES_EXEC =		src/exec/exec.c \
 					src/exec/here_doc.c \
 					src/exec/expand_heredoc.c \
 					src/exec/expand_heredoc_utils.c \
-					src/exec/exec_utils.c \
-					src/exec/w_expands.c
+					src/exec/exec_utils.c
 
 CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/lexer/lexer_operator.c \

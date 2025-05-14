@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   new_wildcard_expanders.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npapashv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 09:23:03 by npapashv          #+#    #+#             */
+/*   Updated: 2025/05/14 09:28:31 by npapashv         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	new_match_pattern(const char *pattern, const char *str)
@@ -7,7 +19,8 @@ static int	new_match_pattern(const char *pattern, const char *str)
 	if (*pattern == '*' && *(pattern + 1) != '\0' && *str == '\0')
 		return (0);
 	if (*pattern == '*')
-		return (new_match_pattern(pattern + 1, str) || new_match_pattern(pattern, str + 1));
+		return (new_match_pattern(pattern + 1, str)
+				|| new_match_pattern(pattern, str + 1));
 	if (*pattern == *str)
 		return (new_match_pattern(pattern + 1, str + 1));
 	return (0);
@@ -65,16 +78,21 @@ static char	*new_process_wildcards(char *str)
 	char			*result;
 	char			*pattern;
 
-	if (!str || !(dir = opendir(".")))
+	dir = opendir(".");
+	if (!str || !dir)
 		return (ft_strdup(str));
 	matches = malloc(sizeof(char *) * 1024);
 	if (!matches)
 		return (ft_strdup(str));
 	count = 0;
-	pattern = (ft_strncmp(str, "./", 2) == 0) ? str + 2 : str;
-	while ((entry = readdir(dir)) && count < 1024)
+	pattern = str;
+	if (ft_strncmp(str, "./", 2) == 0)
+		pattern = str + 2;
+	entry = readdir(dir);
+	while (entry && count < 1024)
 	{
-		if ((pattern[0] == '.' || entry->d_name[0] != '.') && new_match_pattern(pattern, entry->d_name))
+		if ((pattern[0] == '.' || entry->d_name[0] != '.')
+			&& new_match_pattern(pattern, entry->d_name))
 		{
 			if (ft_strncmp(str, "./", 2) == 0)
 			{
@@ -86,13 +104,16 @@ static char	*new_process_wildcards(char *str)
 			}
 			count++;
 		}
+		entry = readdir(dir);
 	}
 	closedir(dir);
 	result = new_join_matches(matches, count);
 	while (--count >= 0)
 		free(matches[count]);
 	free(matches);
-	return (result ? result : ft_strdup(str));
+	if (!result)
+		result = ft_strdup(str);
+	return (result);
 }
 
 char	*new_expand_wildcard(char *str)
@@ -225,23 +246,23 @@ char	**new_expand_wildcards_array(char **array)
 
 static void    new_expand_redirs(t_redir *redirs)
 {
-    char    *tmp;
-    
-    if (!redirs)
-        return ;
-    while (redirs)
-    {
-        tmp = redirs->filename;
-        redirs->filename = new_expand_wildcard(redirs->filename);
-        free(tmp);
-        redirs = redirs->next;
-    }
+	char	*tmp;
+
+	if (!redirs)
+		return ;
+	while (redirs)
+	{
+		tmp = redirs->filename;
+		redirs->filename = new_expand_wildcard(redirs->filename);
+		free(tmp);
+		redirs = redirs->next;
+	}
 }
 
 void	new_expand_wildcards_in_node(t_nodes *node)
 {
 	char	**argv;
-	
+
 	if (!node)
 		return ;
 	argv = node->argv;
