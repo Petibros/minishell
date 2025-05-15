@@ -53,7 +53,7 @@ char	*expand_filename(char *filename, int exit_status, char **envp,
 	return (expanded);
 }
 
-int	handle_redirections(t_nodes *node, t_token **token, char **envp)
+int	handle_redirections(t_nodes *node, t_token **token)
 {
 	t_token_type	type;
 	int				result;
@@ -65,7 +65,7 @@ int	handle_redirections(t_nodes *node, t_token **token, char **envp)
 	{
 		type = (*token)->type;
 		*token = (*token)->next;
-		result = handle_redirection_type(node, token, envp, type);
+		result = handle_redirection_type(node, token, type);
 		if (!result)
 			return (0);
 	}

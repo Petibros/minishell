@@ -34,11 +34,10 @@ static int	is_redirection_token(t_token_type type)
 		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
 }
 
-static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token,
-	char **envp)
+static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token)
 {
 	if (*token && is_redirection_token((*token)->type)
-		&& !handle_redirections(node, token, envp))
+		&& !handle_redirections(node, token))
 	{
 		free_node(node);
 		return (NULL);
@@ -46,12 +45,12 @@ static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token,
 	return (node);
 }
 
-t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token, char **envp)
+t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token)
 {
 	t_nodes	*node;
 
 	node = create_subshell_node(inner_cmd);
 	if (!node)
 		return (NULL);
-	return (handle_redirections_wrapper(node, token, envp));
+	return (handle_redirections_wrapper(node, token));
 }

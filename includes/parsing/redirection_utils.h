@@ -30,11 +30,11 @@ int		process_redirection(t_nodes *node, char *expanded_filename,
 			t_token_type type);
 int		validate_and_get_token(t_token **token, char **filename);
 int		handle_redirection_type(t_nodes *node, t_token **token,
-			char **envp, t_token_type type);
+			t_token_type type);
 char	*process_quotes_wrapper(char *filename);
 
 // redirection_utils4.c
 char	*expand_filename(char *filename, int exit_status, char **envp, t_token_type type);
-int		handle_redirections(t_nodes *node, t_token **token, char **envp);
+int		handle_redirections(t_nodes *node, t_token **token);
 
 #endif

@@ -56,7 +56,7 @@ int	process_command_token(t_cmd_ctx *ctx)
 		if (!process_word_token(ctx->word_tokens, ctx->token, ctx->word_count))
 			return (0);
 	}
-	else if (!handle_redirections(ctx->node, ctx->token, ctx->envp))
+	else if (!handle_redirections(ctx->node, ctx->token))
 		return (0);
 	return (1);
 }

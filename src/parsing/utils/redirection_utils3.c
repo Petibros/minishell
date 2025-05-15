@@ -39,13 +39,11 @@ int	validate_and_get_token(t_token **token, char **filename)
 	return (1);
 }
 
-int	handle_redirection_type(t_nodes *node, t_token **token,
-		char **envp, t_token_type type)
+int	handle_redirection_type(t_nodes *node, t_token **token, t_token_type type)
 {
 	char	*filename;
-	char	*expanded_filename;
 	int		result;
-
+	
 	if (!validate_and_get_token(token, &filename))
 		return (0);
 	if (type == TOKEN_HEREDOC)
@@ -53,27 +51,20 @@ int	handle_redirection_type(t_nodes *node, t_token **token,
 		result = handle_heredoc(node, filename);
 		return (result);
 	}
-	else
-	{
-		expanded_filename = expand_filename(filename, 0, envp, type);
-		if (!expanded_filename)
-			return (0);
-	}
-	result = process_redirection(node, expanded_filename, type);
-	free(expanded_filename);
+	result = process_redirection(node, filename, type);
 	return (result);
 }
 
-int	process_redirection(t_nodes *node, char *expanded_filename,
+int	process_redirection(t_nodes *node, char *filename,
 		t_token_type type)
 {
 	if (type == TOKEN_REDIR_IN)
-		return (handle_input_redirection(node, expanded_filename));
+		return (handle_input_redirection(node, filename));
 	else if (type == TOKEN_REDIR_OUT)
-		return (handle_output_redirection(node, expanded_filename, 0));
+		return (handle_output_redirection(node, filename, 0));
 	else if (type == TOKEN_APPEND)
-		return (handle_output_redirection(node, expanded_filename, 1));
+		return (handle_output_redirection(node, filename, 1));
 	else if (type == TOKEN_HEREDOC)
-		return (handle_heredoc(node, expanded_filename));
+		return (handle_heredoc(node, filename));
 	return (0);
 }

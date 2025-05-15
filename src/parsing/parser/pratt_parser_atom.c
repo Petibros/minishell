@@ -43,7 +43,7 @@ static t_nodes	*process_token_loop(t_token_loop_ctx *ctx)
 				return (NULL);
 			}
 		}
-		else if (!handle_redirections(ctx->node, ctx->token, ctx->envp))
+		else if (!handle_redirections(ctx->node, ctx->token))
 		{
 			cleanup_word_tokens(*(ctx->word_tokens));
 			free_node(ctx->node);
