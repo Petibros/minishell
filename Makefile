@@ -63,8 +63,12 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/utils/redirection_utils4.c \
 					src/parsing/utils/parsing_utils.c \
 					src/parsing/utils/quote_utils.c \
-					src/parsing/new_var_expander/new_var_expanders.c \
-					src/parsing/new_var_expander/new_wildcard_expanders.c \
+					src/parsing/new_var_expander/new_var_expanders1.c \
+					src/parsing/new_var_expander/new_var_expanders2.c \
+					src/parsing/new_var_expander/new_var_expanders3.c \
+					src/parsing/new_var_expander/new_wildcard_expanders1.c \
+					src/parsing/new_var_expander/new_wildcard_expanders2.c \
+					src/parsing/new_var_expander/new_wildcard_expanders3.c \
 					src/parsing/new_var_expander/supra_split.c \
 					src/parsing/new_var_expander/remove_all_quotes.c \
 					src/parsing/new_var_expander/shared.c
