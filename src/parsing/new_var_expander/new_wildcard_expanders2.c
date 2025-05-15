@@ -32,16 +32,6 @@ int	process_directory(DIR *dir, char *pattern, char ***matches)
 	return (count);
 }
 
-void	free_matches(char **matches, int count)
-{
-	while (count >= 1)
-	{
-		free(matches[count - 1]);
-		--count;
-	}
-	free(matches);
-}
-
 int	get_count(char *str, DIR *dir, char ***matches)
 {
 	int		count;
@@ -64,7 +54,6 @@ char	*new_process_wildcards(char *str)
 	char	**matches;
 	int		count;
 	char	*result;
-	char	*pattern;
 
 	dir = opendir(".");
 	if (!str || !dir)

@@ -72,3 +72,13 @@ void	new_expand_wildcards_in_node(t_nodes *node, t_vars *vars, int *status)
 	if (node->file_out)
 		new_expand_redirs_wildcards(node->file_out, vars, status);
 }
+
+void	free_matches(char **matches, int count)
+{
+	while (count >= 1)
+	{
+		free(matches[count - 1]);
+		--count;
+	}
+	free(matches);
+}
