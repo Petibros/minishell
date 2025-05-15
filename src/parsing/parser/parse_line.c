@@ -51,7 +51,6 @@ static int	handle_parse_error(t_token *tokens, t_vars *vars)
 
 static int	process_tokens(t_token *tokens, t_vars *vars)
 {
-	// Removed expansions from parsing phase - they will happen in execution phase
 	vars->cmd.cmds = pratt_parse(tokens, vars->env.envp, vars);
 	if (!vars->cmd.cmds)
 		return (handle_parse_error(tokens, vars));
