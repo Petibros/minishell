@@ -53,7 +53,6 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/parser/parse_line.c \
 					src/parsing/parser/parse_line_validation.c \
 					src/parsing/parser/parse_line_validation_utils.c \
-					src/parsing/nodes/pratt_node.c \
 					src/parsing/nodes/pratt_node_op.c \
 					src/parsing/utils/pratt_utils.c \
 					src/parsing/utils/pratt_utils2.c \
