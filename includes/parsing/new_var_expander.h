@@ -14,6 +14,7 @@
 # define NEW_VAR_EXPANDER_H
 
 # include "types.h"
+# include "parsing/shared.h"
 
 /* Variable expansion functions */
 void	new_expand_variables_in_node(t_nodes *node, t_vars *vars);

@@ -15,18 +15,6 @@
 char	**handle_expansion(char **result, char *str);
 char	**merge_and_free(char **result, char **temp);
 
-static void	new_free_arr(char **array)
-{
-	int	i;
-
-	i = 0;
-	while (array && array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-}
 
 static int	new_match_pattern(const char *pattern, const char *str)
 {
@@ -194,58 +182,13 @@ char	*new_expand_wildcard(char *str)
 	return (ft_strdup(str));
 }
 
-static int	new_count_array_size(char **array)
-{
-	int	i;
+/* Function moved to shared.c */
 
-	i = 0;
-	while (array && array[i])
-		i++;
-	return (i);
-}
+/* Function moved to shared.c */
 
-static char	**new_copy_array(char **src, char **dest, int *index)
-{
-	int	i;
+/* Function moved to shared.c */
 
-	i = 0;
-	while (src && src[i])
-	{
-		dest[*index] = ft_strdup(src[i]);
-		(*index)++;
-		i++;
-	}
-	return (dest);
-}
-
-static char	**new_join_string_arrays(char **arr1, char **arr2)
-{
-	char	**result;
-	int		total_size;
-	int		j;
-
-	total_size = new_count_array_size(arr1) + new_count_array_size(arr2);
-	result = malloc(sizeof(char *) * (total_size + 1));
-	if (!result)
-		return (NULL);
-	j = 0;
-	result = new_copy_array(arr1, result, &j);
-	result = new_copy_array(arr2, result, &j);
-	result[j] = NULL;
-	return (result);
-}
-
-static char	**new_split_expanded_string(char *expanded)
-{
-	char	**result;
-
-	if (!expanded)
-		return (NULL);
-	result = supra_split(expanded, " ");
-	if (!result)
-		return (NULL);
-	return (result);
-}
+/* Function moved to shared.c */
 
 char	**new_expand_wildcards_array(char **array)
 {
@@ -282,15 +225,7 @@ char	**handle_expansion(char **result, char *str)
 	return (merge_and_free(result, temp));
 }
 
-char	**merge_and_free(char **result, char **temp)
-{
-	char	**new_result;
-
-	new_result = new_join_string_arrays(result, temp);
-	new_free_arr(result);
-	new_free_arr(temp);
-	return (new_result);
-}
+/* Function moved to shared.c */
 
 static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 {
