@@ -42,6 +42,22 @@ void	free_matches(char **matches, int count)
 	free(matches);
 }
 
+int	get_count(char *str, DIR *dir, char ***matches)
+{
+	int		count;
+	char	*pattern;
+
+	count = 0;
+	pattern = str;
+	if (ft_strncmp(str, "./", 2) == 0)
+		pattern = str + 2;
+	count = process_directory(dir, pattern, matches);
+	closedir(dir);
+	if (count == -1)
+		return (-1);
+	return (count);
+}
+
 char	*new_process_wildcards(char *str)
 {
 	DIR		*dir;
@@ -59,12 +75,7 @@ char	*new_process_wildcards(char *str)
 		closedir(dir);
 		return (handle_no_matches(str, matches));
 	}
-	count = 0;
-	pattern = str;
-	if (ft_strncmp(str, "./", 2) == 0)
-		pattern = str + 2;
-	count = process_directory(dir, pattern, &matches);
-	closedir(dir);
+	count = get_count(str, dir, &matches);
 	if (count == -1)
 		return (handle_no_matches(str, matches));
 	result = new_join_matches(matches, count);
