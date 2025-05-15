@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-/* Function moved to shared.c */
-
 static char	*new_add_pre_str(char *current, char *pre_str)
 {
 	char	*result;
@@ -132,16 +130,6 @@ char	*new_get_expanded_str(char *str, char **envp, t_vars *vars)
 	current = new_add_pre_str(current, pre_str);
 	return (current);
 }
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
 
 static void	join_hole(char **argv)
 {

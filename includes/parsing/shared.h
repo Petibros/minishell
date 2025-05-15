@@ -15,7 +15,6 @@
 
 # include "types.h"
 
-/* Shared functions between var and wildcard expanders */
 void	new_remove_quotes(char *str);
 int		new_count_array_size(char **array);
 char	**new_copy_array(char **src, char **dest, int *index);

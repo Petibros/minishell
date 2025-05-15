@@ -12,10 +12,6 @@
 
 #include "minishell.h"
 
-char	**handle_expansion(char **result, char *str);
-char	**merge_and_free(char **result, char **temp);
-
-
 static int	new_match_pattern(const char *pattern, const char *str)
 {
 	if (*pattern == '\0' && *str == '\0')
@@ -182,14 +178,6 @@ char	*new_expand_wildcard(char *str)
 	return (ft_strdup(str));
 }
 
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
-/* Function moved to shared.c */
-
 char	**new_expand_wildcards_array(char **array)
 {
 	char	**result;
@@ -224,8 +212,6 @@ char	**handle_expansion(char **result, char *str)
 		return (result);
 	return (merge_and_free(result, temp));
 }
-
-/* Function moved to shared.c */
 
 static void	new_expand_redirs(t_redir *redirs, t_vars *vars, int *status)
 {
