@@ -49,5 +49,5 @@ t_nodes	*handle_parentheses(t_token **token, char **envp, t_vars *vars)
 	inner_cmd = handle_inner_expression(token, envp, vars);
 	if (!inner_cmd)
 		return (NULL);
-	return (finalize_subshell(inner_cmd, token, envp));
+	return (finalize_subshell(inner_cmd, token, vars));
 }

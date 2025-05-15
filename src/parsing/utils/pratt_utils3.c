@@ -42,7 +42,7 @@ static int	is_valid_token_after_subshell(t_token_type type)
 		|| type == TOKEN_EOF || type == TOKEN_RPAREN);
 }
 
-static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token)
+static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token, t_vars *vars)
 {
 	if (*token && is_redirection_token((*token)->type)
 		&& !handle_redirections(node, token))
@@ -55,18 +55,20 @@ static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token)
 		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 		ft_putstr_fd((*token)->value, 2);
 		ft_putstr_fd("'\n", 2);
+		if (vars)
+			vars->cmd.last_exit_status = 2;
 		free_node(node);
 		return (NULL);
 	}
 	return (node);
 }
 
-t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token)
+t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token, t_vars *vars)
 {
 	t_nodes	*node;
 
 	node = create_subshell_node(inner_cmd);
 	if (!node)
 		return (NULL);
-	return (handle_redirections_wrapper(node, token));
+	return (handle_redirections_wrapper(node, token, vars));
 }

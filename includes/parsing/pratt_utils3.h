@@ -15,6 +15,6 @@
 
 # include "parsing.h"
 
-t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token, char **envp);
+t_nodes	*finalize_subshell(t_nodes *inner_cmd, t_token **token, t_vars *vars);
 
 #endif
