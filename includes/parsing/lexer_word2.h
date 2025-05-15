@@ -15,7 +15,6 @@
 
 # include "parsing.h"
 
-
 int	process_word_char(char *input, int *len, char *quote);
 
 #endif

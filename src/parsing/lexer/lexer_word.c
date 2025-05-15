@@ -13,7 +13,6 @@
 #include "parsing.h"
 #include "lexer_word2.h"
 
-
 static int	get_word_len(char *input)
 {
 	int		len;

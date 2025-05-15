@@ -42,7 +42,8 @@ static int	is_valid_token_after_subshell(t_token_type type)
 		|| type == TOKEN_EOF || type == TOKEN_RPAREN);
 }
 
-static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token, t_vars *vars)
+static t_nodes	*handle_redirections_wrapper(t_nodes *node,
+		t_token **token, t_vars *vars)
 {
 	if (*token && is_redirection_token((*token)->type)
 		&& !handle_redirections(node, token))

@@ -54,10 +54,24 @@ int	handle_output_redirection(t_nodes *node, char *filename, int append)
 	return (1);
 }
 
+static void	set_next(t_redir *new, t_nodes *node)
+{
+	t_redir	*current;
+
+	if (!node->heredoc)
+		node->heredoc = new;
+	else
+	{
+		current = node->heredoc;
+		while (current->next)
+			current = current->next;
+		current->next = new;
+	}
+}
+
 int	handle_heredoc(t_nodes *node, char *delimiter)
 {
 	t_redir	*new;
-	t_redir	*current;
 
 	if (ft_strchr(delimiter, '\'') || ft_strchr(delimiter, '\"'))
 	{
@@ -73,14 +87,6 @@ int	handle_heredoc(t_nodes *node, char *delimiter)
 			return (0);
 		new->quoted = 0;
 	}
-	if (!node->heredoc)
-		node->heredoc = new;
-	else
-	{
-		current = node->heredoc;
-		while (current->next)
-			current = current->next;
-		current->next = new;
-	}
+	set_next(new, node);
 	return (1);
 }

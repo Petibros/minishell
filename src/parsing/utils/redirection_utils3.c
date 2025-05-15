@@ -43,7 +43,7 @@ int	handle_redirection_type(t_nodes *node, t_token **token, t_token_type type)
 {
 	char	*filename;
 	int		result;
-	
+
 	if (!validate_and_get_token(token, &filename))
 		return (0);
 	if (type == TOKEN_HEREDOC)

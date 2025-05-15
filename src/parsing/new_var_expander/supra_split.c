@@ -12,6 +12,10 @@
 
 #include "libft.h"
 
+int	count_strings(char const *s, char *seps);
+int	fill_array(char const *s, char *seps, char **array, int count);
+int	is_in_quotes(const char *s, int pos);
+
 static void	ft_free(char **array, int n)
 {
 	if (n > 0)
@@ -26,20 +30,7 @@ static void	ft_free(char **array, int n)
 	free(array);
 }
 
-static void	ft_strncpy(char *dest, char const *src, int n)
-{
-	int	i;
-
-	i = 0;
-	while (src[i] && i < n)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-}
-
-static int	is_sep(char c, char *seps)
+int	is_sep(char c, char *seps)
 {
 	int	i;
 
@@ -51,74 +42,6 @@ static int	is_sep(char c, char *seps)
 		i++;
 	}
 	return (0);
-}
-
-static int	is_in_quotes(const char *s, int pos)
-{
-	int		i;
-	int		in_single_quote;
-	int		in_double_quote;
-
-	i = 0;
-	in_single_quote = 0;
-	in_double_quote = 0;
-	while (i < pos)
-	{
-		if (s[i] == '\'' && !in_double_quote)
-			in_single_quote = !in_single_quote;
-		else if (s[i] == '\"' && !in_single_quote)
-			in_double_quote = !in_double_quote;
-		i++;
-	}
-	return (in_single_quote || in_double_quote);
-}
-
-static int	fill_array(char const *s, char *seps, char **array, int count)
-{
-	int	i;
-	int	j;
-	int	start;
-
-	start = 0;
-	j = 0;
-	i = 0;
-	while (j < count)
-	{
-		if (is_sep(s[i], seps) && !is_in_quotes(s, i) && is_sep(s[i - 1], seps))
-			start = -1;
-		else if ((is_sep(s[i], seps) && !is_in_quotes(s, i)) || s[i] == '\0')
-		{
-			array[j] = malloc((start + 1) * sizeof(char));
-			if (!array[j])
-				return (j);
-			ft_strncpy(array[j], &s[i - start], start);
-			start = -1;
-			j++;
-		}
-		i++;
-		start++;
-	}
-	array[j] = NULL;
-	return (-1);
-}
-
-static int	numstring(char const *s, char *seps)
-{
-	int	i;
-	int	count;
-
-	count = 0;
-	i = 0;
-	while (s[i])
-	{
-		if (is_sep(s[i], seps) && !is_in_quotes(s, i)
-			&& (i == 0 || !is_sep(s[i - 1], seps) || s[i + 1] == '\0'))
-			count++;
-		else if (s[i + 1] == '\0' && !is_sep(s[i], seps))
-			count++;
-		i++;
-	}
-	return (count);
 }
 
 char	**supra_split(char const *s)
@@ -134,7 +57,7 @@ char	**supra_split(char const *s)
 	i = 0;
 	while (s[i] && is_sep(s[i], seps) && !is_in_quotes(s, i))
 		i++;
-	count = numstring(&s[i], seps);
+	count = count_strings(&s[i], seps);
 	array = malloc((count + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);

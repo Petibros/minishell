@@ -70,6 +70,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/new_var_expander/new_wildcard_expanders2.c \
 					src/parsing/new_var_expander/new_wildcard_expanders3.c \
 					src/parsing/new_var_expander/supra_split.c \
+					src/parsing/new_var_expander/supra_split2.c \
 					src/parsing/new_var_expander/remove_all_quotes.c \
 					src/parsing/new_var_expander/shared.c \
 					src/parsing/new_var_expander/shared2.c
