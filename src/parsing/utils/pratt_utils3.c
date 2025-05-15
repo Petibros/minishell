@@ -50,7 +50,6 @@ static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token)
 		free_node(node);
 		return (NULL);
 	}
-	/* Check for syntax errors after subshell */
 	if (*token && !is_valid_token_after_subshell((*token)->type))
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
