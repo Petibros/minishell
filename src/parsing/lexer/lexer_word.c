@@ -13,11 +13,6 @@
 #include "parsing.h"
 #include "lexer_word2.h"
 
-int	is_dollar_redir_operator(char *input, int pos)
-{
-	return (input[pos] == '$' && input[pos + 1]
-		&& (input[pos + 1] == '>' || input[pos + 1] == '<'));
-}
 
 static int	get_word_len(char *input)
 {

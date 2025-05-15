@@ -15,7 +15,7 @@
 
 # include "parsing.h"
 
-int	is_dollar_redir_operator(char *input, int pos);
+
 int	process_word_char(char *input, int *len, char *quote);
 
 #endif

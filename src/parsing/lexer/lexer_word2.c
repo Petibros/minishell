@@ -23,15 +23,8 @@ static int	handle_quote(char quote, int *len)
 static int	check_special_chars(char *input, int len)
 {
 	if (is_whitespace(input[len])
-		|| (is_operator_char(input[len])
-			&& !is_dollar_redir_operator(input, len)))
+		|| is_operator_char(input[len]))
 		return (1);
-	if (is_dollar_redir_operator(input, len))
-	{
-		if (len == 0)
-			return (2);
-		return (1);
-	}
 	return (0);
 }
 
