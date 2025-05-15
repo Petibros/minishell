@@ -318,7 +318,6 @@ static void	new_expand_redirs(t_redir *redirs, t_vars *vars)
 	while (redirs)
 	{
 		redirs->old_filename = ft_strdup(redirs->filename);
-		printf("%s\n%s\n", redirs->filename, redirs->old_filename);
 		tmp = redirs->filename;
 		redirs->filename
 			= new_get_expanded_str(redirs->filename, vars->env.envp, vars);
