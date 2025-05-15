@@ -38,7 +38,7 @@ void	new_expand_redirs_wildcards(t_redir *redirs, t_vars *vars, int *status)
 	{
 		tmp = redirs->filename;
 		redirs->filename = new_expand_wildcard(redirs->filename);
-		check_expand = supra_split(redirs->filename, " ");
+		check_expand = supra_split(redirs->filename);
 		if (!check_expand || (check_expand[0] && check_expand[1]))
 		{
 			*status = 2;

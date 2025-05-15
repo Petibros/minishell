@@ -82,7 +82,7 @@ char	**new_split_expanded_string(char *expanded)
 
 	if (!expanded)
 		return (NULL);
-	result = supra_split(expanded, " ");
+	result = supra_split(expanded);
 	if (!result)
 		return (NULL);
 	return (result);

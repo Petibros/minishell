@@ -121,12 +121,14 @@ static int	numstring(char const *s, char *seps)
 	return (count);
 }
 
-char	**supra_split(char const *s, char *seps)
+char	**supra_split(char const *s)
 {
+	char	*seps;
 	char	**array;
 	int		count;
 	int		i;
 
+	seps = " \t\n\r\f";
 	if (!s || !seps)
 		return (NULL);
 	i = 0;
