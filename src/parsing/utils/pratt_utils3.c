@@ -34,11 +34,28 @@ static int	is_redirection_token(t_token_type type)
 		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
 }
 
+static int	is_valid_token_after_subshell(t_token_type type)
+{
+	return (type == TOKEN_PIPE || type == TOKEN_AND || type == TOKEN_OR
+		|| type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC
+		|| type == TOKEN_EOF || type == TOKEN_RPAREN);
+}
+
 static t_nodes	*handle_redirections_wrapper(t_nodes *node, t_token **token)
 {
 	if (*token && is_redirection_token((*token)->type)
 		&& !handle_redirections(node, token))
 	{
+		free_node(node);
+		return (NULL);
+	}
+	/* Check for syntax errors after subshell */
+	if (*token && !is_valid_token_after_subshell((*token)->type))
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+		ft_putstr_fd((*token)->value, 2);
+		ft_putstr_fd("'\n", 2);
 		free_node(node);
 		return (NULL);
 	}
