@@ -14,6 +14,11 @@
 
 int	is_sep(char c, char *seps);
 
+int	is_quote(char c)
+{
+	return (c == '\'' || c == '\"');
+}
+
 int	is_in_quotes(const char *s, int pos)
 {
 	int		i;
@@ -25,11 +30,20 @@ int	is_in_quotes(const char *s, int pos)
 	in_double_quote = 0;
 	while (i < pos)
 	{
-		if (s[i] == '\'' && !in_double_quote)
+		if (s[i] == '\\' && i + 1 < pos && is_quote(s[i + 1]))
+			i += 2;
+		else if (s[i] == '\'' && !in_double_quote)
+		{
 			in_single_quote = !in_single_quote;
+			i++;
+		}
 		else if (s[i] == '\"' && !in_single_quote)
+		{
 			in_double_quote = !in_double_quote;
-		i++;
+			i++;
+		}
+		else
+			i++;
 	}
 	return (in_single_quote || in_double_quote);
 }

@@ -40,19 +40,25 @@ char	*new_get_var_value(char *dollar, char **envp, t_vars *vars)
 {
 	char	*name;
 	char	*value;
+	char	*escaped_value;
 
 	if (dollar[1] == '\0')
 	{
 		return (ft_strdup("$"));
 	}
 	if (dollar[1] == '?')
-		return (ft_itoa(vars->cmd.last_exit_status));
+	{
+		value = ft_itoa(vars->cmd.last_exit_status);
+		escaped_value = escape_quotes_in_var_value(value);
+		free(value);
+		return (escaped_value);
+	}
 	name = new_get_var_name(dollar);
 	value = ft_getenv(envp, name);
 	free(name);
 	if (!value)
 		return (ft_strdup(""));
-	return (ft_strdup(value));
+	return (escape_quotes_in_var_value(value));
 }
 
 char	*new_skip_var(char *dollar)

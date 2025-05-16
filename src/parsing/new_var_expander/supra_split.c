@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 03:10:42 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/14 09:30:29 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/15 13:39:05 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,15 @@ char	**supra_split(char const *s)
 	int		count;
 	int		i;
 
-	seps = " \t\n\r\f";
+	seps = " \t\n\r\f\v";
 	if (!s || !seps)
 		return (NULL);
 	i = 0;
 	while (s[i] && is_sep(s[i], seps) && !is_in_quotes(s, i))
 		i++;
 	count = count_strings(&s[i], seps);
+	if (count <= 0)
+		return (NULL);
 	array = malloc((count + 1) * sizeof(char *));
 	if (!array)
 		return (NULL);

@@ -12,33 +12,79 @@
 
 #include "minishell.h"
 
-char	**new_copy_array(char **src, char **dest, int *index)
+int	is_quote(char c);
+
+static int	is_escaped_quote(char *str, int i)
+{
+	return (str[i] == '\\' && (str[i + 1] == '"' || str[i + 1] == '\'')
+		&& str[i + 1] != '\0');
+}
+
+void	new_free_arr(char **array)
 {
 	int	i;
 
 	i = 0;
-	while (src && src[i])
+	while (array && array[i])
 	{
-		dest[*index] = ft_strdup(src[i]);
-		(*index)++;
+		free(array[i]);
 		i++;
 	}
-	return (dest);
+	free(array);
 }
 
-char	**new_join_string_arrays(char **arr1, char **arr2)
+static int	handle_escaped_quote(char *str, int *i, int *j)
 {
-	char	**result;
-	int		total_size;
-	int		j;
+	str[*j] = str[*i + 1];
+	(*j)++;
+	*i += 2;
+	return (1);
+}
 
-	total_size = new_count_array_size(arr1) + new_count_array_size(arr2);
-	result = malloc(sizeof(char *) * (total_size + 1));
-	if (!result)
-		return (NULL);
+static int	handle_content_within_quotes(char *str, int *i, int *j, char quote)
+{
+	while (str[*i] && (str[*i] != quote
+			|| (str[*i] == quote && *i > 0 && str[*i - 1] == '\\')))
+	{
+		if (str[*i] == '\\' && str[*i + 1] == quote && str[*i + 1] != '\0')
+		{
+			str[*j] = str[*i + 1];
+			(*j)++;
+			*i += 2;
+		}
+		else
+		{
+			str[*j] = str[*i];
+			(*j)++;
+			(*i)++;
+		}
+	}
+	return (1);
+}
+
+void	new_remove_quotes(char *str)
+{
+	int		i;
+	int		j;
+	char	quote;
+
+	if (!str)
+		return ;
+	i = 0;
 	j = 0;
-	result = new_copy_array(arr1, result, &j);
-	result = new_copy_array(arr2, result, &j);
-	result[j] = NULL;
-	return (result);
+	while (str[i])
+	{
+		if (is_escaped_quote(str, i))
+			handle_escaped_quote(str, &i, &j);
+		else if (is_quote(str[i]) && (i == 0 || str[i - 1] != '\\'))
+		{
+			quote = str[i++];
+			handle_content_within_quotes(str, &i, &j, quote);
+			if (str[i] == quote)
+				i++;
+		}
+		else
+			str[j++] = str[i++];
+	}
+	str[j] = '\0';
 }

@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:50:16 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/25 18:00:38 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/15 14:37:04 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int		cd(char **argv, t_vars *vars);
 int		pwd(char **argv, char **envp);
 int		unset(char **argv, t_vars *vars);
 int		env(char **argv, char **envp);
-int		exit_built_in(char **argv, t_vars *vars, bool write_exit);
+int		exit_built_in(char **argv, t_vars *vars,
+			bool write_exit, int exit_status);
 char	*get_var(char *argv);
 
 #endif

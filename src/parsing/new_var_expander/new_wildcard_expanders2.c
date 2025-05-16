@@ -16,19 +16,27 @@ int	process_directory(DIR *dir, char *pattern, char ***matches)
 {
 	struct dirent	*entry;
 	int				count;
+	char			*clean_pattern;
 
 	count = 0;
 	entry = readdir(dir);
+	clean_pattern = ft_strdup(pattern);
+	if (!clean_pattern)
+		return (-1);
 	while (entry)
 	{
 		if ((pattern[0] == '.' || entry->d_name[0] != '.')
-			&& new_match_pattern(pattern, entry->d_name))
+			&& new_match_pattern(clean_pattern, entry->d_name))
 		{
 			if (add_match(matches, &count, pattern, entry->d_name) == -1)
+			{
+				free(clean_pattern);
 				return (-1);
+			}
 		}
 		entry = readdir(dir);
 	}
+	free(clean_pattern);
 	return (count);
 }
 

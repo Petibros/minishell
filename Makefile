@@ -6,7 +6,7 @@
 #    By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/04 00:07:40 by sacgarci          #+#    #+#              #
-#    Updated: 2025/05/14 09:32:51 by npapashv         ###   ########.fr        #
+#    Updated: 2025/05/16 14:05:09 by sacgarci         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,6 +72,7 @@ CFILES_PARSING =	src/parsing/lexer/lexer.c \
 					src/parsing/new_var_expander/supra_split.c \
 					src/parsing/new_var_expander/supra_split2.c \
 					src/parsing/new_var_expander/remove_all_quotes.c \
+					src/parsing/new_var_expander/escape_quotes.c \
 					src/parsing/new_var_expander/shared.c \
 					src/parsing/new_var_expander/shared2.c
 
@@ -92,7 +93,7 @@ LDFLAGS = $(LIBFT) -lreadline
 all : $(NAME)
 
 $(NAME) : $(LIBFT) $(OFILES)
-	$(CC) $(OFILES) $(LDFLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OFILES) $(LDFLAGS) -o $(NAME)
 
 $(LIBFT) :
 	make bonus -C libft

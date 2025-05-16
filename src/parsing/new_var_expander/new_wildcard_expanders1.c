@@ -16,11 +16,17 @@ int	new_match_pattern(const char *pattern, const char *str)
 {
 	if (*pattern == '\0' && *str == '\0')
 		return (1);
-	if (*pattern == '*' && *(pattern + 1) != '\0' && *str == '\0')
-		return (0);
 	if (*pattern == '*')
+	{
+		while (*(pattern + 1) == '*')
+			pattern++;
+		if (*(pattern + 1) == '\0')
+			return (1);
+		if (*str == '\0')
+			return (0);
 		return (new_match_pattern(pattern + 1, str)
 			|| new_match_pattern(pattern, str + 1));
+	}
 	if (*pattern == *str)
 		return (new_match_pattern(pattern + 1, str + 1));
 	return (0);

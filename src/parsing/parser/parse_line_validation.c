@@ -13,6 +13,8 @@
 #include "minishell.h"
 #include "parsing.h"
 
+int	check_invalid_parentheses_usage(t_token *tokens);
+
 int	validate_parentheses_content(t_token *current)
 {
 	current = current->next;
@@ -56,6 +58,28 @@ static int	validate_token(t_token *current, t_token *next)
 	return (1);
 }
 
+static int	check_parentheses_balance(t_token *tokens)
+{
+	t_token	*current;
+	int		paren_count;
+
+	current = tokens;
+	paren_count = 0;
+	while (current)
+	{
+		if (current->type == TOKEN_LPAREN)
+			paren_count++;
+		else if (current->type == TOKEN_RPAREN)
+		{
+			paren_count--;
+			if (paren_count < 0)
+				return (0);
+		}
+		current = current->next;
+	}
+	return (paren_count == 0);
+}
+
 int	validate_syntax(t_token *tokens)
 {
 	t_token	*current;
@@ -66,6 +90,10 @@ int	validate_syntax(t_token *tokens)
 	current = tokens;
 	if (current->type == TOKEN_PIPE || current->type == TOKEN_AND
 		|| current->type == TOKEN_OR)
+		return (0);
+	if (!check_parentheses_balance(tokens))
+		return (0);
+	if (!check_invalid_parentheses_usage(tokens))
 		return (0);
 	while (current)
 	{

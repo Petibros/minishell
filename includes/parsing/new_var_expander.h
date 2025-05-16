@@ -51,6 +51,7 @@ void	new_expand_redirs_wildcards(t_redir *redirs, t_vars *vars, int *status);
 /* Quote handling functions */
 void	new_remove_quotes(char *str);
 void	remove_all_quotes(t_nodes *node);
+char	*escape_quotes_in_var_value(const char *str);
 
 /* Utility functions */
 char	**merge_and_free(char **result, char **temp);

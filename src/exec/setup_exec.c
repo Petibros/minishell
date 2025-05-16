@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:50:44 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/14 23:52:43 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/15 14:38:22 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ static int	is_built_in(t_vars *vars, t_nodes *cmds, int is_pipe[2])
 	else if (status == 3)
 		status = cd(cmds->argv, vars);
 	else if (status == 4)
-		status = exit_built_in(cmds->argv, vars, true);
+		status = exit_built_in(cmds->argv, vars,
+				true, vars->cmd.last_exit_status);
 	if (status != -1)
 		vars->cmd.last_exit_status = status;
 	return (status);

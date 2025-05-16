@@ -35,3 +35,21 @@ int	validate_redirection(t_token *next)
 		return (0);
 	return (1);
 }
+
+int	check_invalid_parentheses_usage(t_token *tokens)
+{
+	t_token	*current;
+	t_token	*next;
+
+	current = tokens;
+	while (current && current->next)
+	{
+		next = current->next;
+		if (current->type == TOKEN_WORD && next->type == TOKEN_LPAREN)
+			return (0);
+		if (current->type == TOKEN_RPAREN && next->type == TOKEN_WORD)
+			return (0);
+		current = next;
+	}
+	return (1);
+}

@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:36:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/27 19:05:18 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/15 14:36:28 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,21 +49,22 @@ void	exit_and_free(t_vars *vars, int status, bool write_exit)
 	exit(status);
 }
 
-int	exit_built_in(char **argv, t_vars *vars, bool write_exit)
+int	exit_built_in(char **argv, t_vars *vars, bool write_exit, int exit_status)
 {
-	int	exit_status;
-
-	exit_status = vars->cmd.last_exit_status;
-	if (argv[1] && argv[2])
-	{
-		write(2, "exit: too many arguments\n", 25);
-		vars->cmd.last_exit_status = 1;
-		return (1);
-	}
+	if (write_exit)
+		write(2, "exit\n", 5);
 	if (argv[1])
 	{
 		if (verif_argv(argv[1]) == 0)
+		{
 			exit_status = (char)ft_atoi(argv[1]);
+			if (argv[1] && argv[2])
+			{
+				write(2, "exit: too many arguments\n", 25);
+				vars->cmd.last_exit_status = 1;
+				return (1);
+			}
+		}
 		else
 		{
 			write(2, "exit: ", 5);
@@ -72,6 +73,6 @@ int	exit_built_in(char **argv, t_vars *vars, bool write_exit)
 			exit_status = 2;
 		}
 	}
-	exit_and_free(vars, exit_status, write_exit);
+	exit_and_free(vars, exit_status, 0);
 	return (0);
 }

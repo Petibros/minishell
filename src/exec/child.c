@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:36:35 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/13 16:32:50 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:03:19 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	is_built_in(char **argv, char **envp, t_vars *vars)
 	else if (ft_strncmp(argv[0], "cd", 3) == 0)
 		status = cd(argv, vars);
 	else if (ft_strncmp(argv[0], "exit", 5) == 0)
-		status = exit_built_in(argv, vars, false);
+		status = exit_built_in(argv, vars, false, vars->cmd.last_exit_status);
 	if (status != -10)
 	{
 		free_all(vars, NULL, false);
@@ -74,6 +74,7 @@ void	exec_cmd(t_vars *vars, t_nodes *cmds)
 	status = 1;
 	envp = vars->env.envp;
 	argv = cmds->argv;
+	rl_clear_history();
 	dup2(vars->cmd.fd_in, 0);
 	dup2(vars->cmd.fd_out, 1);
 	close_child_fds(vars, vars->cmd.pipes);
