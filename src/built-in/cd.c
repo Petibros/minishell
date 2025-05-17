@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/27 22:29:01 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/17 10:45:46 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX], int update_env)
 	char	**tmp_export;
 
 	if (!update_env)
-		write(2, "Cannot update OLDPWD var\n", 25);
+		write(2, "cd: cannot update OLDPWD var\n", 29);
 	if (!getcwd(pwd, PATH_MAX) && !update_env)
 	{
-		write(2, "Cannot update PWD var\n", 22);
-		perror("cd: getcwd");
+		write(2, "cd: cannot update PWD var: ", 27);
+		perror("");
 		return (0);
 	}
 	tmp_export = malloc(3 * sizeof(char *));
@@ -73,9 +73,8 @@ int	cd(char **argv, t_vars *vars)
 	}
 	else if (argv[1] && chdir(argv[1]) == -1)
 	{
-		write(2, "cd: no such file or directory: ", 32);
-		write(2, argv[1], ft_strlen(argv[1]));
-		write(2, "\n", 1);
+		write(2, "cd: ", 4);
+		perror(argv[1]);
 		return (1);
 	}
 	return (change_pwd(vars, old_pwd, update_env));
