@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:19:03 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/17 10:45:46 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/17 11:15:00 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ static int	change_pwd(t_vars *vars, char old_pwd[PATH_MAX], int update_env)
 	tmp_export = malloc(3 * sizeof(char *));
 	if (!tmp_export)
 		return (-1);
-	if (update_env && !join_and_export("OLDPWD=", old_pwd, tmp_export, vars))
+	if (update_env && ft_getenv(vars->env.envp, "OLDPWD")
+		&& !join_and_export("OLDPWD=", old_pwd, tmp_export, vars))
 		return (-1);
 	if (!join_and_export("PWD=", pwd, tmp_export, vars))
 		return (-1);
