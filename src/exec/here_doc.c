@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 20:30:13 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 02:52:26 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/17 11:04:29 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static int	is_sigint(char *buffer)
 {
 	if (g_signal_received == SIGINT)
 	{
-		free(buffer);
+		if (buffer)
+			free(buffer);
 		return (1);
 	}
 	return (0);

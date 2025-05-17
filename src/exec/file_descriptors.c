@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:35:02 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/13 16:49:45 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/17 10:57:03 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
 	t_redir	*files;
 
 	files = *redirs;
-	while (files && *fd != -1)
+	while (files && *fd >= 0)
 	{
 		if (fd_type == 2)
 			heredoc_gestion(vars, files, fd);
@@ -30,7 +30,7 @@ static void	open_fd(t_redir **redirs, int *fd, int fd_type, t_vars *vars)
 		if (*fd == -1)
 			perror(files->filename);
 		files = files->next;
-		if (files && *fd != -1)
+		if (files && *fd >= 0)
 			close(*fd);
 	}
 }
