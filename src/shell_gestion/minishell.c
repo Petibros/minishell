@@ -6,11 +6,22 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/14 22:44:23 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/17 10:03:17 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	check_line(t_vars *vars)
+{
+	if (!vars->line[0])
+	{
+		free(vars->line);
+		free(vars->prompt);
+		return (0);
+	}
+	return (1);
+}
 
 int	run_shell(t_vars *vars)
 {
@@ -21,7 +32,7 @@ int	run_shell(t_vars *vars)
 	vars->line = readline(vars->prompt);
 	if (!vars->line)
 		return (0);
-	if (!vars->line[0])
+	else if (!check_line(vars))
 		return (1);
 	if (g_signal_received == SIGINT)
 	{

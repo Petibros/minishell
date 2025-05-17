@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:36:23 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/15 14:36:28 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/17 10:22:04 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int	exit_built_in(char **argv, t_vars *vars, bool write_exit, int exit_status)
 			exit_status = 2;
 		}
 	}
+	rl_clear_history();
 	exit_and_free(vars, exit_status, 0);
 	return (0);
 }
