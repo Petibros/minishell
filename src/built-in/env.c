@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:18:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/15 17:16:26 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/18 14:42:32 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	env(char **argv, char **envp)
 {
 	int	i;
+	int	j;
 	int	status;
 
 	(void) argv;
@@ -22,9 +23,16 @@ int	env(char **argv, char **envp)
 	i = 0;
 	while (envp && envp[i])
 	{
-		if (write(1, envp[i], ft_strlen(envp[i])) == -1)
-			status = 125;
-		write(1, "\n", 1);
+		j = 0;
+		while (envp[i][j] && (ft_isalnum(envp[i][j]) || envp[i][j] == '_')
+			&& !ft_isdigit(envp[i][0]))
+			++j;
+		if (envp[i][j] == '=')
+		{
+			if (write(1, envp[i], ft_strlen(envp[i])) == -1)
+				status = 125;
+			write(1, "\n", 1);
+		}
 		++i;
 	}
 	return (status);

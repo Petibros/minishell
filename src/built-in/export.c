@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 19:33:44 by marvin           ###   ########.fr       */
+/*   Updated: 2025/05/18 15:03:30 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,13 @@ static int	already_exists(char **argv, char **envp,
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(argv[1], envp[i], var_len) == 0
-			&& envp[i][var_len] == '=')
+		if (is_existing(envp, argv, i, var_len))
 		{
+			//HERE
 			if (concatenate)
 				tmp = ft_strjoin(envp[i], &argv[1][var_len + 2]);
+			else if (!argv[1][var_len])
+				return (-1);
 			else
 				tmp = ft_strdup(argv[1]);
 			free(envp[i]);
@@ -70,11 +72,9 @@ static int	is_valid(char **argv, int *status)
 	while (argv[1][i] && (ft_isalnum(argv[1][i]) || argv[1][i] == '_')
 		&& !ft_isdigit(argv[1][0]))
 		++i;
-	if ((argv[1][i] != '=' && !(argv[1][i] == '+'
+	if ((argv[1][i] != '=' && argv[1][i] && !(argv[1][i] == '+'
 		&& argv[1][i + 1] == '=')) || i == 0)
 	{
-		if (!argv[1][i] && i > 0)
-			return (-1);
 		write(2, "minishell: export: ", 19);
 		write(2, argv[1], ft_strlen(argv[1]));
 		write(2, ": not a valid identifier\n", 25);

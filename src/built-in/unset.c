@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:04:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/18 18:49:08 by sacha            ###   ########.fr       */
+/*   Updated: 2025/05/18 14:43:19 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ static int	is_unset(char **argv, char *env)
 	while (argv[i])
 	{
 		var_len = ft_strlen(argv[i]);
-		if (ft_strncmp(argv[i], env, var_len) == 0 && *(env + var_len) == '=')
+		if (ft_strncmp(argv[i], env, var_len) == 0
+			&& (*(env + var_len) == '=' || !*(env + var_len)))
 			return (1);
 		++i;
 	}

@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:50:16 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/15 14:37:04 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/05/18 14:48:01 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ int		env(char **argv, char **envp);
 int		exit_built_in(char **argv, t_vars *vars,
 			bool write_exit, int exit_status);
 char	*get_var(char *argv);
+bool	is_existing(char **envp, char **argv, int i, int var_len);
 
 #endif
