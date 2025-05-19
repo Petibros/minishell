@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:33:52 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/18 14:54:49 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/19 23:13:03 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ int	unset_null(char **envp, int i, int *current_size)
 	return (-1);
 }
 
-int	solely_export(char **envp)
+int	solely_export(char **envp, char *argv)
 {
 	int	i;
 	int	var_len;
 
 	i = 0;
-	while (envp[i])
+	while (!argv && envp[i])
 	{
 		var_len = ft_strnlen(envp[i], '=') + 1;
 		if (!envp[i][var_len - 1])

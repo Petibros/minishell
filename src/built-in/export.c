@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 22:48:28 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/18 15:03:30 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/19 23:28:02 by sacgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,14 @@ static int	already_exists(char **argv, char **envp,
 	int		i;
 	char	*tmp;
 
-	if (argv[1][var_len] == '+')
-		concatenate = 1;
 	i = 0;
 	while (envp[i])
 	{
 		if (is_existing(envp, argv, i, var_len))
 		{
-			//HERE
-			if (concatenate)
+			if (concatenate && !envp[i][var_len])
+				tmp = ft_strjoin(envp[i], &argv[1][var_len + 1]);
+			else if (concatenate)
 				tmp = ft_strjoin(envp[i], &argv[1][var_len + 2]);
 			else if (!argv[1][var_len])
 				return (-1);
@@ -110,8 +109,7 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 	int	return_status;
 	int	i;
 
-	if (!argv[1])
-		return (solely_export(*envp));
+	solely_export(*envp, argv[1]);
 	return_status = 0;
 	i = -1;
 	while (argv[i + 2])
@@ -120,7 +118,10 @@ int	export_var(char **argv, char ***envp, t_vars *vars)
 		status = is_valid(&argv[i], &return_status);
 		if (status == -1)
 			continue ;
-		status = already_exists(&argv[i], *envp, status, 0);
+		if (argv[i + 1][status] == '+')
+			status = already_exists(&argv[i], *envp, status, 1);
+		else
+			status = already_exists(&argv[i], *envp, status, 0);
 		if (status == -1)
 			continue ;
 		else if (status >= 0)
