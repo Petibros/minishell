@@ -81,10 +81,12 @@ char	*ft_strjoin_free(char *s1, char *s2)
 
 void	print_syntax_error(char *token)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	ft_putstr_fd("minishell: syntax error ", 2);
 	if (token)
+	{
+		ft_putstr_fd("near unexpected token '", 2);
 		ft_putstr_fd(token, 2);
-	else
-		ft_putstr_fd("newline", 2);
-	ft_putstr_fd("'\n", 2);
+		ft_putstr_fd("'", 2);
+	}
+	ft_putstr_fd("\n", 2);
 }
