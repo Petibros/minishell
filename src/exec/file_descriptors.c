@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:35:02 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/17 10:57:03 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/05/22 18:03:24 by sacha            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,12 @@ static void	get_fd_in(t_vars *vars, t_nodes *cmds, int is_pipe[2], int *fd_in)
 	if (*fd_in <= -2)
 		return ;
 	if (cmds->file_in)
+	{
+		if (*fd_in > 0)
+			close(*fd_in);
 		open_fd(&cmds->file_in, fd_in, 1, vars);
-	else if (is_pipe[0] == 1)
+	}
+	else if (!*fd_in && is_pipe[0] == 1)
 		*fd_in = vars->cmd.pipes[vars->cmd.pipes_count % 2][0];
 }
 
