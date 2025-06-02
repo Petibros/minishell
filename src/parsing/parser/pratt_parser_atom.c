@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 03:39:23 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 03:39:23 by npapash          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:23:55 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,16 @@ static void	cleanup_word_tokens(t_token *word_tokens)
 
 static t_nodes	*process_token_loop(t_token_loop_ctx *ctx)
 {
-	while (*(ctx->token) && ((*(ctx->token))->type == TOKEN_WORD || \
-		(*(ctx->token))->type == TOKEN_REDIR_IN || \
-		(*(ctx->token))->type == TOKEN_REDIR_OUT || \
-		(*(ctx->token))->type == TOKEN_APPEND || \
-		(*(ctx->token))->type == TOKEN_HEREDOC))
+	while (*(ctx->token) && ((*(ctx->token))->type == TOKEN_WORD
+			|| (*(ctx->token))->type == TOKEN_REDIR_IN
+			|| (*(ctx->token))->type == TOKEN_REDIR_OUT
+			|| (*(ctx->token))->type == TOKEN_APPEND
+			|| (*(ctx->token))->type == TOKEN_HEREDOC))
 	{
 		if ((*(ctx->token))->type == TOKEN_WORD)
 		{
-			if (!process_word_token(ctx->word_tokens, ctx->token, \
-									ctx->word_count))
+			if (!process_word_token(ctx->word_tokens, ctx->token,
+					ctx->word_count))
 			{
 				cleanup_word_tokens(*(ctx->word_tokens));
 				free_node(ctx->node);

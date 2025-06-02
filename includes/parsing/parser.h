@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 19:20:08 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/23 19:20:08 by npapash          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:21:20 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ int			validate_syntax(t_token *tokens);
 
 // Parser command utils
 t_token		*create_word_token(t_token *src);
-int			process_word_token(t_token **word_tokens, t_token **token, \
-								int *word_count);
+int			process_word_token(t_token **word_tokens, t_token **token,
+				int *word_count);
 int			process_command_token(t_cmd_ctx *ctx);
 int			build_argv(t_nodes *node, t_token *word_tokens, int word_count);
 
