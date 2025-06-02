@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/06/02 14:59:52 by npapashv         ###   ########.fr       */
+/*   Updated: 2025/06/02 16:01:20 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ static int	search_binary_tree(t_vars *vars, t_nodes *cmds,
 	if (cmds && cmds->is_operator)
 	{
 		if (cmds->operator_type == TOKEN_SUBSHELL)
-			return (create_subshell(vars, cmds, pipe_in, pipe_out));
+			return (subshell_and_clean(vars, cmds, pipe_in, pipe_out));
 		res = recursive_call(vars, cmds, (int [2]){pipe_in, pipe_out}, true);
 		if (res == -1 || res == 130 || res == 131)
 			return (res);
