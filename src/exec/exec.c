@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:30:15 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/16 13:58:38 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:59:52 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ int	create_subshell(t_vars *vars, t_nodes *cmds,
 	int pipe_in, int pipe_out)
 {
 	int	pid;
-	int	status;
+	int	code;
 
-	status = get_fds(vars, cmds, (int [2]){pipe_in, pipe_out});
-	if (status != 0)
-		return (status);
+	code = get_fds(vars, cmds, (int [2]){pipe_in, pipe_out});
+	if (code != 0)
+		return (code);
 	pid = fork();
 	if (pid == -1)
 		return (-1);
@@ -59,11 +59,11 @@ int	create_subshell(t_vars *vars, t_nodes *cmds,
 		setup_signals_subshell();
 		vars->sa_setup = &setup_signals_subshell;
 		search_binary_tree(vars, cmds->left, 0, 0);
-		status = wait_processes
-			(vars->cmd.last_exit_status, vars->cmd.last_pid);
+		code = wait_processes(vars->cmd.last_exit_status, vars->cmd.last_pid);
 		close_pipe(vars->cmd.pipes, 3);
 		free_all(vars, NULL, false);
-		exit(status);
+		rl_clear_history();
+		exit(code);
 	}
 	vars->cmd.last_pid = pid;
 	return (0);
