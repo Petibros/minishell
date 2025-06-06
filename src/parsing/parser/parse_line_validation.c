@@ -17,7 +17,12 @@ int	check_invalid_parentheses_usage(t_token *tokens);
 
 int	validate_parentheses_content(t_token *current)
 {
+	t_token *first;
+	t_token *prev;
+
 	current = current->next;
+	first = current;
+	prev = NULL;
 	if (!current || current->type == TOKEN_RPAREN)
 		return (0);
 	while (current && current->type != TOKEN_RPAREN)
@@ -28,6 +33,13 @@ int	validate_parentheses_content(t_token *current)
 		if (current->type == TOKEN_WORD
 			&& is_dollar_operator(current->value))
 			return (0);
+		if ((current->type == TOKEN_AND || current->type == TOKEN_OR || current->type == TOKEN_PIPE) &&
+			(current == first || !current->next || current->next->type == TOKEN_RPAREN))
+			return (0);
+		if (prev && (prev->type == TOKEN_AND || prev->type == TOKEN_OR || prev->type == TOKEN_PIPE) &&
+			(current->type == TOKEN_AND || current->type == TOKEN_OR || current->type == TOKEN_PIPE))
+			return (0);
+		prev = current;
 		current = current->next;
 	}
 	if (!current || current->type != TOKEN_RPAREN)
@@ -37,6 +49,8 @@ int	validate_parentheses_content(t_token *current)
 
 static int	validate_operator_sequence(t_token *current, t_token *next)
 {
+	if (current->value && ft_strncmp(current->value, "&", 2) == 0)
+		return (0);
 	if ((current->type == TOKEN_PIPE || current->type == TOKEN_AND
 			|| current->type == TOKEN_OR) && (!next || next->type == TOKEN_PIPE
 			|| next->type == TOKEN_AND || next->type == TOKEN_OR))
@@ -89,7 +103,7 @@ int	validate_syntax(t_token *tokens)
 		return (0);
 	current = tokens;
 	if (current->type == TOKEN_PIPE || current->type == TOKEN_AND
-		|| current->type == TOKEN_OR)
+		|| current->type == TOKEN_OR || (current->value && ft_strncmp(current->value, "&", 2) == 0))
 		return (0);
 	if (!check_parentheses_balance(tokens))
 		return (0);
