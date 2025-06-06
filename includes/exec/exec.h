@@ -6,7 +6,7 @@
 /*   By: sacgarci <sacgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:40:00 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/04/28 15:30:34 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/06/02 16:05:39 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@ int		print_quit(void);
 char	*get_path(char *cmd, char **envp, int *status);
 void	execute(t_vars *vars, t_nodes *cmds);
 int		exec_routine(t_vars *vars, t_nodes *cmds, int is_pipe[2]);
+int		create_subshell(t_vars *vars, t_nodes *cmds,
+			int pipe_in, int pipe_out);
+int		subshell_and_clean(t_vars *vars, t_nodes *cmds,
+			int pipe_in, int pipe_out);
 void	exec_cmd(t_vars *vars, t_nodes *cmds);
 int		wait_processes(int last_known_exit_status, int last_known_pid);
 void	expand_wildcards_in_node(t_nodes *node);
