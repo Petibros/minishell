@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 19:42:08 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/23 19:42:08 by npapash          ###   ########.fr       */
+/*   Updated: 2025/06/06 19:29:50 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,22 +38,22 @@ static t_token	*handle_logical(char **input, char curr, char next)
 	if (curr == '|' && next == '|')
 	{
 		(*input) += 2;
-		return (create_token(TOKEN_OR, ft_strdup("||"))); 
+		return (create_token(TOKEN_OR, ft_strdup("||")));
 	}
 	else if (curr == '&' && next == '&')
 	{
 		(*input) += 2;
-		return (create_token(TOKEN_AND, ft_strdup("&&"))); 
+		return (create_token(TOKEN_AND, ft_strdup("&&")));
 	}
 	else if (curr == '|')
 	{
 		(*input)++;
-		return (create_token(TOKEN_PIPE, ft_strdup("|"))); 
+		return (create_token(TOKEN_PIPE, ft_strdup("|")));
 	}
 	else if (curr == '&')
 	{
 		(*input)++;
-		return (create_token(TOKEN_WORD, ft_strdup("&"))); 
+		return (create_token(TOKEN_WORD, ft_strdup("&")));
 	}
 	return (NULL);
 }

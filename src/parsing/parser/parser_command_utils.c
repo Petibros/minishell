@@ -6,7 +6,7 @@
 /*   By: npapash <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:22:30 by npapash           #+#    #+#             */
-/*   Updated: 2025/03/24 17:22:30 by npapash          ###   ########.fr       */
+/*   Updated: 2025/06/06 19:46:52 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,25 @@ int	process_command_token(t_cmd_ctx *ctx)
 	else if (!handle_redirections(ctx->node, ctx->token))
 		return (0);
 	return (1);
+}
+
+int	is_syntax_error(t_token *current, t_token *prev, t_token *first)
+{
+	if (is_redirection(current->type)
+		&& !validate_redirection(current->next))
+		return (1);
+	if (current->type == TOKEN_WORD && is_dollar_operator(current->value))
+		return (1);
+	if ((current->type == TOKEN_AND || current->type == TOKEN_OR
+			|| current->type == TOKEN_PIPE)
+		&& (current == first || !current->next
+			|| current->next->type == TOKEN_RPAREN))
+		return (1);
+	if (prev && (prev->type == TOKEN_AND || prev->type == TOKEN_OR
+			|| prev->type == TOKEN_PIPE) && (current->type == TOKEN_AND
+			|| current->type == TOKEN_OR || current->type == TOKEN_PIPE))
+		return (1);
+	return (0);
 }
 
 int	build_argv(t_nodes *node, t_token *word_tokens, int word_count)
