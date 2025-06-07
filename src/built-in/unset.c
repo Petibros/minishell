@@ -6,7 +6,7 @@
 /*   By: sacgarci <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 20:04:56 by sacgarci          #+#    #+#             */
-/*   Updated: 2025/05/18 14:43:19 by sacgarci         ###   ########.fr       */
+/*   Updated: 2025/06/07 16:31:41 by npapashv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	unset(char **argv, t_vars *vars)
 			}
 			vars->env.envp[tmp_i] = NULL;
 			--vars->env.current_size;
+			continue ;
 		}
 		++i;
 	}
