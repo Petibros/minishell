@@ -30,15 +30,15 @@ int	run_shell(t_vars *vars)
 	if (get_prompt(vars) == -1)
 		return (0);
 	vars->line = readline(vars->prompt);
-	if (!vars->line)
-		return (0);
-	else if (!check_line(vars))
-		return (1);
 	if (g_signal_received == SIGINT)
 	{
 		vars->cmd.last_exit_status = 130;
 		g_signal_received = 0;
 	}
+	if (!vars->line)
+		return (0);
+	else if (!check_line(vars))
+		return (1);
 	add_history(vars->line);
 	if (parse_line(vars))
 		execute(vars, vars->cmd.cmds);
